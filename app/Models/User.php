@@ -18,9 +18,14 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'role_id',
+        'user_code',
         'name',
         'email',
         'password',
+        'phone',
+        'address',
+        'department_id'
     ];
 
     /**
@@ -32,6 +37,11 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::Class);
+    }
 
     /**
      * Get the attributes that should be cast.
