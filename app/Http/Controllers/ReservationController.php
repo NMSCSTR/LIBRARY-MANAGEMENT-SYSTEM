@@ -12,7 +12,8 @@ class ReservationController extends Controller
      */
     public function index()
     {
-        //
+        $reservations = Reservation::with(['user', 'book'])->get();
+        return view('admin.reservations', compact('reservations'));
     }
 
     /**
