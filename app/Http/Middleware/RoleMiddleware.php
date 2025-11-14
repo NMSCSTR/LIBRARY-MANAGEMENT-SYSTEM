@@ -11,7 +11,7 @@ class RoleMiddleware
     {
         // User must be logged in
         if (!Auth::check()) {
-            return redirect()->route('login');
+            return redirect()->route('users.login');
         }
 
         $user = Auth::user();

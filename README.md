@@ -88,3 +88,9 @@ public function index() {
 
 
 
+color pallete
+#EFECE3 #8FABD4 #4A70A9 #000000
+
+#F2E9D8 (parchment) #A67C52 (book spines) #6C4F3D (hardcover brown) #2C1A13 (ink)
+
+

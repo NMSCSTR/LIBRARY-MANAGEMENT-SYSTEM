@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;;
-
 use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookCopyController;
 use App\Http\Controllers\BorrowController;
@@ -14,21 +14,35 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;use Illuminate\Support\Facades\Route;
 
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
+
 
 Route::get('/', function () {
     return view('welcome');
-})->name('login');
-
+})->name('welcome');
 
 Route::get('/register', function () {
     return view('register');
 })->name('register');
 
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])
+        ->name('users.login');
+
+    Route::post('/login', [AuthController::class, 'login'])
+        ->name('users.login.submit');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('users.logout');
+});
+
+
 
 Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(function () {
+    Route::get('/librarian/dashboard', function () {
+            return view('librarian.dashboard');
+        })->name('librarian.dashboard');
 
     // Authors
     Route::resource('authors', AuthorController::class)->names([
@@ -105,6 +119,10 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
 
 // Admin-only routes
 Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('admin.dashboard');
+
     Route::resource('users', UserController::class)->names([
         'index'   => 'users.index',
         'store'   => 'users.store',
@@ -125,6 +143,22 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 // Routes accessible to all authenticated users
 Route::middleware(['auth'])->group(function () {
+
+    // Instructor Dashboard
+    Route::get('/instructor/dashboard', function () {
+            return view('instructor.dashboard');
+        })->name('instructor.dashboard');
+
+    // Student Dashboard
+    Route::get('/student/dashboard', function () {
+            return view('student.dashboard');
+        })->name('student.dashboard');
+        
+    // Donor Dashboard
+    Route::get('/donor/dashboard', function () {
+            return view('donor.dashboard');
+        })->name('donor.dashboard');
+
     Route::resource('reservations', ReservationController::class)->names([
         'index'   => 'reservations.index',
         'store'   => 'reservations.store',
