@@ -12,7 +12,8 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        //
+        $suppliers = Supplier::with('books')->get();
+        return view('admin.suppliers', compact('suppliers'));
     }
 
     /**
