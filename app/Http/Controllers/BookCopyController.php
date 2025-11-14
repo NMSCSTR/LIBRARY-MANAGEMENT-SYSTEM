@@ -12,7 +12,8 @@ class BookCopyController extends Controller
      */
     public function index()
     {
-        //
+        $bookCopies = BookCopy::with('book')->get();
+        return view('admin.bookcopies', compact('bookCopies'));
     }
 
     /**
