@@ -12,7 +12,8 @@ class BorrowController extends Controller
      */
     public function index()
     {
-        //
+        $borrows = Borrow::with(['user', 'book'])->get();
+        return view('admin.borrows', compact('borrows'));
     }
 
     /**
