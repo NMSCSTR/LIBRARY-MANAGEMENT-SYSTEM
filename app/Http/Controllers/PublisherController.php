@@ -12,7 +12,8 @@ class PublisherController extends Controller
      */
     public function index()
     {
-        //
+        $publishers = Publisher::withCount('books')->get();
+        return view('admin.publishers', compact('publishers'));
     }
 
     /**
