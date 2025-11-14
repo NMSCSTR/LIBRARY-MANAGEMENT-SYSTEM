@@ -6,8 +6,33 @@ use Illuminate\Database\Eloquent\Model;
 class Book extends Model
 {
     protected $fillable = [
-        'isbn', 'title', 'author', 'publisher', 'year_published', 'quantity',
+        'title', 'isbn', 'author_id', 'category_id', 'publisher_id', 'supplier_id', 'copies_available'
     ];
+
+    public function author()
+    {
+        return $this->belongsTo(Author::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function publisher()
+    {
+        return $this->belongsTo(Publisher::class);
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    public function copies()
+    {
+        return $this->hasMany(BookCopy::class);
+    }
 
     public function reservations()
     {

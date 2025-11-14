@@ -9,7 +9,7 @@ class BookCopy extends Model
     protected $fillable = [
         'book_id',
         'copy_number',
-        'status', // available, borrowed, lost, damaged
+        'status', 
         'shelf_location',
     ];
 
@@ -18,8 +18,9 @@ class BookCopy extends Model
         return $this->belongsTo(Book::class);
     }
 
-    public function borrowRecords()
+    public function borrows()
     {
-        return $this->hasMany(BorrowRecord::class);
+        return $this->hasMany(Borrow::class, 'book_id');
     }
+
 }

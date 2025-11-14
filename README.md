@@ -63,3 +63,19 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 =======
 # LIBRARY-MANAGEMENT-SYSTEM
 >>>>>>> c3ea731722e0db3a4ce2661557501723d5353b1f
+
+
+
+
+
+
+
+# Optional enhancements:
+    book_reviews for student/instructor feedback
+    notifications for due dates, overdue, and reservation alerts
+
+
+
+
+
+
