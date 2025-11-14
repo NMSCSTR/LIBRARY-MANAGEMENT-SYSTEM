@@ -12,7 +12,8 @@ use App\Http\Controllers\PublisherController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\UserController;use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 
 
@@ -153,7 +154,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/student/dashboard', function () {
             return view('student.dashboard');
         })->name('student.dashboard');
-        
+
     // Donor Dashboard
     Route::get('/donor/dashboard', function () {
             return view('donor.dashboard');

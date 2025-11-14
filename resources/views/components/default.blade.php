@@ -8,6 +8,8 @@
     <title>@yield('title', 'Welcome')</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
+    <link rel="shortcut icon" href="https://clipground.com/images/book-logo-png-14.png" type="image/x-icon">
+
 
     <!-- Google Font: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
