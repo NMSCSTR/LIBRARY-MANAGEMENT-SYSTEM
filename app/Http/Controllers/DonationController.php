@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Donations;
+use App\Models\Donation;
 use Illuminate\Http\Request;
 
-class DonationsController extends Controller
+class DonationController extends Controller
 {
     /**
      * Display a listing of the resource.

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Books;
+use App\Models\Book;
 use Illuminate\Http\Request;
 
-class BooksController extends Controller
+class BookController extends Controller
 {
     /**
      * Display a listing of the resource.

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Borrows;
+use App\Models\Borrow;
 use Illuminate\Http\Request;
 
-class BorrowsController extends Controller
+class BorrowController extends Controller
 {
     /**
      * Display a listing of the resource.

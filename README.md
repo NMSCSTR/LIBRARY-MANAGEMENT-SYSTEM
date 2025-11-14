@@ -75,6 +75,15 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
     notifications for due dates, overdue, and reservation alerts
 
 
+public function index() {
+    if (auth()->user()->role->name === 'admin') {
+        return view('admin.books.index', compact('books'));
+    } elseif (auth()->user()->role->name === 'librarian') {
+        return view('librarian.books.index', compact('books'));
+    } else {
+        return view('student.books.index', compact('books'));
+    }
+}
 
 
 

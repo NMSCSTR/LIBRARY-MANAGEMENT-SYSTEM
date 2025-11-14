@@ -1,0 +1,1 @@
+<div class="absolute inset-0 bg-[url('https://t4.ftcdn.net/jpg/04/89/89/53/360_F_489895355_Z4Hb6t1lSLT0zo66l5uWDnfmUGwdlkP4.jpg')] bg-cover bg-center opacity-10 mix-blend-overlay z-0 pointer-events-none"></div>

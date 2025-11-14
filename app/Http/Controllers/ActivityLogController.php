@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ActivityLogs;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
-class ActivityLogsController extends Controller
+class ActivityLogController extends Controller
 {
     /**
      * Display a listing of the resource.
