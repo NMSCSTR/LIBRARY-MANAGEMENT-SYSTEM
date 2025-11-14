@@ -1,17 +1,14 @@
 <?php
+
 namespace Database\Seeders;
 
-use App\Models\Author;
 use Illuminate\Database\Seeder;
+use App\Models\Author; 
 
 class AuthorSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //
         $authors = [
             'J.K. Rowling',
             'George Orwell',

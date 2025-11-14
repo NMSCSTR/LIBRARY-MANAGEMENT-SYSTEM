@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,16 +11,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-    $this->call([
-        RoleSeeder::class,
-        UserSeeder::class,
-        AuthorSeeder::class,
-        CategorySeeder::class,
-        PublisherSeeder::class,
-        SupplierSeeder::class,
-        BookSeeder::class,
-        DonationSeeder::class,
-        CatalogingSeeder::class,
-    ]);
+        // ORDER MATTERS
+
+        // 1. Roles (foundation of user access)
+        $this->call(RoleSeeder::class);
+
+        // 2. Users (requires roles)
+        $this->call(UserSeeder::class);
+
+        // 3. Categories, Authors, Publishers, Suppliers
+        $this->call(CategorySeeder::class);
+        $this->call(AuthorSeeder::class);
+        $this->call(PublisherSeeder::class);
+        $this->call(SupplierSeeder::class);
+
+        // 4. Books (requires authors, categories, suppliers, publishers)
+        $this->call(BookSeeder::class);
+
+        // 5. Book Copies (requires books)
+        $this->call(BookCopySeeder::class);
     }
 }

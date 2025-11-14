@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->string('isbn')->unique();
             $table->string('title');
-            $table->string('author');
-            $table->string('publisher')->nullable();
-            $table->integer('year_published')->nullable();
-            $table->integer('quantity')->default(1);
+            $table->string('isbn')->unique();
+            $table->foreignId('author_id')->constrained()->onDelete('cascade'); // must exist
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->foreignId('publisher_id')->constrained()->onDelete('cascade');
+            $table->foreignId('supplier_id')->constrained()->onDelete('cascade');
+            $table->integer('copies_available')->default(0);
             $table->timestamps();
         });
     }
