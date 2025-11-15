@@ -33,7 +33,7 @@
 
     <!-- Book Copy -->
     <a href="{{ route('book-copies.index') }}"
-        class="flex items-center justify-between my-4 {{ request()->routeIs('bookcopies.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
+        class="flex items-center justify-between my-4 {{ request()->routeIs('book-copies.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
         <span class="flex items-center">
             <span class="material-icons-outlined pr-2">library_books</span>
             Book Copies
@@ -131,7 +131,7 @@
 
     <!-- Activity Logs -->
     <a href="{{ route('activity-logs.index') }}"
-        class="flex items-center justify-between my-4 {{ request()->routeIs('activitylogs.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
+        class="flex items-center justify-between my-4 {{ request()->routeIs('activity-logs.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
         <span class="flex items-center">
             <span class="material-icons-outlined pr-2">history</span>
             Activity Log
@@ -177,5 +177,26 @@
             <span class="material-icons-outlined">keyboard_arrow_right</span>
         </button>
     </form>
+
+        <script>
+        document.getElementById('logout-button').addEventListener('click', function(event) {
+        event.preventDefault();
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You will be logged out!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, log me out!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('logout-form').submit();
+            }
+        });
+    });
+    </script>
 
 </div>

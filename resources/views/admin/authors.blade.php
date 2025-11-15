@@ -118,13 +118,13 @@
                                     <td class="px-6 py-4 flex gap-2 justify-end">
                                         {{-- Edit --}}
                                         <a href="{{ route('authors.edit', $author->id) }}"
-                                            class="px-3 py-2 text-xs text-white bg-blue-700 rounded-lg hover:bg-blue-800">
+                                            class="px-2 py-1 text-xs text-white bg-blue-700 hover:bg-blue-800">
                                             Edit
                                         </a>
 
                                         {{-- Delete --}}
                                         <button data-id="{{ $author->id }}"
-                                            class="delete-author-btn px-3 py-2 text-xs text-white bg-red-600 rounded-lg hover:bg-red-700">
+                                            class="delete-author-btn px-2 py-1 text-xs text-white bg-red-600 hover:bg-red-700">
                                             Delete
                                         </button>
 

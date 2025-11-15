@@ -57,7 +57,7 @@
                                                 stroke-width="2" d="m1 9 4-4-4-4" />
                                         </svg>
                                         <span
-                                            class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">Authors</span>
+                                            class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">Book Copies</span>
                                     </div>
                                 </li>
                             </ol>
@@ -140,13 +140,13 @@
 
                                         {{-- Edit --}}
                                         {{-- <a href="{{ route('', $copy->id) }}"
-                                           class="px-3 py-2 text-xs text-white bg-blue-700 rounded-lg hover:bg-blue-800">
+                                           class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
                                            Edit
                                         </a> --}}
 
                                         {{-- Delete --}}
                                         <button data-id="{{ $copy->id }}"
-                                            class="delete-copy-btn px-3 py-2 text-xs text-white bg-red-600 rounded-lg hover:bg-red-700">
+                                            class="delete-copy-btn px-3 py-2 text-xs text-white bg-red-600 hover:bg-red-700">
                                             Delete
                                         </button>
 
