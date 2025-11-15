@@ -1,5 +1,5 @@
 @extends('components.default')
-@section('title', 'Categories | Admin Dashboard | LMIS')
+@section('title', 'Publisher | Admin Dashboard | LMIS')
 @section('content')
 
 <section>
@@ -264,8 +264,6 @@
                         Add Publisher
                     </button>
                 </form>
-
-
             </div>
         </div>
     </div>

@@ -1,5 +1,5 @@
 @extends('components.default')
-@section('title', 'Categories | Admin Dashboard | LMIS')
+@section('title', 'Donations | Admin Dashboard | LMIS')
 @section('content')
 
 <section>
@@ -60,6 +60,23 @@
                                 </li>
                             </ol>
                         </nav>
+
+                        <div class="flex justify-end py-4">
+                            <button id="defaultModalButton" data-modal-target="defaultModal"
+                                data-modal-toggle="defaultModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
+                                    focus:ring-4 focus:outline-none focus:ring-blue-300
+                                    font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition">
+
+                                <!-- Plus Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                    stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+
+                                Add Donation
+                            </button>
+                        </div>
+
 
                     </div>
 
@@ -169,12 +186,27 @@
                                     <td class="px-6 py-4">{{ $donation->publisher }}</td>
                                     <td class="px-6 py-4">{{ $donation->year_published }}</td>
                                     <td class="px-6 py-4">{{ $donation->quantity }}</td>
-                                    <td class="px-6 py-4 capitalize">{{ $donation->status }}</td>
+                                    <td class="px-6 py-4">
+                                        @php
+                                        $statusColors = [
+                                        'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-300',
+                                        'approved' => 'bg-green-100 text-green-800 border-green-300',
+                                        'rejected' => 'bg-red-100 text-red-800 border-red-300',
+                                        ];
+                                        $statusClass = $statusColors[$donation->status] ?? 'bg-gray-100 text-gray-800
+                                        border-gray-300';
+                                        @endphp
+
+                                        <span
+                                            class="px-3 py-1 text-xs font-semibold border rounded-full {{ $statusClass }}">
+                                            {{ ucfirst($donation->status) }}
+                                        </span>
+                                    </td>
                                     <td class="px-6 py-4 flex gap-2">
                                         {{-- Edit --}}
                                         <a href="{{ route('donations.edit', $donation->id) }}"
-                                           class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
-                                           Edit
+                                            class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
+                                            Edit
                                         </a>
 
                                         {{-- Delete --}}
@@ -184,8 +216,8 @@
                                         </button>
 
                                         <form id="delete-donation-form-{{ $donation->id }}"
-                                              action="{{ route('donations.destroy', $donation->id) }}"
-                                              method="POST" class="hidden">
+                                            action="{{ route('donations.destroy', $donation->id) }}" method="POST"
+                                            class="hidden">
                                             @csrf
                                             @method('DELETE')
                                         </form>
@@ -199,13 +231,98 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Main modal -->
+    <div id="defaultModal" tabindex="-1" aria-hidden="true"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+
+        <div class="relative w-full max-w-lg p-4">
+            <div class="relative bg-white rounded-2xl shadow-2xl p-6">
+
+                <!-- Modal header -->
+                <div class="flex items-center justify-between border-b pb-3 mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-6 h-6 text-blue-600">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Add New Donation Book
+                    </h3>
+
+                    <button type="button" class="p-2 rounded-full hover:bg-gray-200 text-gray-500"
+                        data-modal-toggle="defaultModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form action="{{ route('donations.store') }}" method="POST">
+                    @csrf
+
+                    <div>
+                        <label>Donor</label>
+                        <select name="donor_id" class="w-full">
+                            @foreach(\App\Models\User::all() as $user)
+                            <option value="{{ $user->id }}">
+                                {{ $user->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Book Title</label>
+                        <input type="text" name="book_title" class="w-full" required>
+                    </div>
+
+                    <div>
+                        <label>Author</label>
+                        <input type="text" name="author" class="w-full" required>
+                    </div>
+
+                    <div>
+                        <label>Publisher</label>
+                        <input type="text" name="publisher" class="w-full">
+                    </div>
+
+                    <div>
+                        <label>Year Published</label>
+                        <input type="number" name="year_published" class="w-full">
+                    </div>
+
+                    <div>
+                        <label>Quantity</label>
+                        <input type="number" name="quantity" class="w-full" required>
+                    </div>
+
+                    <div>
+                        <label>Status</label>
+                        <select name="status" class="w-full">
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="declined">Declined</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded">
+                        Add Donation
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
 </section>
 @endsection
 @push('scripts')
 @include('components.alerts')
 @push('scripts')
 <script>
-document.querySelectorAll('.delete-donation-btn').forEach(button => {
+    document.querySelectorAll('.delete-donation-btn').forEach(button => {
     button.addEventListener('click', function () {
         let donationId = this.getAttribute('data-id');
 
