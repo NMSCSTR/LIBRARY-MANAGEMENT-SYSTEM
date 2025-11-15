@@ -40,7 +40,7 @@
         <div class="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
 
             <!-- Login button -->
-            <a href="{{ route('login') }}"
+            <a href="{{ route('users.login') }}"
                 class="inline-flex items-center px-7 py-3.5 text-lg font-semibold text-white
                        bg-gradient-to-r from-[#6C4F3D] to-[#A67C52]
                        rounded-xl shadow-md hover:shadow-lg

@@ -29,6 +29,9 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.tailwind.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.tailwind.min.css" />
 
+    <script src="//unpkg.com/alpinejs" defer></script>
+
+
 
 
 

@@ -63,9 +63,24 @@
                             </ol>
                         </nav>
 
+                        <div class="flex justify-end py-4">
+                            <button id="defaultModalButton" data-modal-target="defaultModal"
+                                data-modal-toggle="defaultModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
+                                    focus:ring-4 focus:outline-none focus:ring-blue-300
+                                    font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition">
+
+                                <!-- Plus Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                    stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+
+                                Add Author
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="relative overflow-x-auto sm:rounded-lg  px-6 py-6">
+                    <div class="relative overflow-x-auto sm:rounded-lg  px-6 py-6 shadow-2xl">
                         <table id="datatable"
                             class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead
@@ -84,8 +99,8 @@
                                     </th>
 
                                     <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Actions
+                                        <div class="flex justify-end">
+                                            <span class="sr-only">Actions</span>
                                             <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
                                                     xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                                                     viewBox="0 0 24 24">
@@ -100,7 +115,7 @@
                                 @foreach($authors as $author)
                                 <tr class="odd:bg-white even:bg-gray-50 border-b py-4">
                                     <td class="px-6 py-4">{{ $author->name }}</td>
-                                    <td class="px-6 py-4 flex gap-2">
+                                    <td class="px-6 py-4 flex gap-2 justify-end">
                                         {{-- Edit --}}
                                         <a href="{{ route('authors.edit', $author->id) }}"
                                             class="px-3 py-2 text-xs text-white bg-blue-700 rounded-lg hover:bg-blue-800">
@@ -123,18 +138,92 @@
                                 </tr>
                                 @endforeach
                             </tbody>
-
                         </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Main modal -->
+    <div id="defaultModal" tabindex="-1" aria-hidden="true"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+
+        <div class="relative w-full max-w-lg p-4">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-2xl shadow-2xl p-6 dark:bg-gray-800">
+
+                <!-- Modal header -->
+                <div class="flex items-center justify-between border-b pb-3 mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-6 h-6 text-blue-600">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M4.5 20.25a9 9 0 1115 0v.75H4.5v-.75z" />
+                        </svg>
+                        Add Author
+                    </h3>
+
+                    <button type="button"
+                        class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 hover:text-gray-800 dark:text-gray-300"
+                        data-modal-toggle="defaultModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal body -->
+                <form action="{{ route('authors.store') }}" method="POST" class="space-y-5">
+                    @csrf
+                    <!-- Input field -->
+                    <div class="space-y-2">
+                        <label for="name" class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Author Name
+                        </label>
+
+                        <div
+                            class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3 dark:bg-gray-700 dark:border-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-5 h-5 text-gray-500 dark:text-gray-300">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4.5 20.25a9 9 0 1115 0v.75H4.5v-.75z" />
+                            </svg>
+
+                            <input type="text" name="name" id="name"
+                                class="w-full p-2.5 text-sm bg-transparent focus:outline-none dark:text-white"
+                                placeholder="Enter author's full name" required>
+                        </div>
+                    </div>
+
+                    <!-- Submit button -->
+                    <button type="submit"
+                        class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition-all">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+
+                        Add Author
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
 </section>
 @endsection
 @push('scripts')
 @include('components.alerts')
-@push('scripts')
+
 <script>
     document.querySelectorAll('.delete-author-btn').forEach(button => {
     button.addEventListener('click', function () {
@@ -156,5 +245,4 @@
     });
 });
 </script>
-@endpush
 @endpush
