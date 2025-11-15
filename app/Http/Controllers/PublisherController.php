@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Publisher;
@@ -29,7 +28,17 @@ class PublisherController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name'           => 'required|string|max:255',
+            'address'        => 'nullable|string|max:255',
+            'contact_person' => 'nullable|string|max:255',
+            'email'          => 'nullable|email|max:255',
+            'phone'          => 'nullable|string|max:20',
+        ]);
+
+        Publisher::create($validated);
+
+        return redirect()->back()->with('success', 'Publisher added successfully.');
     }
 
     /**
@@ -45,7 +54,7 @@ class PublisherController extends Controller
      */
     public function edit(Publisher $publisher)
     {
-        //
+        return view('admin.publisher-edit', compact('publisher'));
     }
 
     /**
@@ -53,7 +62,17 @@ class PublisherController extends Controller
      */
     public function update(Request $request, Publisher $publisher)
     {
-        //
+        $validated = $request->validate([
+            'name'           => 'required|string|max:255',
+            'address'        => 'nullable|string|max:255',
+            'contact_person' => 'nullable|string|max:255',
+            'email'          => 'nullable|email|max:255',
+            'phone'          => 'nullable|string|max:20',
+        ]);
+
+        $publisher->update($validated);
+
+        return redirect()->route('publishers.index')->with('success', 'Publisher updated successfully.');
     }
 
     /**
@@ -61,6 +80,8 @@ class PublisherController extends Controller
      */
     public function destroy(Publisher $publisher)
     {
-        //
+        $publisher->delete();
+
+        return redirect()->back()->with('success', 'Publisher deleted successfully.');
     }
 }

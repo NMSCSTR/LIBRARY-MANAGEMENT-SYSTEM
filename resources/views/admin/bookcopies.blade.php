@@ -151,12 +151,21 @@
                                 <tr class="odd:bg-white even:bg-gray-50 border-b">
                                     <td class="px-6 py-4">{{ $copy->book->title ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">{{ $copy->copy_number }}</td>
-                                    <td class="px-6 py-4">{{ ucfirst($copy->status) }}</td>
+                                    <td class="px-6 py-4">
+                                        @if($copy->status == 'available')
+                                            <span class="px-2 py-1 bg-green-200 text-green-800 rounded">Available</span>
+                                        @elseif($copy->status == 'borrowed')
+                                            <span class="px-2 py-1 bg-yellow-200 text-yellow-800 rounded">Borrowed</span>
+                                        @else
+                                            <span class="px-2 py-1 bg-red-200 text-red-800 rounded">Lost</span>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4">{{ $copy->shelf_location }}</td>
                                     <td class="px-6 py-4 flex gap-2">
 
                                         {{-- Edit --}}
-                                        <a href="{{ route('book-copies.edit', $copy->id) }}" class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
+                                        <a href="{{ route('book-copies.edit', $copy->id) }}"
+                                            class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
                                             Edit
                                         </a>
 
@@ -176,8 +185,6 @@
                                 </tr>
                                 @endforeach
                             </tbody>
-                        </table>
-
                         </table>
                     </div>
                 </div>

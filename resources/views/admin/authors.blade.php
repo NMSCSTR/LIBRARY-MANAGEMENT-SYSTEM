@@ -63,7 +63,7 @@
                             </ol>
                         </nav>
 
-                        <div class="flex justify-end py-4">
+                        <div class="flex justify-end py-2">
                             <button id="defaultModalButton" data-modal-target="defaultModal"
                                 data-modal-toggle="defaultModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
                                     focus:ring-4 focus:outline-none focus:ring-blue-300

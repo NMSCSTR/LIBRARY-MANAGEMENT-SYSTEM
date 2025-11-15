@@ -62,6 +62,24 @@
                                 </li>
                             </ol>
                         </nav>
+
+
+                        <div class="flex justify-end py-4">
+                            <button id="defaultModalButton" data-modal-target="defaultModal"
+                                data-modal-toggle="defaultModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
+                                    focus:ring-4 focus:outline-none focus:ring-blue-300
+                                    font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition">
+
+                                <!-- Plus Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                    stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+
+                                Add Book
+                            </button>
+                        </div>
+
                     </div>
                     <div class="relative overflow-x-auto sm:rounded-lg  px-6">
                         <table id="datatable"
@@ -173,8 +191,8 @@
 
                                         {{-- Edit --}}
                                         <a href="{{ route('books.edit', $book->id) }}"
-                                           class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
-                                           Edit
+                                            class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
+                                            Edit
                                         </a>
 
                                         {{-- Delete --}}
@@ -184,8 +202,8 @@
                                         </button>
 
                                         <form id="delete-book-form-{{ $book->id }}"
-                                              action="{{ route('books.destroy', $book->id) }}"
-                                              method="POST" class="hidden">
+                                            action="{{ route('books.destroy', $book->id) }}" method="POST"
+                                            class="hidden">
                                             @csrf
                                             @method('DELETE')
                                         </form>
@@ -199,13 +217,114 @@
             </div>
         </div>
     </div>
+
+    <!-- Main modal -->
+    <div id="defaultModal" tabindex="-1" aria-hidden="true"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+
+        <div class="relative w-full max-w-lg p-4">
+            <div class="relative bg-white rounded-2xl shadow-2xl p-6">
+
+                <!-- Modal header -->
+                <div class="flex items-center justify-between border-b pb-3 mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-6 h-6 text-blue-600">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Add New Book
+                    </h3>
+
+                    <button type="button" class="p-2 rounded-full hover:bg-gray-200 text-gray-500"
+                        data-modal-toggle="defaultModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form action="{{ route('books.store') }}" method="POST" class="space-y-5">
+                    @csrf
+
+                    <!-- Title -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Title</label>
+                        <input type="text" name="title" class="w-full p-2.5 bg-gray-50 rounded-lg" required>
+                    </div>
+
+                    <!-- ISBN -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">ISBN</label>
+                        <input type="text" name="isbn" class="w-full p-2.5 bg-gray-50 rounded-lg">
+                    </div>
+
+                    <!-- Author -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Author</label>
+                        <select name="author_id" class="w-full p-2.5 bg-gray-50 rounded-lg" required>
+                            @foreach($authors as $author)
+                            <option value="{{ $author->id }}">{{ $author->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Category</label>
+                        <select name="category_id" class="w-full p-2.5 bg-gray-50 rounded-lg" required>
+                            @foreach($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Publisher -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Publisher</label>
+                        <select name="publisher_id" class="w-full p-2.5 bg-gray-50 rounded-lg" required>
+                            @foreach($publishers as $publisher)
+                            <option value="{{ $publisher->id }}">{{ $publisher->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Supplier -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Supplier</label>
+                        <select name="supplier_id" class="w-full p-2.5 bg-gray-50 rounded-lg" required>
+                            @foreach($suppliers as $supplier)
+                            <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Copies Available -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Number of Copies</label>
+                        <input type="number" name="copies_available" min="1" class="w-full p-2.5 bg-gray-50 rounded-lg"
+                            required>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 shadow-md">
+                        Add Book
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
 </section>
 @endsection
 @push('scripts')
 @include('components.alerts')
 @push('scripts')
 <script>
-document.querySelectorAll('.delete-book-btn').forEach(button => {
+    document.querySelectorAll('.delete-book-btn').forEach(button => {
     button.addEventListener('click', function () {
         let bookId = this.getAttribute('data-id');
 

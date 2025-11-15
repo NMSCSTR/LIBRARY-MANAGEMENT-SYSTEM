@@ -55,17 +55,33 @@
                                                 stroke-width="2" d="m1 9 4-4-4-4" />
                                         </svg>
                                         <span
-                                            class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">Categories</span>
+                                            class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">Publishers</span>
                                     </div>
                                 </li>
                             </ol>
                         </nav>
 
+                        <div class="flex justify-end py-4">
+                            <button id="defaultModalButton" data-modal-target="defaultModal"
+                                data-modal-toggle="defaultModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
+                                    focus:ring-4 focus:outline-none focus:ring-blue-300
+                                    font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition">
+
+                                <!-- Plus Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                    stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+
+                                Add Publisher
+                            </button>
+                        </div>
+
                     </div>
 
                     <div class="relative overflow-x-auto sm:rounded-lg  px-6 py-6">
                         <table id="datatable"
-                            class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
                             <thead
                                 class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 py-4">
                                 <tr>
@@ -161,8 +177,8 @@
                                     <td class="px-6 py-4 flex gap-2">
                                         {{-- Edit --}}
                                         <a href="{{ route('publishers.edit', $publisher->id) }}"
-                                           class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
-                                           Edit
+                                            class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
+                                            Edit
                                         </a>
 
                                         {{-- Delete --}}
@@ -172,8 +188,8 @@
                                         </button>
 
                                         <form id="delete-publisher-form-{{ $publisher->id }}"
-                                              action="{{ route('publishers.destroy', $publisher->id) }}"
-                                              method="POST" class="hidden">
+                                            action="{{ route('publishers.destroy', $publisher->id) }}" method="POST"
+                                            class="hidden">
                                             @csrf
                                             @method('DELETE')
                                         </form>
@@ -187,13 +203,79 @@
             </div>
         </div>
     </div>
+
+    <!-- Main modal -->
+    <div id="defaultModal" tabindex="-1" aria-hidden="true"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+
+        <div class="relative w-full max-w-lg p-4">
+            <div class="relative bg-white rounded-2xl shadow-2xl p-6">
+
+                <!-- Modal header -->
+                <div class="flex items-center justify-between border-b pb-3 mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-6 h-6 text-blue-600">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Add New Publisher
+                    </h3>
+
+                    <button type="button" class="p-2 rounded-full hover:bg-gray-200 text-gray-500"
+                        data-modal-toggle="defaultModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form action="{{ route('publishers.store') }}" method="POST" class="space-y-5">
+                    @csrf
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Publisher Name</label>
+                        <input type="text" name="name" class="w-full p-2.5 bg-gray-50 rounded-lg" required>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Address</label>
+                        <input type="text" name="address" class="w-full p-2.5 bg-gray-50 rounded-lg">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Contact Person</label>
+                        <input type="text" name="contact_person" class="w-full p-2.5 bg-gray-50 rounded-lg">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Email</label>
+                        <input type="email" name="email" class="w-full p-2.5 bg-gray-50 rounded-lg">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Phone</label>
+                        <input type="text" name="phone" class="w-full p-2.5 bg-gray-50 rounded-lg">
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 shadow-md">
+                        Add Publisher
+                    </button>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
 </section>
 @endsection
 @push('scripts')
 @include('components.alerts')
 @push('scripts')
 <script>
-document.querySelectorAll('.delete-publisher-btn').forEach(button => {
+    document.querySelectorAll('.delete-publisher-btn').forEach(button => {
     button.addEventListener('click', function () {
         let publisherId = this.getAttribute('data-id');
 

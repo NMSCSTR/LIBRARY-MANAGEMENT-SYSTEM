@@ -1,8 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
-use App\Models\Book;
+
 use App\Models\Author;
+use App\Models\Book;
+use App\Models\BookCopy;
 use App\Models\Category;
 use App\Models\Publisher;
 use App\Models\Supplier;
@@ -15,8 +16,13 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books = Book::with(['author', 'category', 'publisher', 'supplier'])->get();
-        return view('admin.books', compact('books'));
+        return view('admin.books', [
+            'books'      => Book::with(['author', 'category', 'publisher', 'supplier', 'copies'])->get(),
+            'authors'    => Author::all(),
+            'categories' => Category::all(),
+            'publishers' => Publisher::all(),
+            'suppliers'  => Supplier::all(),
+        ]);
     }
 
     /**
@@ -32,7 +38,29 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'title'            => 'required',
+            'isbn'             => 'nullable|unique:books',
+            'author_id'        => 'required|exists:authors,id',
+            'category_id'      => 'required|exists:categories,id',
+            'publisher_id'     => 'required|exists:publishers,id',
+            'supplier_id'      => 'required|exists:suppliers,id',
+            'copies_available' => 'required|integer|min:1',
+        ]);
+
+        $book = Book::create($validated);
+
+        for ($i = 1; $i <= $validated['copies_available']; $i++) {
+            BookCopy::create([
+                'book_id'        => $book->id,
+                'copy_number'    => $i,
+                'status'         => 'available',
+                'shelf_location' => 'N/A',
+            ]);
+        }
+
+        return redirect()->route('books.index')
+            ->with('success', 'Book added successfully.');
     }
 
     /**
@@ -50,10 +78,10 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($id);
 
-        $authors = Author::all();
+        $authors    = Author::all();
         $categories = Category::all();
         $publishers = Publisher::all();
-        $suppliers = Supplier::all();
+        $suppliers  = Supplier::all();
 
         return view('admin.books-edit', compact('book', 'authors', 'categories', 'publishers', 'suppliers'));
     }
@@ -64,12 +92,12 @@ class BookController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'isbn' => 'required|string|max:255',
-            'author_id' => 'required|exists:authors,id',
-            'category_id' => 'required|exists:categories,id',
-            'publisher_id' => 'required|exists:publishers,id',
-            'supplier_id' => 'required|exists:suppliers,id',
+            'title'            => 'required|string|max:255',
+            'isbn'             => 'required|string|max:255',
+            'author_id'        => 'required|exists:authors,id',
+            'category_id'      => 'required|exists:categories,id',
+            'publisher_id'     => 'required|exists:publishers,id',
+            'supplier_id'      => 'required|exists:suppliers,id',
             'copies_available' => 'required|integer|min:0',
         ]);
 
