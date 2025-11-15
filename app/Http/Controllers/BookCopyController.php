@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\Book;
 use App\Models\BookCopy;
 use Illuminate\Http\Request;
 
@@ -13,7 +13,8 @@ class BookCopyController extends Controller
     public function index()
     {
         $bookCopies = BookCopy::with('book')->get();
-        return view('admin.bookcopies', compact('bookCopies'));
+        $books = Book::all();
+        return view('admin.bookcopies', compact('bookCopies', 'books'));
     }
 
     /**
@@ -21,7 +22,7 @@ class BookCopyController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -29,7 +30,15 @@ class BookCopyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'book_id'        => 'required|exists:books,id',
+            'copy_number'    => 'required|unique:book_copies,copy_number',
+            'status'         => 'required',
+            'shelf_location' => 'required',
+        ]);
+
+        BookCopy::create($request->all());
+        return redirect()->route('book-copies.index')->with('success', 'Book copy created successfully.');
     }
 
     /**
@@ -43,9 +52,11 @@ class BookCopyController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(BookCopy $bookCopy)
+    public function edit($id)
     {
-        //
+        $bookCopy = BookCopy::findOrFail($id);
+        $books = Book::all();
+        return view('admin.edit-bookcopy', compact('bookCopy', 'books'));
     }
 
     /**
@@ -53,14 +64,25 @@ class BookCopyController extends Controller
      */
     public function update(Request $request, BookCopy $bookCopy)
     {
-        //
+        $request->validate([
+            'book_id'        => 'required|exists:books,id',
+            'copy_number'    => 'required|unique:book_copies,copy_number,' . $bookCopy->id,
+            'status'         => 'required',
+            'shelf_location' => 'required',
+        ]);
+
+        $bookCopy->update($request->all());
+        return redirect()->route('book-copies.index')->with('success', 'Book copy updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(BookCopy $bookCopy)
+    public function destroy($id)
     {
-        //
+        $bookCopy = BookCopy::findOrFail($id);
+        $bookCopy->delete();
+
+        return redirect()->route('book-copies.index')->with('success', 'Book copy deleted successfully.');
     }
 }

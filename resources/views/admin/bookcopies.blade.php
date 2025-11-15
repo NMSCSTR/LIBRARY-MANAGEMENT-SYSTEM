@@ -57,11 +57,28 @@
                                                 stroke-width="2" d="m1 9 4-4-4-4" />
                                         </svg>
                                         <span
-                                            class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">Book Copies</span>
+                                            class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">Book
+                                            Copies</span>
                                     </div>
                                 </li>
                             </ol>
                         </nav>
+
+                        <div class="flex justify-end py-4">
+                            <button id="defaultModalButton" data-modal-target="defaultModal"
+                                data-modal-toggle="defaultModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
+                                    focus:ring-4 focus:outline-none focus:ring-blue-300
+                                    font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition">
+
+                                <!-- Plus Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                    stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+
+                                Add Book Copy
+                            </button>
+                        </div>
 
                     </div>
 
@@ -139,10 +156,9 @@
                                     <td class="px-6 py-4 flex gap-2">
 
                                         {{-- Edit --}}
-                                        {{-- <a href="{{ route('', $copy->id) }}"
-                                           class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
-                                           Edit
-                                        </a> --}}
+                                        <a href="{{ route('book-copies.edit', $copy->id) }}" class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
+                                            Edit
+                                        </a>
 
                                         {{-- Delete --}}
                                         <button data-id="{{ $copy->id }}"
@@ -150,12 +166,12 @@
                                             Delete
                                         </button>
 
-                                        {{-- <form id="delete-copy-form-{{ $copy->id }}"
-                                              action="{{ route('book_copies.destroy', $copy->id) }}"
-                                              method="POST" class="hidden">
+                                        <form id="delete-copy-form-{{ $copy->id }}"
+                                            action="{{ route('book-copies.destroy', $copy->id) }}" method="POST"
+                                            class="hidden">
                                             @csrf
                                             @method('DELETE')
-                                        </form> --}}
+                                        </form>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -168,13 +184,94 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Main modal -->
+    <div id="defaultModal" tabindex="-1" aria-hidden="true"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+
+        <div class="relative w-full max-w-lg p-4">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-2xl shadow-2xl p-6 dark:bg-gray-800">
+
+                <!-- Modal header -->
+                <div class="flex items-center justify-between border-b pb-3 mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-6 h-6 text-blue-600">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M4.5 20.25a9 9 0 1115 0v.75H4.5v-.75z" />
+                        </svg>
+                        Add Book Copy
+                    </h3>
+
+                    <button type="button"
+                        class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 hover:text-gray-800 dark:text-gray-300"
+                        data-modal-toggle="defaultModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal body -->
+                <form action="{{ route('book-copies.store') }}" method="POST" class="space-y-5">
+                    @csrf
+                    <div class="space-y-2">
+                        <label for="book_id" class="text-sm font-medium text-gray-700 dark:text-gray-300">Book</label>
+                        <select name="book_id" id="book_id"
+                            class="w-full p-2.5 text-sm bg-transparent focus:outline-none dark:text-white" required>
+                            @foreach($books as $book)
+                            <option value="{{ $book->id }}">{{ $book->title }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="copy_number" class="text-sm font-medium text-gray-700 dark:text-gray-300">Copy
+                            Number</label>
+                        <input type="text" name="copy_number" id="copy_number"
+                            class="w-full p-2.5 text-sm bg-transparent focus:outline-none dark:text-white" required>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="status" class="text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+                        <select name="status" id="status"
+                            class="w-full p-2.5 text-sm bg-transparent focus:outline-none dark:text-white" required>
+                            <option value="available">Available</option>
+                            <option value="borrowed">Borrowed</option>
+                            <option value="reserved">Reserved</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="shelf_location" class="text-sm font-medium text-gray-700 dark:text-gray-300">Shelf
+                            Location</label>
+                        <input type="text" name="shelf_location" id="shelf_location"
+                            class="w-full p-2.5 text-sm bg-transparent focus:outline-none dark:text-white" required>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Add Book Copy
+                    </button>
+                </form>
+            </div>
+        </div>
 </section>
 @endsection
 @push('scripts')
 @include('components.alerts')
 @push('scripts')
 <script>
-document.querySelectorAll('.delete-copy-btn').forEach(button => {
+    document.querySelectorAll('.delete-copy-btn').forEach(button => {
     button.addEventListener('click', function () {
         let copyId = this.getAttribute('data-id');
 

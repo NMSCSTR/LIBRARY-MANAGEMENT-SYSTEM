@@ -9,7 +9,7 @@ class BookCopy extends Model
     protected $fillable = [
         'book_id',
         'copy_number',
-        'status', 
+        'status',
         'shelf_location',
     ];
 
