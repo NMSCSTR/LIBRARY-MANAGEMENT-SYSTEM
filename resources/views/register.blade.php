@@ -1,1 +1,94 @@
-<h2>AYAW UG TANDOGA ANG NATULOG KO NGA OTEN</h2>
+@extends('components.default')
+
+@section('title', 'Login | Library Management Information System')
+
+@section('content')
+<section class="relative flex items-center justify-center min-h-screen overflow-hidden">
+ <pre style="white-space: pre-wrap; font-family: inherit; line-height: 1.6;">
+Ayaw ug tanduga ang natulog ko nga otin
+Ilista lang sa kung kinsay ganahan pa-breeding
+Palungang stereo o diba skip ang track
+Labaw pa's rated PG basin ma-culture shock
+Hala relax kay ing-ani amoang natural
+Siyempre mga amaw magkuyog gyud puro hangal
+Kinsay gusto diha mga baye magpaliwat
+'Di kamahayan gwapuhon ko'g mga liwat
+Inyong anak puhon mura'g si Coco Martin
+Ing-anang produkto nga manggawas sa akong otin
+Sige paglinya na bati'g nawong ako reject
+Sorry lang daan akong otin ninyo 'di erect
+Wa'y problema libre sampak
+Ayaw mo'g pangamong kung inyong kiki mamaak
+Nga kung bitch ka nagkatol na
+It's all good kung arang na's akoa
+Wa'y problema libre sampak
+Ayaw mo'g pangamong kung inyong kiki mamaak
+Nga kung bitch ka nagkatol na
+It's all good kung arang na's akoa
+Kapoy na kaayo maong ayaw ug bikla
+Ang akong luso nga dugay nang naluya
+Ganiha raman gud ni nako nga nilaso
+Upahan lagi tika diha ayaw'g kasuko
+Wait lang sa diha pahuway lang sa kadyot
+Pangandam sa unlimited nakong iyot
+Wa ni'y pili bisan pa ug sa lubot
+Hinayon lang nato basin makautot ka
+Akong body dili ni pangromansa
+Pero akong otin napuno'g sustansiya
+Kuyaw pud ka'g bilat no naa may kandiis
+Match ra pud sa akong luso nga talinis
+Wa'y problema libre sampak
+Ayaw mo'g pangamong kung inyong kiki mamaak
+Nga kung bitch ka nagkatol na
+It's all good kung arang na's akoa
+Wa'y problema libre sampak
+Ayaw mo'g pangamong kung inyong kiki mamaak
+Nga kung bitch ka nagkatol na
+It's all good kung arang na's akoa
+Animal niutog na pod si junior
+Sige'g kabikil nakainom man gud ug senior
+Kabalo nako unsa ang ganahan
+Sa mga girls atoa ra nang sabutan
+Wala'y kuyaw kay dili man ko mamili
+Bisan kinsa daugon basta naay kiki
+Basta humot basta hamis ug pamanit
+Wala'y problema kay dali rako masampit
+Dagha'g duga sustansyado pa si junior
+Molahutay pa ug taas atong adventure
+Rapid pa ug dili pa ni palyado
+Diri nagdepende ang akoang apelyido
+Wa'y problema libre sampak
+Ayaw mo'g pangamong kung inyong kiki mamaak
+Nga kung bitch ka nagkatol na
+It's all good kung arang na's akoa
+Wa'y problema libre sampak
+Ayaw mo'g pangamong kung inyong kiki mamaak
+Nga kung bitch ka nagkatol na
+It's all good kung arang na's akoa
+    </pre>
+</section>
+
+<!-- Fade Animation -->
+<style>
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.9s ease forwards;
+        opacity: 0;
+    }
+</style>
+@endsection
+
+@push('scripts')
+@include('components.alerts')
+@endpush
