@@ -83,7 +83,7 @@
         <!-- Footer -->
         <p class="mt-6 text-center text-sm text-[#4b3b2a]">
             Already have an account?
-            <a href="{{ route('login') }}" class="text-[#8b5e3c] font-semibold hover:underline">Login</a>
+            <a href="{{ route('users.login') }}" class="text-[#8b5e3c] font-semibold hover:underline">Login</a>
         </p>
     </div>
 </section>
