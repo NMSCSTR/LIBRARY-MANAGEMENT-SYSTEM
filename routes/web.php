@@ -45,7 +45,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
             return view('librarian.dashboard');
         })->name('librarian.dashboard');
 
-    // Authors
+
     Route::resource('authors', AuthorController::class)->names([
         'index'   => 'authors.index',
         'store'   => 'authors.store',
@@ -53,8 +53,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'update'  => 'authors.update',
         'destroy' => 'authors.destroy',
     ]);
+    
 
-    // Books
+
     Route::resource('books', BookController::class)->names([
         'index'   => 'books.index',
         'store'   => 'books.store',
@@ -63,7 +64,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'destroy' => 'books.destroy',
     ]);
 
-    // Categories
+
     Route::resource('categories', CategoryController::class)->names([
         'index'   => 'categories.index',
         'store'   => 'categories.store',
@@ -72,7 +73,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'destroy' => 'categories.destroy',
     ]);
 
-    // Publishers
+
     Route::resource('publishers', PublisherController::class)->names([
         'index'   => 'publishers.index',
         'store'   => 'publishers.store',
@@ -81,7 +82,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'destroy' => 'publishers.destroy',
     ]);
 
-    // Suppliers
+
     Route::resource('suppliers', SupplierController::class)->names([
         'index'   => 'suppliers.index',
         'store'   => 'suppliers.store',
@@ -90,7 +91,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'destroy' => 'suppliers.destroy',
     ]);
 
-    // Book Copies
+
     Route::resource('book-copies', BookCopyController::class)->names([
         'index'   => 'book-copies.index',
         'store'   => 'book-copies.store',
@@ -99,7 +100,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'destroy' => 'book-copies.destroy',
     ]);
 
-    // Borrows
+
     Route::resource('borrows', BorrowController::class)->names([
         'index'   => 'borrows.index',
         'store'   => 'borrows.store',
@@ -108,7 +109,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'destroy' => 'borrows.destroy',
     ]);
 
-    // Activity Logs
+
     Route::resource('activity-logs', ActivityLogController::class)->names([
         'index'   => 'activity-logs.index',
         'store'   => 'activity-logs.store',
@@ -118,7 +119,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
     ]);
 });
 
-// Admin-only routes
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
             return view('admin.dashboard');
@@ -142,20 +143,18 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     ]);
 });
 
-// Routes accessible to all authenticated users
+
 Route::middleware(['auth'])->group(function () {
 
-    // Instructor Dashboard
     Route::get('/instructor/dashboard', function () {
             return view('instructor.dashboard');
         })->name('instructor.dashboard');
 
-    // Student Dashboard
     Route::get('/student/dashboard', function () {
             return view('student.dashboard');
         })->name('student.dashboard');
 
-    // Donor Dashboard
+
     Route::get('/donor/dashboard', function () {
             return view('donor.dashboard');
         })->name('donor.dashboard');

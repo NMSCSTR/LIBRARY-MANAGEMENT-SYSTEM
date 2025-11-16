@@ -1,6 +1,6 @@
 <?php
-
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -11,8 +11,8 @@ class UserController extends Controller
      */
     public function index()
     {
-            $users = User::with('role')->get();
-            return view('admin.users', compact('users'));
+        $users = User::with('role')->get();
+        return view('admin.users', compact('users'));
     }
 
     /**
@@ -28,7 +28,25 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name'           => 'required|string|max:255',
+            'email'          => 'required|email|unique:users,email',
+            'password'       => 'required|string|min:6|confirmed',
+            'contact_number' => 'nullable|string|max:15',
+            'address'        => 'nullable|string|max:255',
+            'role_id'        => 'nullable|exists:roles,id',
+        ]);
+
+        User::create([
+            'name'           => $request->name,
+            'email'          => $request->email,
+            'password'       => bcrypt($request->password),
+            'contact_number' => $request->contact_number,
+            'address'        => $request->address,
+            'role_id'        => $request->role_id,
+        ]);
+
+        return redirect()->route('users.index')->with('success', 'User created successfully!');
     }
 
     /**
@@ -60,6 +78,10 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('users.index')->with('success', 'User deleted successfully!');
     }
+
 }
