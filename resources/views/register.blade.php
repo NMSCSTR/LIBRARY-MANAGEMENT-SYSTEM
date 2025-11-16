@@ -21,7 +21,7 @@
             <p class="text-sm text-[#4b3b2a]">Join Santo Niño Parish Church system</p>
         </div>
 
-        <form method="POST" action="{{ route('user.store') }}" class="space-y-4">
+        <form method="POST" action="{{ route('users.store') }}" class="space-y-4">
             @csrf
 
             <!-- First Name -->
