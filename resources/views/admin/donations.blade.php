@@ -324,7 +324,7 @@
                         class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
                         <option value="pending">Pending</option>
                         <option value="accepted">Accepted</option>
-                        <option value="declined">Declined</option>
+                        <option value="rejected">Rejected</option>
                     </select>
                 </div>
 
