@@ -73,6 +73,22 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
 
+                                Add
+                            </button>
+                        </div>
+
+                        <div class="flex justify-end py-4">
+                            <button id="defaultModalButton" data-modal-target="defaultModal"
+                                data-modal-toggle="defaultModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
+                                    focus:ring-4 focus:outline-none focus:ring-blue-300
+                                    font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition">
+
+                                <!-- Plus Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                    stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+
                                 Add Donation
                             </button>
                         </div>
@@ -279,15 +295,27 @@
                         <input type="text" name="book_title" class="w-full" required>
                     </div>
 
-                    <div>
-                        <label>Author</label>
-                        <input type="text" name="author" class="w-full" required>
+                    <div class="form-group">
+                        <label for="author_id">Author</label>
+                        <select name="author_id" class="form-control" required>
+                            <option value="">Select Author</option>
+                            @foreach ($authors as $author)
+                                <option value="{{ $author->id }}">{{ $author->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
-                    <div>
-                        <label>Publisher</label>
-                        <input type="text" name="publisher" class="w-full">
+
+                    <div class="form-group">
+                        <label for="publisher_id">Publisher</label>
+                        <select name="publisher_id" class="form-control" required>
+                            <option value="">Select Publisher</option>
+                            @foreach ($publishers as $publisher)
+                                <option value="{{ $publisher->id }}">{{ $publisher->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
+
 
                     <div>
                         <label>Year Published</label>
@@ -344,3 +372,6 @@
 </script>
 @endpush
 @endpush
+
+
+r

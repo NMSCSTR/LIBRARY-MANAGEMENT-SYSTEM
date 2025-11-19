@@ -96,3 +96,4 @@ color pallete
 
 git fetch origin main
 git reset --hard FETCH_HEAD
+
