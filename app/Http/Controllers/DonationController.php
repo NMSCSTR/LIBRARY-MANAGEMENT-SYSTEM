@@ -12,8 +12,10 @@ class DonationController extends Controller
      */
     public function index()
     {
+        $authors = Author::all();
+        $publishers = Publisher::all();
         $donations = Donation::with('donor')->get();
-        return view('admin.donations', compact('donations'));
+        return view('admin.donations', compact('donations', '$publishers','authors'));
 
     }
 
