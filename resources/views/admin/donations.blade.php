@@ -73,22 +73,6 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
 
-                                Add
-                            </button>
-                        </div>
-
-                        <div class="flex justify-end py-4">
-                            <button id="defaultModalButton" data-modal-target="defaultModal"
-                                data-modal-toggle="defaultModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
-                                    focus:ring-4 focus:outline-none focus:ring-blue-300
-                                    font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition">
-
-                                <!-- Plus Icon -->
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                                    stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                </svg>
-
                                 Add Donation
                             </button>
                         </div>
@@ -248,102 +232,112 @@
         </div>
     </div>
 
+<!-- Main modal -->
+<div id="defaultModal" tabindex="-1" aria-hidden="true"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
 
-    <!-- Main modal -->
-    <div id="defaultModal" tabindex="-1" aria-hidden="true"
-        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div class="relative w-full max-w-xl p-4">
+        <div class="relative bg-white rounded-2xl shadow-2xl p-6">
 
-        <div class="relative w-full max-w-lg p-4">
-            <div class="relative bg-white rounded-2xl shadow-2xl p-6">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between border-b pb-3 mb-4">
+                <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-600">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Add New Donation Book
+                </h3>
 
-                <!-- Modal header -->
-                <div class="flex items-center justify-between border-b pb-3 mb-4">
-                    <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6 text-blue-600">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                        Add New Donation Book
-                    </h3>
+                <button type="button" class="p-2 rounded-full hover:bg-gray-200 text-gray-500"
+                    data-modal-toggle="defaultModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
 
-                    <button type="button" class="p-2 rounded-full hover:bg-gray-200 text-gray-500"
-                        data-modal-toggle="defaultModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+            <!-- Modal Body -->
+            <form action="{{ route('donations.store') }}" method="POST" class="space-y-4">
+                @csrf
+
+                <div class="space-y-1">
+                    <label class="text-sm font-medium text-gray-700">Donor</label>
+                    <select name="donor_id"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+                        @foreach(\App\Models\User::all() as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
-                <!-- Modal Body -->
-                <form action="{{ route('donations.store') }}" method="POST">
-                    @csrf
+                <div class="space-y-1">
+                    <label class="text-sm font-medium text-gray-700">Book Title</label>
+                    <input type="text" name="book_title"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                        required>
+                </div>
 
-                    <div>
-                        <label>Donor</label>
-                        <select name="donor_id" class="w-full">
-                            @foreach(\App\Models\User::all() as $user)
-                            <option value="{{ $user->id }}">
-                                {{ $user->name }}
-                            </option>
-                            @endforeach
-                        </select>
+                <div class="space-y-1">
+                    <label class="text-sm font-medium text-gray-700">Author</label>
+                    <select name="author_id"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                        required>
+                        <option value="">Select Author</option>
+                        @foreach ($authors as $author)
+                            <option value="{{ $author->id }}">{{ $author->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-sm font-medium text-gray-700">Publisher</label>
+                    <select name="publisher_id"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                        required>
+                        <option value="">Select Publisher</option>
+                        @foreach ($publishers as $publisher)
+                            <option value="{{ $publisher->id }}">{{ $publisher->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-sm font-medium text-gray-700">Year Published</label>
+                        <input type="number" name="year_published"
+                            class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
                     </div>
 
-                    <div>
-                        <label>Book Title</label>
-                        <input type="text" name="book_title" class="w-full" required>
+                    <div class="space-y-1">
+                        <label class="text-sm font-medium text-gray-700">Quantity</label>
+                        <input type="number" name="quantity"
+                            class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                            required>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="author_id">Author</label>
-                        <select name="author_id" class="form-control" required>
-                            <option value="">Select Author</option>
-                            @foreach ($authors as $author)
-                                <option value="{{ $author->id }}">{{ $author->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                <div class="space-y-1">
+                    <label class="text-sm font-medium text-gray-700">Status</label>
+                    <select name="status"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="pending">Pending</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="declined">Declined</option>
+                    </select>
+                </div>
 
+                <button type="submit"
+                    class="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition">
+                    Add Donation
+                </button>
+            </form>
 
-                    <div class="form-group">
-                        <label for="publisher_id">Publisher</label>
-                        <select name="publisher_id" class="form-control" required>
-                            <option value="">Select Publisher</option>
-                            @foreach ($publishers as $publisher)
-                                <option value="{{ $publisher->id }}">{{ $publisher->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-
-                    <div>
-                        <label>Year Published</label>
-                        <input type="number" name="year_published" class="w-full">
-                    </div>
-
-                    <div>
-                        <label>Quantity</label>
-                        <input type="number" name="quantity" class="w-full" required>
-                    </div>
-
-                    <div>
-                        <label>Status</label>
-                        <select name="status" class="w-full">
-                            <option value="pending">Pending</option>
-                            <option value="accepted">Accepted</option>
-                            <option value="declined">Declined</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded">
-                        Add Donation
-                    </button>
-                </form>
-
-            </div>
         </div>
     </div>
+</div>
+
 </section>
 @endsection
 @push('scripts')
