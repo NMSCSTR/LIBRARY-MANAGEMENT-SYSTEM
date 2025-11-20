@@ -79,7 +79,7 @@
                                     <label class="text-sm font-medium text-gray-700">Description</label>
                                     <div class="relative">
                                         <textarea name="description"
-                                            class="w-full p-2.5 bg-gray-50 rounded-lg border-gray-600">{{ old('description', $category->description) }}</textarea>
+                                            class="w-full pl-10 bg-gray-50 rounded-lg border-gray-600">{{ old('description', $category->description) }}</textarea>
                                         <div class="absolute top-3 left-3 flex items-center pointer-events-none">
                                             <!-- Document Icon -->
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
@@ -93,7 +93,7 @@
 
                                 {{-- Submit Button --}}
                                 <button type="submit"
-                                    class="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                                    class="w-full bg-blue-600 text-white pl-10 rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2">
                                     <!-- Update Icon -->
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                                         stroke="currentColor" stroke-width="2">
