@@ -76,10 +76,10 @@
 
                                 {{-- Description --}}
                                 <div class="relative space-y-1">
-                                    <label class="text-sm font-medium text-gray-700">Description</label>
+                                    <label class="text-sm font-medium p-2.5 text-gray-700">Description</label>
                                     <div class="relative">
                                         <textarea name="description"
-                                            class="w-full pl-10 bg-gray-50 rounded-lg border-gray-600">{{ old('description', $category->description) }}</textarea>
+                                            class="w-full pl-10 bg-gray-50 p-2.5 rounded-lg border-gray-600">{{ old('description', $category->description) }}</textarea>
                                         <div class="absolute top-3 left-3 flex items-center pointer-events-none">
                                             <!-- Document Icon -->
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
