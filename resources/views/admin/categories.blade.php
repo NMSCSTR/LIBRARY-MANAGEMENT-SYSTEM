@@ -195,12 +195,12 @@
                     <div class="space-y-1">
                         <label class="text-sm font-medium text-gray-700">Category Name</label>
                         <input type="text" name="name" required
-                            class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+                            class="w-full p-2.5 bg-gray-50 rounded-lg">
                     </div>
                     <div class="space-y-1">
                         <label class="text-sm font-medium text-gray-700">Description</label>
                         <textarea name="description"
-                            class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                            class="w-full p-2.5 bg-gray-50 rounded-lg"></textarea>
                     </div>
 
                     <button type="submit"
