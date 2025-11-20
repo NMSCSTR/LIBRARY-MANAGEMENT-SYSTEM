@@ -182,8 +182,8 @@
                                 <tr class="odd:bg-white even:bg-gray-50 border-b">
                                     <td class="px-6 py-4">{{ $donation->donor->name ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">{{ $donation->book_title }}</td>
-                                    <td class="px-6 py-4">{{ $donation->author }}</td>
-                                    <td class="px-6 py-4">{{ $donation->publisher }}</td>
+                                    <td class="px-6 py-4">{{ $donation->author->name }}</td>
+                                    <td class="px-6 py-4">{{ $donation->publisher->name }}</td>
                                     <td class="px-6 py-4">{{ $donation->year_published }}</td>
                                     <td class="px-6 py-4">{{ $donation->quantity }}</td>
                                     <td class="px-6 py-4">

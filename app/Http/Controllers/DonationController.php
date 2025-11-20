@@ -38,7 +38,7 @@ class DonationController extends Controller
             'donor_id'       => 'required|exists:users,id',
             'book_title'     => 'required|string|max:255',
             'author_id'      => 'required|exists:authors,id',
-            'publisher'      => 'nullable|string|max:255',
+            'publisher_id'    => 'nullable|exists:publishers,id',
             'year_published' => 'nullable|integer',
             'quantity'       => 'required|integer|min:1',
             'status'         => 'required|string',
