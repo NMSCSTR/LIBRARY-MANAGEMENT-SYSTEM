@@ -37,7 +37,7 @@ class DonationController extends Controller
         $request->validate([
             'donor_id'       => 'required|exists:users,id',
             'book_title'     => 'required|string|max:255',
-            'author'         => 'required|string|max:255',
+            'author_id'      => 'required|exists:authors,id',
             'publisher'      => 'nullable|string|max:255',
             'year_published' => 'nullable|integer',
             'quantity'       => 'required|integer|min:1',
