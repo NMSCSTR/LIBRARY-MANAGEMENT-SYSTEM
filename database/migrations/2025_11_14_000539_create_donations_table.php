@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('donor_id')->constrained('users')->onDelete('cascade');
             $table->string('book_title');
-            $table->string('author')->nullable();
-            $table->string('publisher')->nullable();
+            $table->foreignId('author_id')->after('book_title')->constrained('authors')->onDelete('cascade');
+            $table->foreignId('publisher_id')->after('author_id')->constrained('publishers')->onDelete('cascade');
             $table->integer('year_published')->nullable();
             $table->integer('quantity')->default(1);
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
