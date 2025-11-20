@@ -62,8 +62,10 @@ class DonationController extends Controller
      */
     public function edit(Donation $donation)
     {
+        $authors = Author::all();
+        $publishers = Publisher::all();
         $users = User::all();
-        return view('admin.donation-edit', compact('donation', 'users'));
+        return view('admin.donation-edit', compact('donation', 'authors', 'publishers', 'users'));
     }
 
     /**
