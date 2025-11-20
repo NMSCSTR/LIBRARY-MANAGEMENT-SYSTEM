@@ -145,7 +145,6 @@
                                             class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
                                             Edit
                                         </a>
-
                                         {{-- Delete --}}
                                         <button data-id="{{ $category->id }}"
                                             class="delete-category-btn px-3 py-2 text-xs text-white bg-red-600 hover:bg-red-700">
@@ -219,25 +218,24 @@
 @include('components.alerts')
 @push('scripts')
 <script>
-    document.querySelectorAll('.delete-copy-btn').forEach(button => {
-    button.addEventListener('click', function () {
-        let copyId = this.getAttribute('data-id');
-
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "This book copy will be deleted permanently!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById(`delete-copy-form-${copyId}`).submit();
-            }
+    document.querySelectorAll('.delete-category-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            let categoryId = this.getAttribute('data-id');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This category will be deleted permanently!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`delete-category-form-${categoryId}`).submit();
+                }
+            });
         });
     });
-});
 </script>
 @endpush
 @endpush
