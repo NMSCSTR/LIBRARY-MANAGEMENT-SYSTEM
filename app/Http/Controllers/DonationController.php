@@ -78,7 +78,7 @@ class DonationController extends Controller
             'publisher'      => 'nullable|string|max:255',
             'year_published' => 'required|integer|min:1900|max:' . date('Y'),
             'quantity'       => 'required|integer|min:1',
-            'status'         => 'required|in:pending,approved,rejected',
+            'status'         => 'required|in:pending,accepted,rejected',
         ]);
 
         $donation->update($validatedData);

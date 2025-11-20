@@ -90,7 +90,7 @@
                             <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
                                 <select name="status" class="w-full p-2.5 bg-transparent focus:outline-none text-sm">
                                     <option value="pending"   {{ $donation->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="approved"  {{ $donation->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                                    <option value="approved"  {{ $donation->status == 'accepted' ? 'selected' : '' }}>Accepted</option>
                                     <option value="rejected"  {{ $donation->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
                                 </select>
                             </div>
