@@ -52,7 +52,7 @@
                         <div class="space-y-2">
                             <label class="text-sm font-medium text-gray-700">Author</label>
                             <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
-                                <input type="text" name="author" value="{{ $donation->author }}"
+                                <input type="text" name="author" value="{{ $donation->author->name }}"
                                        class="w-full p-2.5 bg-transparent focus:outline-none text-sm" required>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                         <div class="space-y-2">
                             <label class="text-sm font-medium text-gray-700">Publisher</label>
                             <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
-                                <input type="text" name="publisher" value="{{ $donation->publisher }}"
+                                <input type="text" name="publisher" value="{{ $donation->publisher->name }}"
                                        class="w-full p-2.5 bg-transparent focus:outline-none text-sm">
                             </div>
                         </div>
