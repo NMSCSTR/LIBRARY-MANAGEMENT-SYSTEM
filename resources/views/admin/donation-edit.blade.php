@@ -31,9 +31,10 @@
                             <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
                                 <select name="donor_id" class="w-full p-2.5 bg-transparent focus:outline-none text-sm">
                                     @foreach($users as $user)
-                                        <option value="{{ $user->id }}" {{ $donation->donor_id == $user->id ? 'selected' : '' }}>
-                                            {{ $user->name }}
-                                        </option>
+                                    <option value="{{ $user->id }}" {{ $donation->donor_id == $user->id ? 'selected' :
+                                        '' }}>
+                                        {{ $user->name }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -44,7 +45,7 @@
                             <label class="text-sm font-medium text-gray-700">Book Title</label>
                             <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
                                 <input type="text" name="book_title" value="{{ $donation->book_title }}"
-                                       class="w-full p-2.5 bg-transparent focus:outline-none text-sm" required>
+                                    class="w-full p-2.5 bg-transparent focus:outline-none text-sm" required>
                             </div>
                         </div>
 
@@ -52,8 +53,16 @@
                         <div class="space-y-2">
                             <label class="text-sm font-medium text-gray-700">Author</label>
                             <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
-                                <input type="text" name="author" value="{{ $donation->author->name }}"
-                                       class="w-full p-2.5 bg-transparent focus:outline-none text-sm" required>
+                                <select name="author_id" required
+                                    class="w-full p-2.5 bg-transparent focus:outline-none text-sm">
+                                    <option value="">Select Author</option>
+                                    @foreach($authors as $author)
+                                    <option value="{{ $author->id }}" {{ $donation->author_id == $author->id ?
+                                        'selected' : '' }}>
+                                        {{ $author->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 
@@ -61,17 +70,26 @@
                         <div class="space-y-2">
                             <label class="text-sm font-medium text-gray-700">Publisher</label>
                             <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
-                                <input type="text" name="publisher" value="{{ $donation->publisher->name }}"
-                                       class="w-full p-2.5 bg-transparent focus:outline-none text-sm">
+                                <select name="publisher_id"
+                                    class="w-full p-2.5 bg-transparent focus:outline-none text-sm">
+                                    <option value="">Select Publisher</option>
+                                    @foreach($publishers as $publisher)
+                                    <option value="{{ $publisher->id }}" {{ $donation->publisher_id == $publisher->id ?
+                                        'selected' : '' }}>
+                                        {{ $publisher->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
+
 
                         {{-- Year Published --}}
                         <div class="space-y-2">
                             <label class="text-sm font-medium text-gray-700">Year Published</label>
                             <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
                                 <input type="number" name="year_published" value="{{ $donation->year_published }}"
-                                       class="w-full p-2.5 bg-transparent focus:outline-none text-sm" required>
+                                    class="w-full p-2.5 bg-transparent focus:outline-none text-sm" required>
                             </div>
                         </div>
 
@@ -80,7 +98,7 @@
                             <label class="text-sm font-medium text-gray-700">Quantity</label>
                             <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
                                 <input type="number" name="quantity" value="{{ $donation->quantity }}"
-                                       class="w-full p-2.5 bg-transparent focus:outline-none text-sm" required>
+                                    class="w-full p-2.5 bg-transparent focus:outline-none text-sm" required>
                             </div>
                         </div>
 
@@ -89,9 +107,12 @@
                             <label class="text-sm font-medium text-gray-700">Status</label>
                             <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
                                 <select name="status" class="w-full p-2.5 bg-transparent focus:outline-none text-sm">
-                                    <option value="pending"   {{ $donation->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="accepted"  {{ $donation->status == 'accepted' ? 'selected' : '' }}>Accepted</option>
-                                    <option value="rejected"  {{ $donation->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                    <option value="pending" {{ $donation->status == 'pending' ? 'selected' : ''
+                                        }}>Pending</option>
+                                    <option value="accepted" {{ $donation->status == 'accepted' ? 'selected' : ''
+                                        }}>Accepted</option>
+                                    <option value="rejected" {{ $donation->status == 'rejected' ? 'selected' : ''
+                                        }}>Rejected</option>
                                 </select>
                             </div>
                         </div>
@@ -100,10 +121,9 @@
                         <button type="submit"
                             class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700
                                    text-white font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition-all">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                 stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M5 13l4 4L19 7" />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
                             Update Donation
                         </button>
