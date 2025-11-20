@@ -16,7 +16,7 @@ class DonationController extends Controller
     {
         $authors = Author::all();
         $publishers = Publisher::all();
-        $donations = Donation::with('donor')->get();
+        $donations = Donation::with(['donor', 'author', 'publisher'])->get();
         return view('admin.donations', compact('donations', 'publishers','authors'));
 
     }

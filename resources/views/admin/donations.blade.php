@@ -320,11 +320,10 @@
 
                     <select name="status"
                         class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="pending" {{ $donation->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="accepted" {{ $donation->status == 'accepted' ? 'selected' : '' }}>Accepted
-                        </option>
-                        <option value="rejected" {{ $donation->status == 'rejected' ? 'selected' : '' }}>Rejected
-                        </option>
+                        <option value="pending">Pending</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="rejected">Rejected</option>
+
                     </select>
 
 
@@ -366,6 +365,3 @@
 </script>
 @endpush
 @endpush
-
-
-
