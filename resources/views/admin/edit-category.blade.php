@@ -62,7 +62,7 @@
                                     <div class="relative">
                                         <input type="text" name="name" value="{{ old('name', $category->name) }}"
                                             required
-                                            class="w-full rounded-lg border-gray-300 pl-10 focus:ring-blue-500 focus:border-blue-500">
+                                            class="w-full p-2.5 bg-gray-50 rounded-lg border-gray-600">
                                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                             <!-- Pencil Icon -->
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
@@ -79,7 +79,7 @@
                                     <label class="text-sm font-medium text-gray-700">Description</label>
                                     <div class="relative">
                                         <textarea name="description"
-                                            class="w-full rounded-lg border-gray-300 pl-10 focus:ring-blue-500 focus:border-blue-500">{{ old('description', $category->description) }}</textarea>
+                                            class="w-full p-2.5 bg-gray-50 rounded-lg border-gray-600">{{ old('description', $category->description) }}</textarea>
                                         <div class="absolute top-3 left-3 flex items-center pointer-events-none">
                                             <!-- Document Icon -->
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
