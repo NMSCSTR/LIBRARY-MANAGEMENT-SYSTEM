@@ -233,7 +233,8 @@ document.querySelectorAll('.return-borrow-btn').forEach(button => {
     button.addEventListener('click', function () {
         let borrowId = this.dataset.id;
         let form = document.getElementById('returnBorrowForm');
-        form.action = `/borrows/${borrowId}/return`;
+        form.action = `/admin/borrows/${borrowId}/return`;
+
     });
 });
 
