@@ -110,7 +110,7 @@
                                 <tr class="odd:bg-white even:bg-gray-50 border-b">
                                     <td class="px-6 py-4">{{ ucfirst($role->name) }}</td>
                                     <td class="px-6 py-4">{{ $role->users_count }}</td>
-                                    <td class="px-6 py-4 flex gap-2">
+                                    <td class="flex gap-2 justify-end">
                                         {{-- Edit --}}
                                         <a href="{{ route('roles.edit', $role->id) }}"
                                             class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
