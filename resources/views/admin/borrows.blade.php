@@ -4,186 +4,101 @@
 
 <section>
     <div class="min-h-screen pt-24">
-        {{-- @include('components.admin.bg') --}}
-        {{-- Include Top Navigation --}}
+
         @include('components.admin.topnav')
+
         <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-4 gap-6">
 
-            {{-- Include Sidebar --}}
             <div class="lg:w-2/12 w-full">
                 @include('components.admin.sidebar')
             </div>
 
-            {{-- Main Content --}}
             <div class="lg:w-10/12 w-full">
 
                 <div class="bg-white rounded-xl shadow-lg">
                     <div class="px-6 py-6">
 
-
                         <!-- Breadcrumb -->
-                        <nav class="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
+                        <nav class="flex px-5 py-3 text-gray-700 border rounded-lg bg-gray-50"
                             aria-label="Breadcrumb">
-                            <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-                                <li class="inline-flex items-center">
-                                    <a href="#"
-                                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-                                        <svg class="w-3 h-3 me-2.5" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                            <path
-                                                d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
-                                        </svg>
-                                        Admin
-                                    </a>
-                                </li>
+                            <ol class="inline-flex items-center space-x-2">
                                 <li>
-                                    <div class="flex items-center">
-                                        <svg class="rtl:rotate-180 block w-3 h-3 mx-1 text-gray-400 " aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="m1 9 4-4-4-4" />
-                                        </svg>
-                                        <a href="#"
-                                            class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Dashboard</a>
-                                    </div>
+                                    <a href="#" class="text-sm text-gray-600">Admin</a>
                                 </li>
-                                <li aria-current="page">
-                                    <div class="flex items-center">
-                                        <svg class="rtl:rotate-180  w-3 h-3 mx-1 text-gray-400" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="m1 9 4-4-4-4" />
-                                        </svg>
-                                        <span
-                                            class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">Borrow</span>
-                                    </div>
+                                <li>/</li>
+                                <li>
+                                    <a href="#" class="text-sm text-gray-600">Dashboard</a>
                                 </li>
+                                <li>/</li>
+                                <li class="text-sm text-gray-500">Borrow</li>
                             </ol>
                         </nav>
 
-                        <div class="flex justify-end py-2">
-                            <button id="defaultModalButton" data-modal-target="createUserModal"
-                                data-modal-toggle="createUserModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
-                                    focus:ring-4 focus:outline-none focus:ring-blue-300
-                                    font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition">
-
-                                <!-- Plus Icon -->
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                                    stroke="currentColor" class="w-5 h-5">
+                        <!-- Add Button -->
+                        <div class="flex justify-end py-4">
+                            <button data-modal-target="createBorrowModal" data-modal-toggle="createBorrowModal"
+                                class="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg shadow">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="2" stroke="currentColor" class="w-5 h-5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
-
-                                Add New Record
+                                Add Borrow
                             </button>
                         </div>
 
                     </div>
 
-                    <div class="relative overflow-x-auto sm:rounded-lg  px-6 py-6">
+                    <!-- Table -->
+                    <div class="relative overflow-x-auto px-6 py-6">
                         <table id="datatable"
-                            class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                            <thead
-                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 py-4">
+                            class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs uppercase bg-gray-100">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            User
-                                            <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg></a>
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Book
-                                            <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg></a>
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Borrow Date
-                                            <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg></a>
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Due Date
-                                            <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg></a>
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Return Date
-                                            <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg></a>
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Status
-                                            <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg></a>
-                                        </div>
-                                    </th>
-
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Actions
-                                            <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg></a>
-                                        </div>
-                                    </th>
+                                    <th class="px-6 py-3">User</th>
+                                    <th class="px-6 py-3">Book</th>
+                                    <th class="px-6 py-3">Borrow Date</th>
+                                    <th class="px-6 py-3">Due Date</th>
+                                    <th class="px-6 py-3">Return Date</th>
+                                    <th class="px-6 py-3">Status</th>
+                                    <th class="px-6 py-3">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($borrows as $borrow)
-                                <tr class="odd:bg-white even:bg-gray-50 border-b">
-                                    <td class="px-6 py-4">{{ $borrow->user->name ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4">{{ $borrow->book->title ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4">{{ $borrow->borrow_date }}</td>
-                                    <td class="px-6 py-4">{{ $borrow->due_date }}</td>
-                                    <td class="px-6 py-4">{{ $borrow->return_date ?? '-' }}</td>
-                                    <td class="px-6 py-4 capitalize">{{ $borrow->status }}</td>
+                                <tr class="border-b">
+                                    <td class="px-6 py-4">{{ $borrow->user->name }}</td>
+                                    <td class="px-6 py-4">{{ $borrow->book->title }}</td>
+                                    <td class="px-6 py-4">{{ $borrow->borrow_date->format('Y-m-d') }}</td>
+                                    <td class="px-6 py-4">{{ $borrow->due_date->format('Y-m-d') }}</td>
+                                    <td class="px-6 py-4">
+                                        {{ $borrow->return_date ? $borrow->return_date->format('Y-m-d') : '-' }}
+                                    </td>
+                                    <td class="px-6 py-4 capitalize">
+                                        @if($borrow->status == 'returned')
+                                            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs">Returned</span>
+                                        @elseif($borrow->status == 'overdue')
+                                            <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs">Overdue</span>
+                                        @else
+                                            <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs">Borrowed</span>
+                                        @endif
+                                    </td>
+
                                     <td class="px-6 py-4 flex gap-2">
-                                        {{-- Edit --}}
-                                        <a href="{{ route('borrows.edit', $borrow->id) }}"
-                                            class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
-                                            Edit
-                                        </a>
+
+                                        {{-- Return --}}
+                                        @if($borrow->status !== 'returned')
+                                        <button
+                                            data-id="{{ $borrow->id }}"
+                                            data-modal-target="returnBorrowModal"
+                                            data-modal-toggle="returnBorrowModal"
+                                            class="return-borrow-btn px-3 py-2 text-xs bg-green-600 text-white rounded hover:bg-green-700">
+                                            Return
+                                        </button>
+                                        @endif
 
                                         {{-- Delete --}}
                                         <button data-id="{{ $borrow->id }}"
-                                            class="delete-borrow-btn px-3 py-2 text-xs text-white bg-red-600 hover:bg-red-700">
+                                            class="delete-borrow-btn px-3 py-2 text-xs text-white bg-red-600 rounded hover:bg-red-700">
                                             Delete
                                         </button>
 
@@ -193,114 +108,135 @@
                                             @csrf
                                             @method('DELETE')
                                         </form>
+
                                     </td>
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
+
                 </div>
+
             </div>
         </div>
     </div>
 
-  <!-- Create Borrow Modal -->
-<div id="createUserModal" tabindex="-1" aria-hidden="true"
-    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <!-- ===================================================== -->
+    <!-- ADD BORROW MODAL -->
+    <!-- ===================================================== -->
+    <div id="createBorrowModal" tabindex="-1" aria-hidden="true"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur">
 
-    <div class="relative w-full max-w-lg p-4">
-        <div class="relative bg-white rounded-2xl shadow-2xl p-6">
+        <div class="w-full max-w-lg p-4">
+            <div class="bg-white rounded-2xl p-6 shadow-lg">
 
-            <!-- Modal header -->
-            <div class="flex items-center justify-between border-b pb-3 mb-4">
-                <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                    Add Borrow Record
-                </h3>
+                <div class="flex justify-between items-center border-b pb-3 mb-4">
+                    <h3 class="text-xl font-bold">Add Borrow Record</h3>
+                    <button data-modal-toggle="createBorrowModal" class="p-2 hover:bg-gray-200 rounded-full">✕</button>
+                </div>
 
-                <button type="button" data-modal-toggle="createUserModal"
-                    class="p-2 rounded-full hover:bg-gray-200 text-gray-500 hover:text-gray-800">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                        stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                <form action="{{ route('borrows.store') }}" method="POST" class="space-y-4">
+                    @csrf
+
+                    <div>
+                        <label class="font-medium text-sm">Select User</label>
+                        <select name="user_id" class="w-full p-2 border rounded-lg bg-gray-50" required>
+                            <option value="">-- choose user --</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="font-medium text-sm">Select Book</label>
+                        <select name="book_id" class="w-full p-2 border rounded-lg bg-gray-50" required>
+                            <option value="">-- choose book --</option>
+                            @foreach($books as $book)
+                                <option value="{{ $book->id }}">{{ $book->title }} ({{ $book->copies_available }} copies)</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                        Add Borrow
+                    </button>
+                </form>
+
             </div>
-
-            <!-- Modal Form -->
-            <form action="{{ route('borrows.store') }}" method="POST" class="mt-4 space-y-4">
-                @csrf
-
-                <!-- User -->
-                <div>
-                    <label class="text-sm font-medium">Select User</label>
-                    <select name="user_id" required class="w-full p-2 border rounded-lg bg-gray-50">
-                        <option value="">-- Select a User --</option>
-                        @foreach($users as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Book -->
-                <div>
-                    <label class="text-sm font-medium">Select Book</label>
-                    <select name="book_id" required class="w-full p-2 border rounded-lg bg-gray-50">
-                        <option value="">-- Select a Book --</option>
-                        @foreach($books as $book)
-                            <option value="{{ $book->id }}">
-                                {{ $book->title }} ({{ $book->copies_available }} copies)
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Auto-filled Dates (View only) -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-sm font-medium">Borrow Date</label>
-                        <input type="text" value="{{ now()->format('Y-m-d') }}" disabled
-                            class="w-full p-2 border rounded-lg bg-gray-100">
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium">Due Date</label>
-                        <input type="text" value="{{ now()->addDays(3)->format('Y-m-d') }}" disabled
-                            class="w-full p-2 border rounded-lg bg-gray-100">
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
-                    Add Borrow Record
-                </button>
-            </form>
-
         </div>
     </div>
-</div>
+
+    <!-- ===================================================== -->
+    <!-- RETURN BORROW MODAL -->
+    <!-- ===================================================== -->
+    <div id="returnBorrowModal" tabindex="-1" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur">
+
+        <div class="w-full max-w-md p-4">
+            <div class="bg-white p-6 rounded-xl shadow-xl">
+
+                <div class="flex justify-between items-center border-b pb-3 mb-4">
+                    <h3 class="text-lg font-bold">Return Book</h3>
+                    <button data-modal-toggle="returnBorrowModal" class="p-2 hover:bg-gray-200 rounded-full">✕</button>
+                </div>
+
+                <form id="returnBorrowForm" method="POST">
+                    @csrf
+                    @method('PUT')
+
+                    <p class="text-gray-700 mb-4">
+                        Confirm marking this book as <strong>returned</strong>?
+                    </p>
+
+                    <div class="flex justify-end gap-3">
+                        <button type="button" data-modal-toggle="returnBorrowModal"
+                            class="px-3 py-2 bg-gray-300 rounded-lg">Cancel</button>
+                        <button type="submit"
+                            class="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Return</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
 
 </section>
 @endsection
+
 @push('scripts')
 @include('components.alerts')
+
 <script>
-    document.querySelectorAll('.delete-borrow-btn').forEach(button => {
-    button.addEventListener('click', function () {
-        let borrowId = this.getAttribute('data-id');
+/* DELETE CONFIRMATION */
+document.querySelectorAll('.delete-borrow-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+        let borrowId = this.dataset.id;
 
         Swal.fire({
-            title: 'Are you sure?',
-            text: "This borrow record will be deleted permanently!",
+            title: 'Delete this borrow record?',
+            text: "This action cannot be undone.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
+            confirmButtonText: 'Yes, delete it'
+        }).then(result => {
             if (result.isConfirmed) {
                 document.getElementById(`delete-borrow-form-${borrowId}`).submit();
             }
         });
     });
 });
+
+/* RETURN BORROW */
+document.querySelectorAll('.return-borrow-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        let borrowId = this.dataset.id;
+        let form = document.getElementById('returnBorrowForm');
+        form.action = `/admin/borrows/${borrowId}/return`;
+    });
+});
 </script>
+
 @endpush

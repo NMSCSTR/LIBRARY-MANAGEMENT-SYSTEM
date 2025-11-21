@@ -60,6 +60,25 @@ class BorrowController extends Controller
         return redirect()->route('borrows.index')->with('success', 'Borrow record created successfully.');
     }
 
+    public function return ($id)
+    {
+        $borrow = Borrow::findOrFail($id);
+
+        if ($borrow->return_date !== null) {
+            return redirect()->back()->with('error', 'This book is already returned.');
+        }
+
+        $borrow->update([
+            'return_date' => now(),
+            'status'      => 'returned',
+        ]);
+
+        // Restore book count
+        $borrow->book->increment('copies_available');
+
+        return redirect()->route('borrows.index')->with('success', 'Book returned successfully.');
+    }
+
     /**
      * Display the specified resource.
      */

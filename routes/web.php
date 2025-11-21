@@ -53,7 +53,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'update'  => 'authors.update',
         'destroy' => 'authors.destroy',
     ]);
-    
+
 
 
     Route::resource('books', BookController::class)->names([
@@ -109,6 +109,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'destroy' => 'borrows.destroy',
     ]);
 
+    Route::put('/admin/borrows/{id}/return', [BorrowController::class, 'return'])->name('borrows.return');
 
     Route::resource('activity-logs', ActivityLogController::class)->names([
         'index'   => 'activity-logs.index',
