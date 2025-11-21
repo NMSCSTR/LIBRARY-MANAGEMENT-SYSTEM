@@ -54,6 +54,7 @@
                                 <tr>
                                     <th class="px-6 py-3">User</th>
                                     <th class="px-6 py-3">Book</th>
+                                    <th class="px-6 py-3">Quantity</th>
                                     <th class="px-6 py-3">Borrow Date</th>
                                     <th class="px-6 py-3">Due Date</th>
                                     <th class="px-6 py-3">Return Date</th>
@@ -66,6 +67,7 @@
                                 <tr class="border-b">
                                     <td class="px-6 py-4">{{ $borrow->user->name }}</td>
                                     <td class="px-6 py-4">{{ $borrow->book->title }}</td>
+                                    <td class="px-6 py-4">{{ $borrow->quantity }}</td>
                                     <td class="px-6 py-4">{{ $borrow->borrow_date->format('Y-m-d') }}</td>
                                     <td class="px-6 py-4">{{ $borrow->due_date->format('Y-m-d') }}</td>
                                     <td class="px-6 py-4">
@@ -83,9 +85,7 @@
                                             class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs">Borrowed</span>
                                         @endif
                                     </td>
-
                                     <td class="px-6 py-4 flex gap-2">
-
                                         {{-- Return --}}
                                         @if($borrow->status !== 'returned')
                                         <button data-id="{{ $borrow->id }}" data-modal-target="returnBorrowModal"
@@ -107,12 +107,12 @@
                                             @csrf
                                             @method('DELETE')
                                         </form>
-
                                     </td>
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
+
                     </div>
 
                 </div>

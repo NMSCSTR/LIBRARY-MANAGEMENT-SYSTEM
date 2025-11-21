@@ -7,18 +7,25 @@ use App\Models\Borrow;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BorrowController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
-        $borrows = Borrow::with(['user', 'book'])->get();
-        $users   = User::all();
-        $books   = Book::all();
-        return view('admin.borrows', compact('borrows', 'users', 'books'));
+        // Fetch borrows grouped by user and book with quantity
+        $borrows = Borrow::with(['user', 'book'])
+            ->select('user_id', 'book_id', DB::raw('COUNT(*) as quantity'))
+            ->groupBy('user_id', 'book_id')
+            ->orderBy('borrow_date', 'desc')
+            ->get();
+
+        // Pass to the view
+        return view('admin.borrows', compact('borrows'));
     }
 
     /**
@@ -33,48 +40,48 @@ class BorrowController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    $request->validate([
-        'user_id' => 'required|exists:users,id',
-        'books'   => 'required|array',
-    ]);
-
-    $borrowDate = Carbon::now();
-    $dueDate    = $borrowDate->copy()->addDays(3);
-
-foreach ($request->books as $bookId => $data) {
-    if (!isset($data['selected'])) continue;
-
-    $quantity = (int) $data['quantity'];
-
-    $availableCopies = BookCopy::where('book_id', $bookId)
-        ->where('status', 'available')
-        ->take($quantity)
-        ->get();
-
-    if ($availableCopies->count() < $quantity) {
-        $book = Book::find($bookId); // safely get book info
-        return redirect()->back()->with('error', "Not enough copies for '{$book->title}'");
-    }
-
-    foreach ($availableCopies as $copy) {
-        Borrow::create([
-            'user_id'      => $request->user_id,
-            'book_id'      => $bookId,
-            'book_copy_id' => $copy->id,
-            'borrow_date'  => now(),
-            'due_date'     => now()->addDays(3),
-            'status'       => 'borrowed',
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'books'   => 'required|array',
         ]);
 
-        $copy->update(['status' => 'borrowed']);
+        $borrowDate = Carbon::now();
+        $dueDate    = $borrowDate->copy()->addDays(3);
+
+        foreach ($request->books as $bookId => $data) {
+            if (! isset($data['selected'])) {
+                continue;
+            }
+
+            $quantity = (int) $data['quantity'];
+
+            $availableCopies = BookCopy::where('book_id', $bookId)
+                ->where('status', 'available')
+                ->take($quantity)
+                ->get();
+
+            if ($availableCopies->count() < $quantity) {
+                $book = Book::find($bookId);
+                return redirect()->back()->with('error', "Not enough copies for '{$book->title}'");
+            }
+
+            foreach ($availableCopies as $copy) {
+                Borrow::create([
+                    'user_id'      => $request->user_id,
+                    'book_id'      => $bookId,
+                    'book_copy_id' => $copy->id,
+                    'borrow_date'  => now(),
+                    'due_date'     => now()->addDays(3),
+                    'status'       => 'borrowed',
+                ]);
+
+                $copy->update(['status' => 'borrowed']);
+            }
+        }
+
+        return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
     }
-}
-
-
-    return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
-}
-
 
     public function return ($id)
     {
