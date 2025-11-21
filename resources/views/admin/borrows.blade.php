@@ -204,45 +204,80 @@
         </div>
     </div>
 
-    <!-- Create Roles Modal -->
-    <div id="createUserModal" tabindex="-1" aria-hidden="true"
-        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+  <!-- Create Borrow Modal -->
+<div id="createUserModal" tabindex="-1" aria-hidden="true"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
 
-        <div class="relative w-full max-w-lg p-4">
-            <div class="relative bg-white rounded-2xl shadow-2xl p-6">
+    <div class="relative w-full max-w-lg p-4">
+        <div class="relative bg-white rounded-2xl shadow-2xl p-6">
 
-                <!-- Modal header -->
-                <div class="flex items-center justify-between border-b pb-3 mb-4">
-                    <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                        Add Role
-                    </h3>
+            <!-- Modal header -->
+            <div class="flex items-center justify-between border-b pb-3 mb-4">
+                <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    Add Borrow Record
+                </h3>
 
-                    <button type="button" data-modal-toggle="createUserModal"
-                        class="p-2 rounded-full hover:bg-gray-200 text-gray-500 hover:text-gray-800">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                <button type="button" data-modal-toggle="createUserModal"
+                    class="p-2 rounded-full hover:bg-gray-200 text-gray-500 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Form -->
+            <form action="{{ route('borrows.store') }}" method="POST" class="mt-4 space-y-4">
+                @csrf
+
+                <!-- User -->
+                <div>
+                    <label class="text-sm font-medium">Select User</label>
+                    <select name="user_id" required class="w-full p-2 border rounded-lg bg-gray-50">
+                        <option value="">-- Select a User --</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
-                <!-- Modal Form -->
-                <form action="{{ route('roles.store') }}" method="POST" class="mt-4 space-y-4">
-                    @csrf
+                <!-- Book -->
+                <div>
+                    <label class="text-sm font-medium">Select Book</label>
+                    <select name="book_id" required class="w-full p-2 border rounded-lg bg-gray-50">
+                        <option value="">-- Select a Book --</option>
+                        @foreach($books as $book)
+                            <option value="{{ $book->id }}">
+                                {{ $book->title }} ({{ $book->copies_available }} copies)
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
+                <!-- Auto-filled Dates (View only) -->
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="text-sm font-medium">Role Name</label>
-                        <input type="text" name="name" required class="w-full p-2 border rounded-lg bg-gray-50">
+                        <label class="text-sm font-medium">Borrow Date</label>
+                        <input type="text" value="{{ now()->format('Y-m-d') }}" disabled
+                            class="w-full p-2 border rounded-lg bg-gray-100">
                     </div>
 
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
-                        Add Record
-                    </button>
-                </form>
+                    <div>
+                        <label class="text-sm font-medium">Due Date</label>
+                        <input type="text" value="{{ now()->addDays(3)->format('Y-m-d') }}" disabled
+                            class="w-full p-2 border rounded-lg bg-gray-100">
+                    </div>
+                </div>
 
-            </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
+                    Add Borrow Record
+                </button>
+            </form>
+
         </div>
     </div>
+</div>
+
 </section>
 @endsection
 @push('scripts')
