@@ -192,48 +192,74 @@
         </div>
     </div>
 
+<!-- Main modal -->
+<div id="defaultModal" tabindex="-1" aria-hidden="true"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
 
-    <!-- Modal body -->
-    <form action="{{ route('suppliers.store') }}" method="POST" class="space-y-5">
-        @csrf
-        <div class="space-y-2">
-            <label for="name" class="text-sm font-medium text-gray-700">Supplier Name</label>
+    <div class="relative w-full max-w-lg p-4">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-2xl shadow-2xl p-6">
 
-            <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
-                <input type="text" name="name" id="name" class="w-full p-2.5 text-sm bg-transparent focus:outline-none"
-                    placeholder="Enter supplier name" required>
+            <!-- Modal header -->
+            <div class="flex items-center justify-between border-b pb-3 mb-4">
+                <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    Add Supplier
+                </h3>
+
+                <button type="button"
+                    class="p-2 rounded-full hover:bg-gray-200 text-gray-500 hover:text-gray-800"
+                    data-modal-toggle="defaultModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
-        </div>
 
-        <div class="space-y-2">
-            <label for="address" class="text-sm font-medium text-gray-700">Address</label>
-            <input type="text" name="address" id="address" class="w-full p-2.5 border rounded-lg bg-gray-50"
-                placeholder="Enter address">
-        </div>
+            <!-- Modal Form -->
+            <form action="{{ route('suppliers.store') }}" method="POST" class="space-y-5">
+                @csrf
 
-        <div class="space-y-2">
-            <label for="contact_person" class="text-sm font-medium text-gray-700">Contact Person</label>
-            <input type="text" name="contact_person" id="contact_person"
-                class="w-full p-2.5 border rounded-lg bg-gray-50" placeholder="Enter contact person">
-        </div>
+                <div>
+                    <label class="text-sm font-medium">Supplier Name</label>
+                    <input type="text" name="name"
+                        class="w-full p-2.5 border rounded-lg bg-gray-50" required>
+                </div>
 
-        <div class="space-y-2">
-            <label for="email" class="text-sm font-medium text-gray-700">Email</label>
-            <input type="email" name="email" id="email" class="w-full p-2.5 border rounded-lg bg-gray-50"
-                placeholder="Enter email">
-        </div>
+                <div>
+                    <label class="text-sm font-medium">Address</label>
+                    <input type="text" name="address"
+                        class="w-full p-2.5 border rounded-lg bg-gray-50">
+                </div>
 
-        <div class="space-y-2">
-            <label for="phone" class="text-sm font-medium text-gray-700">Phone</label>
-            <input type="text" name="phone" id="phone" class="w-full p-2.5 border rounded-lg bg-gray-50"
-                placeholder="Enter phone">
-        </div>
+                <div>
+                    <label class="text-sm font-medium">Contact Person</label>
+                    <input type="text" name="contact_person"
+                        class="w-full p-2.5 border rounded-lg bg-gray-50">
+                </div>
 
-        <button type="submit"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5">
-            Add Supplier
-        </button>
-    </form>
+                <div>
+                    <label class="text-sm font-medium">Email</label>
+                    <input type="email" name="email"
+                        class="w-full p-2.5 border rounded-lg bg-gray-50">
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium">Phone</label>
+                    <input type="text" name="phone"
+                        class="w-full p-2.5 border rounded-lg bg-gray-50">
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-5 py-2.5">
+                    Add Supplier
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
 
 
 </section>
