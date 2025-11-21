@@ -240,6 +240,7 @@
 @endsection
 @push('scripts')
 @include('components.alerts')
+@push('scripts')
 <script>
     document.querySelectorAll('.delete-supplier-btn').forEach(button => {
     button.addEventListener('click', function () {
