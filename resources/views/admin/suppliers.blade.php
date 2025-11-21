@@ -266,9 +266,9 @@
 @endsection
 @push('scripts')
 @include('components.alerts')
-@push('scripts')
+
 <script>
-    document.querySelectorAll('.delete-supplier-btn').forEach(button => {
+document.querySelectorAll('.delete-supplier-btn').forEach(button => {
     button.addEventListener('click', function () {
         let supplierId = this.getAttribute('data-id');
 
@@ -279,7 +279,8 @@
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById(`delete-supplier-form-${supplierId}`).submit();
@@ -288,5 +289,5 @@
     });
 });
 </script>
-@endpush
+
 @endpush
