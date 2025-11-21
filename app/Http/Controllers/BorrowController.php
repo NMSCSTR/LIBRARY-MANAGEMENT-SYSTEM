@@ -32,42 +32,47 @@ class BorrowController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'books'   => 'required|array',
-        ]);
+{
+    $request->validate([
+        'user_id' => 'required|exists:users,id',
+        'books'   => 'required|array', 
+    ]);
 
-        $borrowDate = Carbon::now();
-        $dueDate    = $borrowDate->copy()->addDays(3);
+    $borrowDate = Carbon::now();
+    $dueDate    = $borrowDate->copy()->addDays(3);
 
-        foreach ($request->books as $bookId => $data) {
-            if (! isset($data['selected'])) {
-                continue; // Skip if not selected
-            }
+    foreach ($request->books as $bookId => $data) {
+        if (!isset($data['selected'])) continue;
 
-            $book     = Book::find($bookId);
-            $quantity = (int) $data['quantity'];
+        $quantity = (int) $data['quantity'];
 
-            if ($book->copies_available < $quantity) {
-                return redirect()->back()->with('error', "Not enough copies for '{$book->title}'. Available: {$book->copies_available}");
-            }
 
-            for ($i = 0; $i < $quantity; $i++) {
-                Borrow::create([
-                    'user_id'     => $request->user_id,
-                    'book_id'     => $book->id,
-                    'borrow_date' => $borrowDate,
-                    'due_date'    => $dueDate,
-                    'status'      => 'borrowed',
-                ]);
-            }
+        $availableCopies = BookCopy::where('book_id', $bookId)
+            ->where('status', 'available')
+            ->take($quantity)
+            ->get();
 
-            $book->decrement('copies_available', $quantity);
+        if ($availableCopies->count() < $quantity) {
+            return redirect()->back()->with('error', "Not enough copies for '{$availableCopies->first()->book->title}'");
         }
 
-        return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
+        foreach ($availableCopies as $copy) {
+            Borrow::create([
+                'user_id'      => $request->user_id,
+                'book_id'      => $bookId,
+                'book_copy_id' => $copy->id,
+                'borrow_date'  => $borrowDate,
+                'due_date'     => $dueDate,
+                'status'       => 'borrowed',
+            ]);
+
+            $copy->update(['status' => 'borrowed']);
+        }
     }
+
+    return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
+}
+
 
     public function return ($id)
     {
