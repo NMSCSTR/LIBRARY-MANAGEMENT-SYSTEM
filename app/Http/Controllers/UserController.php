@@ -3,7 +3,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -39,13 +41,20 @@ class UserController extends Controller
             'role_id'        => 'nullable|exists:roles,id',
         ]);
 
-        User::create([
+        $user = User::create([
             'name'           => $request->name,
             'email'          => $request->email,
             'password'       => bcrypt($request->password),
             'contact_number' => $request->contact_number,
             'address'        => $request->address,
             'role_id'        => $request->role_id,
+        ]);
+
+        // Log creation
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'create',
+            'description' => "Created user '{$user->name}' (ID: {$user->id})",
         ]);
 
         return redirect()->route('users.index')->with('success', 'User created successfully!');
@@ -65,7 +74,6 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::all();
-
         return view('admin.user-edit', compact('user', 'roles'));
     }
 
@@ -85,6 +93,8 @@ class UserController extends Controller
             'password'       => 'nullable|min:6|confirmed',
         ]);
 
+        $oldData = $user->only(['name', 'email', 'contact_number', 'address', 'role_id']);
+
         $data = [
             'name'           => $request->name,
             'email'          => $request->email,
@@ -93,12 +103,18 @@ class UserController extends Controller
             'role_id'        => $request->role_id,
         ];
 
-
         if ($request->filled('password')) {
             $data['password'] = bcrypt($request->password);
         }
 
         $user->update($data);
+
+        // Log update
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'update',
+            'description' => "Updated user '{$oldData['name']}' (ID: {$user->id})",
+        ]);
 
         return redirect()->route('users.index')->with('success', 'User updated successfully!');
     }
@@ -108,8 +124,17 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $userName = $user->name;
+        $userId = $user->id;
         $user->delete();
+
+        // Log deletion
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'description' => "Deleted user '{$userName}' (ID: {$userId})",
+        ]);
+
         return redirect()->back()->with('success', 'User deleted successfully!');
     }
-
 }

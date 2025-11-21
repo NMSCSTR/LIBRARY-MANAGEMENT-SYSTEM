@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Supplier;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SupplierController extends Controller
 {
@@ -37,7 +39,14 @@ class SupplierController extends Controller
             'phone' => 'nullable|string|max:20',
         ]);
 
-        Supplier::create($request->all());
+        $supplier = Supplier::create($request->all());
+
+        // Log creation
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'create',
+            'description' => "Created supplier '{$supplier->name}' (ID: {$supplier->id})",
+        ]);
 
         return redirect()->back()->with('success', 'Supplier added successfully!');
     }
@@ -56,7 +65,6 @@ class SupplierController extends Controller
     public function edit(Supplier $supplier)
     {
         return view('admin.supplier-edit', compact('supplier'));
-
     }
 
     /**
@@ -72,7 +80,16 @@ class SupplierController extends Controller
             'phone' => 'nullable|string|max:20',
         ]);
 
+        $oldName = $supplier->name;
+
         $supplier->update($request->all());
+
+        // Log update
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'update',
+            'description' => "Updated supplier '{$oldName}' to '{$supplier->name}' (ID: {$supplier->id})",
+        ]);
 
         return redirect()->route('suppliers.index')->with('success', 'Supplier updated successfully!');
     }
@@ -82,9 +99,16 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier)
     {
+        $supplierName = $supplier->name;
         $supplier->delete();
 
-        return redirect()->back()->with('success', 'Supplier deleted successfully!');
+        // Log deletion
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'description' => "Deleted supplier '{$supplierName}' (ID: {$supplier->id})",
+        ]);
 
+        return redirect()->back()->with('success', 'Supplier deleted successfully!');
     }
 }

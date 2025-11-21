@@ -2,7 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Publisher;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PublisherController extends Controller
 {
@@ -36,7 +38,14 @@ class PublisherController extends Controller
             'phone'          => 'nullable|string|max:20',
         ]);
 
-        Publisher::create($validated);
+        $publisher = Publisher::create($validated);
+
+        // Log creation
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'create',
+            'description' => "Added publisher '{$publisher->name}' (ID: {$publisher->id})",
+        ]);
 
         return redirect()->back()->with('success', 'Publisher added successfully.');
     }
@@ -70,7 +79,15 @@ class PublisherController extends Controller
             'phone'          => 'nullable|string|max:20',
         ]);
 
+        $oldName = $publisher->name;
         $publisher->update($validated);
+
+        // Log update
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'update',
+            'description' => "Updated publisher '{$oldName}' (ID: {$publisher->id})",
+        ]);
 
         return redirect()->route('publishers.index')->with('success', 'Publisher updated successfully.');
     }
@@ -80,7 +97,15 @@ class PublisherController extends Controller
      */
     public function destroy(Publisher $publisher)
     {
+        $name = $publisher->name;
         $publisher->delete();
+
+        // Log deletion
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'description' => "Deleted publisher '{$name}' (ID: {$publisher->id})",
+        ]);
 
         return redirect()->back()->with('success', 'Publisher deleted successfully.');
     }

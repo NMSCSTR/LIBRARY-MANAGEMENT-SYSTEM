@@ -3,7 +3,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\BookCopy;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BookCopyController extends Controller
 {
@@ -22,7 +24,7 @@ class BookCopyController extends Controller
      */
     public function create()
     {
-
+        //
     }
 
     /**
@@ -37,7 +39,15 @@ class BookCopyController extends Controller
             'shelf_location' => 'required',
         ]);
 
-        BookCopy::create($request->all());
+        $bookCopy = BookCopy::create($request->all());
+
+        // Log creation
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'create',
+            'description' => "Added book copy #{$bookCopy->copy_number} for book '{$bookCopy->book->title}'",
+        ]);
+
         return redirect()->route('book-copies.index')->with('success', 'Book copy created successfully.');
     }
 
@@ -71,7 +81,18 @@ class BookCopyController extends Controller
             'shelf_location' => 'required',
         ]);
 
+        $oldCopyNumber = $bookCopy->copy_number;
+        $oldBookTitle = $bookCopy->book->title;
+
         $bookCopy->update($request->all());
+
+        // Log update
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'update',
+            'description' => "Updated book copy #{$oldCopyNumber} for book '{$oldBookTitle}'",
+        ]);
+
         return redirect()->route('book-copies.index')->with('success', 'Book copy updated successfully.');
     }
 
@@ -81,7 +102,16 @@ class BookCopyController extends Controller
     public function destroy($id)
     {
         $bookCopy = BookCopy::findOrFail($id);
+        $copyNumber = $bookCopy->copy_number;
+        $bookTitle = $bookCopy->book->title;
         $bookCopy->delete();
+
+        // Log deletion
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'description' => "Deleted book copy #{$copyNumber} for book '{$bookTitle}'",
+        ]);
 
         return redirect()->route('book-copies.index')->with('success', 'Book copy deleted successfully.');
     }

@@ -5,7 +5,9 @@ use App\Models\Donation;
 use App\Models\User;
 use App\Models\Author;
 use App\Models\Publisher;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DonationController extends Controller
 {
@@ -18,7 +20,6 @@ class DonationController extends Controller
         $publishers = Publisher::all();
         $donations = Donation::with(['donor', 'author', 'publisher'])->get();
         return view('admin.donations', compact('donations', 'publishers','authors'));
-
     }
 
     /**
@@ -34,17 +35,24 @@ class DonationController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'donor_id'       => 'required|exists:users,id',
             'book_title'     => 'required|string|max:255',
             'author_id'      => 'required|exists:authors,id',
-            'publisher_id'    => 'nullable|exists:publishers,id',
+            'publisher_id'   => 'nullable|exists:publishers,id',
             'year_published' => 'nullable|integer',
             'quantity'       => 'required|integer|min:1',
             'status'         => 'required|string',
         ]);
 
-        Donation::create($request->all());
+        $donation = Donation::create($validated);
+
+        // Log creation
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'create',
+            'description' => "Added donation '{$donation->book_title}' by donor ID {$donation->donor_id}",
+        ]);
 
         return redirect()->route('donations.index')->with('success', 'Donation added successfully.');
     }
@@ -83,7 +91,15 @@ class DonationController extends Controller
             'status'         => 'required|in:pending,accepted,rejected',
         ]);
 
+        $oldTitle = $donation->book_title;
         $donation->update($validatedData);
+
+        // Log update
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'update',
+            'description' => "Updated donation '{$oldTitle}' (ID: {$donation->id})",
+        ]);
 
         return redirect()->route('donations.index')->with('success', 'Donation updated successfully.');
     }
@@ -93,7 +109,16 @@ class DonationController extends Controller
      */
     public function destroy(Donation $donation)
     {
+        $title = $donation->book_title;
         $donation->delete();
+
+        // Log deletion
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'description' => "Deleted donation '{$title}' (ID: {$donation->id})",
+        ]);
+
         return redirect()->route('donations.index')->with('success', 'Donation deleted.');
     }
 }
