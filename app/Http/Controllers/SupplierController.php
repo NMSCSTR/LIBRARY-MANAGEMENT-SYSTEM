@@ -29,7 +29,17 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'contact_person' => 'nullable|string|max:255',
+            'email' => 'nullable|email',
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        Supplier::create($request->all());
+
+        return redirect()->back()->with('success', 'Supplier added successfully!');
     }
 
     /**
@@ -45,7 +55,8 @@ class SupplierController extends Controller
      */
     public function edit(Supplier $supplier)
     {
-        //
+        return view('admin.supplier-edit', compact('supplier'));
+
     }
 
     /**
@@ -53,7 +64,17 @@ class SupplierController extends Controller
      */
     public function update(Request $request, Supplier $supplier)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'contact_person' => 'nullable|string|max:255',
+            'email' => 'nullable|email',
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        $supplier->update($request->all());
+
+        return redirect()->route('suppliers.index')->with('success', 'Supplier updated successfully!');
     }
 
     /**
@@ -61,6 +82,9 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier)
     {
-        //
+        $supplier->delete();
+
+        return redirect()->back()->with('success', 'Supplier deleted successfully!');
+
     }
 }

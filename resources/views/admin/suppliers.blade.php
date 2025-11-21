@@ -61,6 +61,22 @@
                             </ol>
                         </nav>
 
+                        <div class="flex justify-end py-2">
+                            <button id="defaultModalButton" data-modal-target="defaultModal"
+                                data-modal-toggle="defaultModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
+                                    focus:ring-4 focus:outline-none focus:ring-blue-300
+                                    font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition">
+
+                                <!-- Plus Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                    stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+
+                                Add Supplier
+                            </button>
+                        </div>
+
                     </div>
 
                     <div class="relative overflow-x-auto sm:rounded-lg  px-6 py-6">
@@ -149,8 +165,8 @@
                                     <td class="px-6 py-4 flex gap-2 justify-end">
                                         {{-- Edit --}}
                                         <a href="{{ route('suppliers.edit', $supplier->id) }}"
-                                           class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
-                                           Edit
+                                            class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
+                                            Edit
                                         </a>
 
                                         {{-- Delete --}}
@@ -160,8 +176,8 @@
                                         </button>
 
                                         <form id="delete-supplier-form-{{ $supplier->id }}"
-                                              action="{{ route('suppliers.destroy', $supplier->id) }}"
-                                              method="POST" class="hidden">
+                                            action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST"
+                                            class="hidden">
                                             @csrf
                                             @method('DELETE')
                                         </form>
@@ -175,13 +191,57 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Modal body -->
+    <form action="{{ route('suppliers.store') }}" method="POST" class="space-y-5">
+        @csrf
+        <div class="space-y-2">
+            <label for="name" class="text-sm font-medium text-gray-700">Supplier Name</label>
+
+            <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
+                <input type="text" name="name" id="name" class="w-full p-2.5 text-sm bg-transparent focus:outline-none"
+                    placeholder="Enter supplier name" required>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <label for="address" class="text-sm font-medium text-gray-700">Address</label>
+            <input type="text" name="address" id="address" class="w-full p-2.5 border rounded-lg bg-gray-50"
+                placeholder="Enter address">
+        </div>
+
+        <div class="space-y-2">
+            <label for="contact_person" class="text-sm font-medium text-gray-700">Contact Person</label>
+            <input type="text" name="contact_person" id="contact_person"
+                class="w-full p-2.5 border rounded-lg bg-gray-50" placeholder="Enter contact person">
+        </div>
+
+        <div class="space-y-2">
+            <label for="email" class="text-sm font-medium text-gray-700">Email</label>
+            <input type="email" name="email" id="email" class="w-full p-2.5 border rounded-lg bg-gray-50"
+                placeholder="Enter email">
+        </div>
+
+        <div class="space-y-2">
+            <label for="phone" class="text-sm font-medium text-gray-700">Phone</label>
+            <input type="text" name="phone" id="phone" class="w-full p-2.5 border rounded-lg bg-gray-50"
+                placeholder="Enter phone">
+        </div>
+
+        <button type="submit"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5">
+            Add Supplier
+        </button>
+    </form>
+
+
 </section>
 @endsection
 @push('scripts')
 @include('components.alerts')
-@push('scripts')
 <script>
-document.querySelectorAll('.delete-supplier-btn').forEach(button => {
+    document.querySelectorAll('.delete-supplier-btn').forEach(button => {
     button.addEventListener('click', function () {
         let supplierId = this.getAttribute('data-id');
 
