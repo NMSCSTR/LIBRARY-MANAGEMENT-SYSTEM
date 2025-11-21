@@ -34,41 +34,39 @@ class BorrowController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id'   => 'required|exists:users,id',
-            'book_ids'  => 'required|array',
-            'book_ids.*'=> 'exists:books,id',
+            'user_id' => 'required|exists:users,id',
+            'books'   => 'required|array',
         ]);
 
         $borrowDate = Carbon::now();
         $dueDate    = $borrowDate->copy()->addDays(3);
 
-        if ($book->copies_available < 1) {
-            return redirect()->back()->with('error', 'No copies available for this book.');
+        foreach ($request->books as $bookId => $data) {
+            if (! isset($data['selected'])) {
+                continue; // Skip if not selected
+            }
+
+            $book     = Book::find($bookId);
+            $quantity = (int) $data['quantity'];
+
+            if ($book->copies_available < $quantity) {
+                return redirect()->back()->with('error', "Not enough copies for '{$book->title}'. Available: {$book->copies_available}");
+            }
+
+            for ($i = 0; $i < $quantity; $i++) {
+                Borrow::create([
+                    'user_id'     => $request->user_id,
+                    'book_id'     => $book->id,
+                    'borrow_date' => $borrowDate,
+                    'due_date'    => $dueDate,
+                    'status'      => 'borrowed',
+                ]);
+            }
+
+            $book->decrement('copies_available', $quantity);
         }
 
-        $borrowDate = Carbon::now();
-        $dueDate    = $borrowDate->copy()->addDays(3);
-
-       foreach ($request->book_ids as $bookId) {
-        $book = Book::find($bookId);
-
-        if ($book->copies_available < 1) {
-            return redirect()->back()->with('error', "No copies available for '{$book->title}'.");
-        }
-
-        Borrow::create([
-            'user_id'     => $request->user_id,
-            'book_id'     => $book->id,
-            'borrow_date' => $borrowDate,
-            'due_date'    => $dueDate,
-            'status'      => 'borrowed',
-        ]);
-
-        $book->decrement('copies_available');
-    }
-
-    return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
-
+        return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
     }
 
     public function return ($id)
