@@ -115,7 +115,7 @@
                                 @foreach($authors as $author)
                                 <tr class="odd:bg-white even:bg-gray-50 border-b py-4">
                                     <td class="px-6 py-4">{{ $author->name }}</td>
-                                    <td class="px-6 py-4 ">
+                                    <td class="px-6 py-4 flex gap-2 justify-end">
                                         {{-- Edit --}}
                                         <a href="{{ route('authors.edit', $author->id) }}"
                                             class="px-2 py-1 text-xs text-white bg-blue-700 hover:bg-blue-800">

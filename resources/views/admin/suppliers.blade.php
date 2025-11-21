@@ -146,7 +146,7 @@
                                     <td class="px-6 py-4">{{ $supplier->contact_person ?? '---' }}</td>
                                     <td class="px-6 py-4">{{ $supplier->email ?? '---' }}</td>
                                     <td class="px-6 py-4">{{ $supplier->phone ?? '---'}}</td>
-                                    <td class="px-6 py-4 flex gap-2">
+                                    <td class="px-6 py-4 flex gap-2 justify-end">
                                         {{-- Edit --}}
                                         <a href="{{ route('suppliers.edit', $supplier->id) }}"
                                            class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
