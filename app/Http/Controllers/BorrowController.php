@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\BookCopy;
 use App\Models\Borrow;
 use App\Models\User;
 use Carbon\Carbon;
@@ -35,7 +36,7 @@ class BorrowController extends Controller
 {
     $request->validate([
         'user_id' => 'required|exists:users,id',
-        'books'   => 'required|array', 
+        'books'   => 'required|array',
     ]);
 
     $borrowDate = Carbon::now();
