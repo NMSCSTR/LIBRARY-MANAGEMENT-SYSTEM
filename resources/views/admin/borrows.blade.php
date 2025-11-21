@@ -68,8 +68,9 @@
                                     <td class="px-6 py-4">{{ $borrow->user->name }}</td>
                                     <td class="px-6 py-4">{{ $borrow->book->title }}</td>
                                     <td class="px-6 py-4">{{ $borrow->quantity }}</td>
-                                    <td class="px-6 py-4">{{ $borrow->borrow_date->format('Y-m-d') }}</td>
-                                    <td class="px-6 py-4">{{ $borrow->due_date->format('Y-m-d') }}</td>
+<td class="px-6 py-4">{{ \Carbon\Carbon::parse($borrow->borrow_date)->format('Y-m-d') }}</td>
+<td class="px-6 py-4">{{ \Carbon\Carbon::parse($borrow->due_date)->format('Y-m-d') }}</td>
+
                                     <td class="px-6 py-4">
                                         {{ $borrow->return_date ? $borrow->return_date->format('Y-m-d') : '-' }}
                                     </td>
