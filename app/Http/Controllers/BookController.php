@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Author;
@@ -7,7 +8,9 @@ use App\Models\BookCopy;
 use App\Models\Category;
 use App\Models\Publisher;
 use App\Models\Supplier;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -50,6 +53,7 @@ class BookController extends Controller
 
         $book = Book::create($validated);
 
+        // Create copies
         for ($i = 1; $i <= $validated['copies_available']; $i++) {
             BookCopy::create([
                 'book_id'        => $book->id,
@@ -59,6 +63,13 @@ class BookController extends Controller
             ]);
         }
 
+        // Log creation
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'create',
+            'description' => "Added book: '{$book->title}'",
+        ]);
+
         return redirect()->route('books.index')
             ->with('success', 'Book added successfully.');
     }
@@ -66,7 +77,7 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Books $books)
+    public function show(Book $book)
     {
         //
     }
@@ -102,10 +113,18 @@ class BookController extends Controller
         ]);
 
         $book = Book::findOrFail($id);
+        $oldTitle = $book->title;
 
         $book->update($request->all());
-        return redirect()->route('books.index')->with('success', 'Book updated successfully.');
 
+        // Log update
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'update',
+            'description' => "Updated book: '{$oldTitle}' to '{$book->title}'",
+        ]);
+
+        return redirect()->route('books.index')->with('success', 'Book updated successfully.');
     }
 
     /**
@@ -114,7 +133,15 @@ class BookController extends Controller
     public function destroy($id)
     {
         $book = Book::findOrFail($id);
+        $bookTitle = $book->title;
         $book->delete();
+
+        // Log deletion
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'description' => "Deleted book: '{$bookTitle}'",
+        ]);
 
         return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
     }

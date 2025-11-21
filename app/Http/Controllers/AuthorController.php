@@ -1,8 +1,11 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Author;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthorController extends Controller
 {
@@ -32,8 +35,15 @@ class AuthorController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        Author::create([
+        $author = Author::create([
             'name' => $request->name,
+        ]);
+
+        // Log creation
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'create',
+            'description' => 'Created author: ' . $author->name,
         ]);
 
         return redirect()->route('authors.index')->with('success', 'Author created successfully.');
@@ -66,8 +76,17 @@ class AuthorController extends Controller
         ]);
 
         $author = Author::findOrFail($id);
+        $oldName = $author->name;
+
         $author->update([
             'name' => $request->name,
+        ]);
+
+        // Log update
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'update',
+            'description' => "Updated author: '$oldName' to '{$author->name}'",
         ]);
 
         return redirect()->route('authors.index')->with('success', 'Author updated successfully.');
@@ -79,7 +98,15 @@ class AuthorController extends Controller
     public function destroy(string $id)
     {
         $author = Author::findOrFail($id);
+        $authorName = $author->name;
         $author->delete();
+
+        // Log deletion
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'description' => 'Deleted author: ' . $authorName,
+        ]);
 
         return redirect()->route('authors.index')->with('success', 'Author deleted successfully.');
     }
