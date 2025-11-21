@@ -229,14 +229,14 @@ document.querySelectorAll('.delete-borrow-btn').forEach(btn => {
     });
 });
 
-/* RETURN BORROW */
 document.querySelectorAll('.return-borrow-btn').forEach(button => {
     button.addEventListener('click', function () {
         let borrowId = this.dataset.id;
         let form = document.getElementById('returnBorrowForm');
-        form.action = `/admin/borrows/${borrowId}/return`;
+        form.action = `/borrows/${borrowId}/return`;
     });
 });
+
 </script>
 
 @endpush

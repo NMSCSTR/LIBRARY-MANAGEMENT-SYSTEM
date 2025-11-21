@@ -107,9 +107,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'show'    => 'borrows.show',
         'update'  => 'borrows.update',
         'destroy' => 'borrows.destroy',
-    ]);
 
-    Route::put('/admin/borrows/{id}/return', [BorrowController::class, 'return'])->name('borrows.return');
+    ]);
+    Route::put('/borrows/{id}/return', [BorrowController::class, 'return'])->name('borrows.return');
 
     Route::resource('activity-logs', ActivityLogController::class)->names([
         'index'   => 'activity-logs.index',
