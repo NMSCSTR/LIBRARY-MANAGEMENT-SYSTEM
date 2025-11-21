@@ -63,6 +63,21 @@
                             </ol>
                         </nav>
 
+                        <div class="flex justify-end py-2">
+                            <button id="defaultModalButton" data-modal-target="createUserModal" data-modal-toggle="createUserModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
+                                    focus:ring-4 focus:outline-none focus:ring-blue-300
+                                    font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition">
+
+                                <!-- Plus Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                    stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+
+                                Add User
+                            </button>
+                        </div>
+
                     </div>
 
                     <div class="relative overflow-x-auto sm:rounded-lg  px-6 py-6">
@@ -185,6 +200,85 @@
             </div>
         </div>
     </div>
+
+    <!-- Create User Modal -->
+<div id="createUserModal" tabindex="-1" aria-hidden="true"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+
+    <div class="relative w-full max-w-lg p-4">
+        <div class="relative bg-white rounded-2xl shadow-2xl p-6">
+
+            <!-- Modal header -->
+            <div class="flex items-center justify-between border-b pb-3 mb-4">
+                <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    Add User
+                </h3>
+
+                <button type="button" data-modal-toggle="createUserModal"
+                    class="p-2 rounded-full hover:bg-gray-200 text-gray-500 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                         class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Form -->
+            <form action="{{ route('users.store') }}" method="POST" class="space-y-4">
+                @csrf
+
+                <div>
+                    <label class="text-sm font-medium">Full Name</label>
+                    <input type="text" name="name" required
+                        class="w-full p-2.5 border rounded-lg bg-gray-50" />
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium">Email</label>
+                    <input type="email" name="email" required
+                        class="w-full p-2.5 border rounded-lg bg-gray-50" />
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium">Password</label>
+                    <input type="password" name="password" required
+                        class="w-full p-2.5 border rounded-lg bg-gray-50" />
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium">Contact Number</label>
+                    <input type="text" name="contact_number"
+                        class="w-full p-2.5 border rounded-lg bg-gray-50" />
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium">Address</label>
+                    <input type="text" name="address"
+                        class="w-full p-2.5 border rounded-lg bg-gray-50" />
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium">Role</label>
+                    <select name="role_id" class="w-full p-2.5 border rounded-lg bg-gray-50" required>
+                        <option value="">Select Role</option>
+                        @foreach($roles as $role)
+                            <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-5 py-2.5">
+                    Add User
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
 </section>
 @endsection
 @push('scripts')
