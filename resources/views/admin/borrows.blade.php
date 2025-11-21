@@ -121,44 +121,56 @@
             </div>
         </div>
     </div>
+<!-- ===================================================== -->
+<!-- ADD BORROW MODAL -->
+<!-- ===================================================== -->
+<div id="createBorrowModal" tabindex="-1" aria-hidden="true"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur">
 
-    <!-- ===================================================== -->
-    <!-- ADD BORROW MODAL -->
-    <!-- ===================================================== -->
-<form action="{{ route('borrows.store') }}" method="POST" class="space-y-4">
-    @csrf
+    <div class="w-full max-w-lg p-4">
+        <div class="bg-white rounded-2xl p-6 shadow-lg">
 
-    <div>
-        <label class="font-medium text-sm">Select User</label>
-        <select name="user_id" class="w-full p-2 border rounded-lg bg-gray-50" required>
-            <option value="">-- choose user --</option>
-            @foreach($users as $user)
-                <option value="{{ $user->id }}">{{ $user->name }}</option>
-            @endforeach
-        </select>
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-xl font-bold">Add Borrow Record</h3>
+                <button data-modal-toggle="createBorrowModal" class="p-2 hover:bg-gray-200 rounded-full">✕</button>
+            </div>
+
+            <form action="{{ route('borrows.store') }}" method="POST" class="space-y-4">
+                @csrf
+
+                <!-- Select User -->
+                <div>
+                    <label class="font-medium text-sm">Select User</label>
+                    <select name="user_id" class="w-full p-2 border rounded-lg bg-gray-50" required>
+                        <option value="">-- choose user --</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Select Multiple Books -->
+                <div>
+                    <label class="font-medium text-sm">Select Books</label>
+                    <select name="book_ids[]" class="w-full p-2 border rounded-lg bg-gray-50" multiple required>
+                        @foreach($books as $book)
+                            <option value="{{ $book->id }}" @if($book->copies_available < 1) disabled @endif>
+                                {{ $book->title }} ({{ $book->copies_available }} copies)
+                                @if($book->copies_available < 1) - Not Available @endif
+                            </option>
+                        @endforeach
+                    </select>
+                    <small class="text-gray-500">Hold Ctrl (Windows) or Cmd (Mac) to select multiple books</small>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                    Add Borrow
+                </button>
+            </form>
+
+        </div>
     </div>
-
-    <div>
-        <label class="font-medium text-sm">Select Books</label>
-        <select name="book_ids[]" class="w-full p-2 border rounded-lg bg-gray-50" multiple required>
-            @foreach($books as $book)
-                <option value="{{ $book->id }}">
-                    {{ $book->title }} ({{ $book->copies_available }} copies)
-                </option>
-            @endforeach
-        </select>
-        <p class="text-xs text-gray-500 mt-1">Hold Ctrl (Windows) / Cmd (Mac) to select multiple books.</p>
-    </div>
-
-    <div>
-        <label class="font-medium text-sm">Borrow Date</label>
-        <input type="date" name="borrow_date" class="w-full p-2 border rounded-lg bg-gray-50" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required>
-    </div>
-
-    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
-        Add Borrow
-    </button>
-</form>
+</div>
 
 
     <!-- ===================================================== -->

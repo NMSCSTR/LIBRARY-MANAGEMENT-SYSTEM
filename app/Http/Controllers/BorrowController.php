@@ -34,11 +34,13 @@ class BorrowController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'book_id' => 'required|exists:books,id',
+            'user_id'   => 'required|exists:users,id',
+            'book_ids'  => 'required|array',
+            'book_ids.*'=> 'exists:books,id',
         ]);
 
-        $book = Book::find($request->book_id);
+        $borrowDate = Carbon::now();
+        $dueDate    = $borrowDate->copy()->addDays(3);
 
         if ($book->copies_available < 1) {
             return redirect()->back()->with('error', 'No copies available for this book.');
@@ -47,17 +49,26 @@ class BorrowController extends Controller
         $borrowDate = Carbon::now();
         $dueDate    = $borrowDate->copy()->addDays(3);
 
+       foreach ($request->book_ids as $bookId) {
+        $book = Book::find($bookId);
+
+        if ($book->copies_available < 1) {
+            return redirect()->back()->with('error', "No copies available for '{$book->title}'.");
+        }
+
         Borrow::create([
             'user_id'     => $request->user_id,
-            'book_id'     => $request->book_id,
+            'book_id'     => $book->id,
             'borrow_date' => $borrowDate,
             'due_date'    => $dueDate,
             'status'      => 'borrowed',
         ]);
 
         $book->decrement('copies_available');
+    }
 
-        return redirect()->route('borrows.index')->with('success', 'Borrow record created successfully.');
+    return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
+
     }
 
     public function return ($id)
