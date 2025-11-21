@@ -283,7 +283,7 @@
 @endsection
 @push('scripts')
 @include('components.alerts')
-@push('scripts')
+
 <script>
 document.querySelectorAll('.delete-user-btn').forEach(button => {
     button.addEventListener('click', function () {
@@ -305,5 +305,4 @@ document.querySelectorAll('.delete-user-btn').forEach(button => {
     });
 });
 </script>
-@endpush
 @endpush
