@@ -1,10 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -13,7 +12,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $roles  = Role::all();
+        $roles = Role::all();
         $users = User::with('role')->get();
         return view('admin.users', compact('users', 'roles'));
     }
@@ -63,7 +62,7 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
         $roles = Role::all();
 
@@ -75,21 +74,31 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $user = User::findOrFail($id);
+
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email,' . $user->id,
+            'name'           => 'required|string|max:255',
+            'email'          => 'required|email|unique:users,email,' . $user->id,
             'contact_number' => 'nullable|string|max:20',
             'address'        => 'nullable|string|max:255',
             'role_id'        => 'required|exists:roles,id',
+            'password'       => 'nullable|min:6|confirmed',
         ]);
 
-        $user->update([
-            'name'     => $request->name,
-            'email'    => $request->email,
+        $data = [
+            'name'           => $request->name,
+            'email'          => $request->email,
             'contact_number' => $request->contact_number,
-            'address' => $request->address,
-            'role_id' => $request->role_id,
-        ]);
+            'address'        => $request->address,
+            'role_id'        => $request->role_id,
+        ];
+
+       
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $user->update($data);
 
         return redirect()->route('users.index')->with('success', 'User updated successfully!');
     }
