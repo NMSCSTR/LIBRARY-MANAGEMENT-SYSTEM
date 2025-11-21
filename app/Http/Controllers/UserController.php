@@ -93,7 +93,7 @@ class UserController extends Controller
             'role_id'        => $request->role_id,
         ];
 
-       
+
         if ($request->filled('password')) {
             $data['password'] = bcrypt($request->password);
         }
@@ -106,7 +106,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
         $user->delete();
         return redirect()->back()->with('success', 'User deleted successfully!');
