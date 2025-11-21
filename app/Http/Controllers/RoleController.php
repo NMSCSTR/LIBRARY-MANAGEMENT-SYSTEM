@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Role;
 use App\Models\ActivityLog;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,8 +40,8 @@ class RoleController extends Controller
 
         // Log creation
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'create',
+            'user_id'     => Auth::id(),
+            'action'      => 'create',
             'description' => "Created role '{$role->name}' (ID: {$role->id})",
         ]);
 
@@ -85,8 +84,8 @@ class RoleController extends Controller
 
         // Log update
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'update',
+            'user_id'     => Auth::id(),
+            'action'      => 'update',
             'description' => "Updated role '{$oldName}' to '{$role->name}' (ID: {$role->id})",
         ]);
 
@@ -109,8 +108,8 @@ class RoleController extends Controller
 
         // Log deletion
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'delete',
+            'user_id'     => Auth::id(),
+            'action'      => 'delete',
             'description' => "Deleted role '{$roleName}' (ID: {$id})",
         ]);
 

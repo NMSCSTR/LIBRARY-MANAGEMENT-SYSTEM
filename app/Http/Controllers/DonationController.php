@@ -1,11 +1,11 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\Donation;
-use App\Models\User;
-use App\Models\Author;
-use App\Models\Publisher;
 use App\Models\ActivityLog;
+use App\Models\Author;
+use App\Models\Donation;
+use App\Models\Publisher;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,10 +16,10 @@ class DonationController extends Controller
      */
     public function index()
     {
-        $authors = Author::all();
+        $authors    = Author::all();
         $publishers = Publisher::all();
-        $donations = Donation::with(['donor', 'author', 'publisher'])->get();
-        return view('admin.donations', compact('donations', 'publishers','authors'));
+        $donations  = Donation::with(['donor', 'author', 'publisher'])->get();
+        return view('admin.donations', compact('donations', 'publishers', 'authors'));
     }
 
     /**
@@ -49,8 +49,8 @@ class DonationController extends Controller
 
         // Log creation
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'create',
+            'user_id'     => Auth::id(),
+            'action'      => 'create',
             'description' => "Added donation '{$donation->book_title}' by donor ID {$donation->donor_id}",
         ]);
 
@@ -70,9 +70,9 @@ class DonationController extends Controller
      */
     public function edit(Donation $donation)
     {
-        $authors = Author::all();
+        $authors    = Author::all();
         $publishers = Publisher::all();
-        $users = User::all();
+        $users      = User::all();
         return view('admin.donation-edit', compact('donation', 'authors', 'publishers', 'users'));
     }
 
@@ -96,8 +96,8 @@ class DonationController extends Controller
 
         // Log update
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'update',
+            'user_id'     => Auth::id(),
+            'action'      => 'update',
             'description' => "Updated donation '{$oldTitle}' (ID: {$donation->id})",
         ]);
 
@@ -114,8 +114,8 @@ class DonationController extends Controller
 
         // Log deletion
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'delete',
+            'user_id'     => Auth::id(),
+            'action'      => 'delete',
             'description' => "Deleted donation '{$title}' (ID: {$donation->id})",
         ]);
 

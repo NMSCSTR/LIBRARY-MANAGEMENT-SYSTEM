@@ -156,7 +156,7 @@
         </div>
     </div>
 
-    <!-- Create User Modal -->
+    <!-- Create Roles Modal -->
     <div id="createUserModal" tabindex="-1" aria-hidden="true"
         class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
 

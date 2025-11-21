@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Book;
 use App\Models\BookCopy;
-use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +15,7 @@ class BookCopyController extends Controller
     public function index()
     {
         $bookCopies = BookCopy::with('book')->get();
-        $books = Book::all();
+        $books      = Book::all();
         return view('admin.bookcopies', compact('bookCopies', 'books'));
     }
 
@@ -43,8 +43,8 @@ class BookCopyController extends Controller
 
         // Log creation
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'create',
+            'user_id'     => Auth::id(),
+            'action'      => 'create',
             'description' => "Added book copy #{$bookCopy->copy_number} for book '{$bookCopy->book->title}'",
         ]);
 
@@ -65,7 +65,7 @@ class BookCopyController extends Controller
     public function edit($id)
     {
         $bookCopy = BookCopy::findOrFail($id);
-        $books = Book::all();
+        $books    = Book::all();
         return view('admin.edit-bookcopy', compact('bookCopy', 'books'));
     }
 
@@ -82,14 +82,14 @@ class BookCopyController extends Controller
         ]);
 
         $oldCopyNumber = $bookCopy->copy_number;
-        $oldBookTitle = $bookCopy->book->title;
+        $oldBookTitle  = $bookCopy->book->title;
 
         $bookCopy->update($request->all());
 
         // Log update
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'update',
+            'user_id'     => Auth::id(),
+            'action'      => 'update',
             'description' => "Updated book copy #{$oldCopyNumber} for book '{$oldBookTitle}'",
         ]);
 
@@ -101,15 +101,15 @@ class BookCopyController extends Controller
      */
     public function destroy($id)
     {
-        $bookCopy = BookCopy::findOrFail($id);
+        $bookCopy   = BookCopy::findOrFail($id);
         $copyNumber = $bookCopy->copy_number;
-        $bookTitle = $bookCopy->book->title;
+        $bookTitle  = $bookCopy->book->title;
         $bookCopy->delete();
 
         // Log deletion
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'delete',
+            'user_id'     => Auth::id(),
+            'action'      => 'delete',
             'description' => "Deleted book copy #{$copyNumber} for book '{$bookTitle}'",
         ]);
 

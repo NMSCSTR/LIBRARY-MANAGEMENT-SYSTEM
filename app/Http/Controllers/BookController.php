@@ -1,14 +1,13 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\BookCopy;
 use App\Models\Category;
 use App\Models\Publisher;
 use App\Models\Supplier;
-use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -65,8 +64,8 @@ class BookController extends Controller
 
         // Log creation
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'create',
+            'user_id'     => Auth::id(),
+            'action'      => 'create',
             'description' => "Added book: '{$book->title}'",
         ]);
 
@@ -112,15 +111,15 @@ class BookController extends Controller
             'copies_available' => 'required|integer|min:0',
         ]);
 
-        $book = Book::findOrFail($id);
+        $book     = Book::findOrFail($id);
         $oldTitle = $book->title;
 
         $book->update($request->all());
 
         // Log update
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'update',
+            'user_id'     => Auth::id(),
+            'action'      => 'update',
             'description' => "Updated book: '{$oldTitle}' to '{$book->title}'",
         ]);
 
@@ -132,14 +131,14 @@ class BookController extends Controller
      */
     public function destroy($id)
     {
-        $book = Book::findOrFail($id);
+        $book      = Book::findOrFail($id);
         $bookTitle = $book->title;
         $book->delete();
 
         // Log deletion
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'delete',
+            'user_id'     => Auth::id(),
+            'action'      => 'delete',
             'description' => "Deleted book: '{$bookTitle}'",
         ]);
 

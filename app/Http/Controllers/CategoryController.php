@@ -1,8 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Models\ActivityLog;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,8 +39,8 @@ class CategoryController extends Controller
 
         // Log creation
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'create',
+            'user_id'     => Auth::id(),
+            'action'      => 'create',
             'description' => "Added category '{$category->name}'",
         ]);
 
@@ -80,8 +80,8 @@ class CategoryController extends Controller
 
         // Log update
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'update',
+            'user_id'     => Auth::id(),
+            'action'      => 'update',
             'description' => "Updated category '{$oldName}' to '{$category->name}'",
         ]);
 
@@ -99,8 +99,8 @@ class CategoryController extends Controller
 
         // Log deletion
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'delete',
+            'user_id'     => Auth::id(),
+            'action'      => 'delete',
             'description' => "Deleted category '{$name}'",
         ]);
 

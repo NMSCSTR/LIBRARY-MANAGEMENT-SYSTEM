@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Supplier;
 use App\Models\ActivityLog;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,19 +31,19 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'nullable|string|max:255',
+            'name'           => 'required|string|max:255',
+            'address'        => 'nullable|string|max:255',
             'contact_person' => 'nullable|string|max:255',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string|max:20',
+            'email'          => 'nullable|email',
+            'phone'          => 'nullable|string|max:20',
         ]);
 
         $supplier = Supplier::create($request->all());
 
         // Log creation
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'create',
+            'user_id'     => Auth::id(),
+            'action'      => 'create',
             'description' => "Created supplier '{$supplier->name}' (ID: {$supplier->id})",
         ]);
 
@@ -73,11 +72,11 @@ class SupplierController extends Controller
     public function update(Request $request, Supplier $supplier)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'nullable|string|max:255',
+            'name'           => 'required|string|max:255',
+            'address'        => 'nullable|string|max:255',
             'contact_person' => 'nullable|string|max:255',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string|max:20',
+            'email'          => 'nullable|email',
+            'phone'          => 'nullable|string|max:20',
         ]);
 
         $oldName = $supplier->name;
@@ -86,8 +85,8 @@ class SupplierController extends Controller
 
         // Log update
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'update',
+            'user_id'     => Auth::id(),
+            'action'      => 'update',
             'description' => "Updated supplier '{$oldName}' to '{$supplier->name}' (ID: {$supplier->id})",
         ]);
 
@@ -104,8 +103,8 @@ class SupplierController extends Controller
 
         // Log deletion
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'delete',
+            'user_id'     => Auth::id(),
+            'action'      => 'delete',
             'description' => "Deleted supplier '{$supplierName}' (ID: {$supplier->id})",
         ]);
 

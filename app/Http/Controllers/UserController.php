@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -52,8 +52,8 @@ class UserController extends Controller
 
         // Log creation
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'create',
+            'user_id'     => Auth::id(),
+            'action'      => 'create',
             'description' => "Created user '{$user->name}' (ID: {$user->id})",
         ]);
 
@@ -111,8 +111,8 @@ class UserController extends Controller
 
         // Log update
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'update',
+            'user_id'     => Auth::id(),
+            'action'      => 'update',
             'description' => "Updated user '{$oldData['name']}' (ID: {$user->id})",
         ]);
 
@@ -125,13 +125,13 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $userName = $user->name;
-        $userId = $user->id;
+        $userId   = $user->id;
         $user->delete();
 
         // Log deletion
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'delete',
+            'user_id'     => Auth::id(),
+            'action'      => 'delete',
             'description' => "Deleted user '{$userName}' (ID: {$userId})",
         ]);
 

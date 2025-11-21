@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\ActivityLog;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -60,7 +59,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-   
+
         ActivityLog::create([
             'user_id'     => Auth::id(),
             'action'      => 'logout',

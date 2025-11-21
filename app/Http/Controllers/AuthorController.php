@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Author;
 use App\Models\ActivityLog;
+use App\Models\Author;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,8 +40,8 @@ class AuthorController extends Controller
 
         // Log creation
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'create',
+            'user_id'     => Auth::id(),
+            'action'      => 'create',
             'description' => 'Created author: ' . $author->name,
         ]);
 
@@ -75,7 +74,7 @@ class AuthorController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        $author = Author::findOrFail($id);
+        $author  = Author::findOrFail($id);
         $oldName = $author->name;
 
         $author->update([
@@ -84,8 +83,8 @@ class AuthorController extends Controller
 
         // Log update
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'update',
+            'user_id'     => Auth::id(),
+            'action'      => 'update',
             'description' => "Updated author: '$oldName' to '{$author->name}'",
         ]);
 
@@ -97,14 +96,14 @@ class AuthorController extends Controller
      */
     public function destroy(string $id)
     {
-        $author = Author::findOrFail($id);
+        $author     = Author::findOrFail($id);
         $authorName = $author->name;
         $author->delete();
 
         // Log deletion
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'delete',
+            'user_id'     => Auth::id(),
+            'action'      => 'delete',
             'description' => 'Deleted author: ' . $authorName,
         ]);
 

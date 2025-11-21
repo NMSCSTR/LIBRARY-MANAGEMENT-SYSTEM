@@ -1,8 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\Publisher;
 use App\Models\ActivityLog;
+use App\Models\Publisher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,8 +42,8 @@ class PublisherController extends Controller
 
         // Log creation
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'create',
+            'user_id'     => Auth::id(),
+            'action'      => 'create',
             'description' => "Added publisher '{$publisher->name}' (ID: {$publisher->id})",
         ]);
 
@@ -84,8 +84,8 @@ class PublisherController extends Controller
 
         // Log update
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'update',
+            'user_id'     => Auth::id(),
+            'action'      => 'update',
             'description' => "Updated publisher '{$oldName}' (ID: {$publisher->id})",
         ]);
 
@@ -102,8 +102,8 @@ class PublisherController extends Controller
 
         // Log deletion
         ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'delete',
+            'user_id'     => Auth::id(),
+            'action'      => 'delete',
             'description' => "Deleted publisher '{$name}' (ID: {$publisher->id})",
         ]);
 
