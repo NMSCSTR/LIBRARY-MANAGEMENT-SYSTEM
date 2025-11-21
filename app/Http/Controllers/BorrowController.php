@@ -63,7 +63,7 @@ class BorrowController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Borrows $borrows)
+    public function show(Borrow $borrow)
     {
         //
     }
