@@ -42,34 +42,35 @@ class BorrowController extends Controller
     $borrowDate = Carbon::now();
     $dueDate    = $borrowDate->copy()->addDays(3);
 
-    foreach ($request->books as $bookId => $data) {
-        if (!isset($data['selected'])) continue;
+foreach ($request->books as $bookId => $data) {
+    if (!isset($data['selected'])) continue;
 
-        $quantity = (int) $data['quantity'];
+    $quantity = (int) $data['quantity'];
 
+    $availableCopies = BookCopy::where('book_id', $bookId)
+        ->where('status', 'available')
+        ->take($quantity)
+        ->get();
 
-        $availableCopies = BookCopy::where('book_id', $bookId)
-            ->where('status', 'available')
-            ->take($quantity)
-            ->get();
-
-        if ($availableCopies->count() < $quantity) {
-            return redirect()->back()->with('error', "Not enough copies for '{$availableCopies->first()->book->title}'");
-        }
-
-        foreach ($availableCopies as $copy) {
-            Borrow::create([
-                'user_id'      => $request->user_id,
-                'book_id'      => $bookId,
-                'book_copy_id' => $copy->id,
-                'borrow_date'  => $borrowDate,
-                'due_date'     => $dueDate,
-                'status'       => 'borrowed',
-            ]);
-
-            $copy->update(['status' => 'borrowed']);
-        }
+    if ($availableCopies->count() < $quantity) {
+        $book = Book::find($bookId); // safely get book info
+        return redirect()->back()->with('error', "Not enough copies for '{$book->title}'");
     }
+
+    foreach ($availableCopies as $copy) {
+        Borrow::create([
+            'user_id'      => $request->user_id,
+            'book_id'      => $bookId,
+            'book_copy_id' => $copy->id,
+            'borrow_date'  => now(),
+            'due_date'     => now()->addDays(3),
+            'status'       => 'borrowed',
+        ]);
+
+        $copy->update(['status' => 'borrowed']);
+    }
+}
+
 
     return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
 }
