@@ -130,4 +130,64 @@
         <span class="material-icons-outlined">keyboard_arrow_right</span>
     </a>
 
+    <!-- Bottom Section: User Account -->
+<div class="bg-white rounded-xl shadow-lg px-6 py-4 mt-6" data-aos="slide-right">
+
+    <!-- Profile -->
+    <a href=""
+        class="flex items-center justify-between text-gray-600 hover:text-black my-4">
+        <span class="flex items-center">
+            <span class="material-icons-outlined pr-2">face</span>
+            Profile
+        </span>
+        <span class="material-icons-outlined">keyboard_arrow_right</span>
+    </a>
+
+    <!-- Settings -->
+    <a href=""
+        class="flex items-center justify-between text-gray-600 hover:text-black my-4">
+        <span class="flex items-center">
+            <span class="material-icons-outlined pr-2">settings</span>
+            Settings
+        </span>
+        <span class="material-icons-outlined">keyboard_arrow_right</span>
+    </a>
+
+    <!-- Logout -->
+    <form id="logout-form" action="{{ route('users.logout') }}" method="POST" class="inline">
+        @csrf
+        <button type="button" id="logout-button"
+            class="flex items-center justify-between text-gray-600 hover:text-black my-4 bg-transparent border-none p-0 m-0 cursor-pointer">
+            <span class="flex items-center">
+                <span class="material-icons-outlined pr-2">power_settings_new</span>
+                Log out
+            </span>
+            <span class="material-icons-outlined">keyboard_arrow_right</span>
+        </button>
+    </form>
+
+</div>
+
+<script>
+document.getElementById('logout-button').addEventListener('click', function(event) {
+    event.preventDefault();
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You will be logged out!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, log me out!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('logout-form').submit();
+        }
+    });
+});
+</script>
+
+
 </div>
