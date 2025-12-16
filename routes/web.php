@@ -124,8 +124,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Other authenticated users
-    Route::get('/instructor/dashboard', fn() => view('instructor.dashboard'))->name('instructor.dashboard');
-    Route::get('/student/dashboard', fn() => view('student.dashboard'))->name('student.dashboard');
+    Route::get('/borrower/dashboard', fn() => view('borrower.dashboard'))->name('borrower.dashboard');
     Route::get('/donor/dashboard', fn() => view('donor.dashboard'))->name('donor.dashboard');
 
     Route::resource('reservations', ReservationController::class)->names([
