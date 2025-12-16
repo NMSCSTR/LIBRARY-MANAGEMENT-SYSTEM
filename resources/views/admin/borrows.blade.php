@@ -62,11 +62,12 @@
                                     <td class="px-6 py-4">{{ $borrow->user->name }}</td>
                                     <td class="px-6 py-4">{{ $borrow->book->title }}</td>
                                     <td class="px-6 py-4">{{ $borrow->quantity }}</td>
-                                    <td class="px-6 py-4">{{ $borrow->borrow_date->format('Y-m-d H:i:s') }}</td>
-                                    <td class="px-6 py-4">{{ $borrow->due_date->format('Y-m-d H:i:s') }}</td>
+                                    <td class="px-6 py-4">{{ $borrow->borrow_date->format('F j, Y g:i A') }}</td>
+                                    <td class="px-6 py-4">{{ $borrow->due_date->format('F j, Y g:i A') }}</td>
                                     <td class="px-6 py-4">
-                                        {{ $borrow->return_date ? $borrow->return_date->format('Y-m-d H:i:s') : '-' }}
+                                        {{ $borrow->return_date ? $borrow->return_date->format('F j, Y g:i A') : '-' }}
                                     </td>
+
 
                                     <td class="px-6 py-4 capitalize">
                                         @if($borrow->status === 'returned')
