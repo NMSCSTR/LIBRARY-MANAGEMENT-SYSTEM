@@ -2,17 +2,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
-use App\Models\User;
-use App\Models\Reservation;
 use App\Models\Borrow;
+use App\Models\Reservation;
 use App\Models\Supplier;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminDashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $keyword = $request->search;
+        $keyword = trim($request->search);
 
         $books = Book::with([
             'author',
@@ -22,17 +22,19 @@ class AdminDashboardController extends Controller
             'copies',
         ])
             ->when($keyword, function ($query) use ($keyword) {
-                $query->where('title', 'like', "%$keyword%")
-                    ->orWhere('isbn', 'like', "%$keyword%")
-                    ->orWhereHas('author', fn($q) =>
-                        $q->where('name', 'like', "%$keyword%")
-                    )
-                    ->orWhereHas('category', fn($q) =>
-                        $q->where('name', 'like', "%$keyword%")
-                    )
-                    ->orWhereHas('publisher', fn($q) =>
-                        $q->where('name', 'like', "%$keyword%")
-                    );
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('title', 'like', "%{$keyword}%")
+                        ->orWhere('isbn', 'like', "%{$keyword}%")
+                        ->orWhereHas('author', function ($q2) use ($keyword) {
+                            $q2->where('name', 'like', "%{$keyword}%");
+                        })
+                        ->orWhereHas('category', function ($q2) use ($keyword) {
+                            $q2->where('name', 'like', "%{$keyword}%");
+                        })
+                        ->orWhereHas('publisher', function ($q2) use ($keyword) {
+                            $q2->where('name', 'like', "%{$keyword}%");
+                        });
+                });
             })
             ->get();
 
@@ -46,4 +48,5 @@ class AdminDashboardController extends Controller
             'keyword'           => $keyword,
         ]);
     }
+
 }

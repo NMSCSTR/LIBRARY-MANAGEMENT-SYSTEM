@@ -17,17 +17,52 @@
             {{-- Main Content --}}
             <div class="lg:w-10/12 w-full">
 
-                {{-- Book Search --}}
-                <form method="GET" action="{{ route('admin.dashboard') }}" class="mb-6">
-                    <div class="flex gap-2">
-                        <input type="text" name="search" value="{{ $keyword }}"
-                            placeholder="Search book, author, category, publisher..."
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring">
-                        <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
-                            Search
-                        </button>
+                {{-- Search Results --}}
+                @if($keyword)
+                <div class="bg-white rounded-xl shadow-lg p-6 mt-6">
+
+                    <h3 class="text-lg font-semibold mb-4">
+                        Search Results for:
+                        <span class="text-indigo-600">"{{ $keyword }}"</span>
+                    </h3>
+
+                    @forelse($books as $book)
+                    <div class="border-b pb-4 mb-4">
+                        <h4 class="text-xl font-semibold text-indigo-900">
+                            {{ $book->title }}
+                        </h4>
+
+                        <p class="text-sm text-gray-600">ISBN: {{ $book->isbn }}</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-sm">
+                            <p><strong>Author:</strong> {{ $book->author->name ?? 'N/A' }}</p>
+                            <p><strong>Category:</strong> {{ $book->category->name ?? 'N/A' }}</p>
+                            <p><strong>Publisher:</strong> {{ $book->publisher->name ?? 'N/A' }}</p>
+                            <p><strong>Supplier:</strong> {{ $book->supplier->name ?? 'N/A' }}</p>
+                        </div>
+
+                        <div class="mt-3">
+                            <p class="font-semibold text-sm mb-2">Copies & Locations:</p>
+                            <ul class="list-disc list-inside text-sm">
+                                @foreach($book->copies as $copy)
+                                <li>
+                                    Copy #{{ $copy->copy_number }}
+                                    — Shelf: <strong>{{ $copy->shelf_location }}</strong>
+                                    —
+                                    <span
+                                        class="{{ $copy->status === 'available' ? 'text-green-600' : 'text-red-600' }}">
+                                        {{ ucfirst($copy->status) }}
+                                    </span>
+                                </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
-                </form>
+                    @empty
+                    <p class="text-gray-500">No books found.</p>
+                    @endforelse
+                </div>
+                @endif
 
 
                 {{-- Dashboard Cards --}}
@@ -92,56 +127,5 @@
             </div>
         </div>
     </div>
-    @if($keyword)
-    <div class="bg-white rounded-xl shadow-lg p-6 mt-6">
-
-        <h3 class="text-lg font-semibold mb-4">
-            Search Results for: <span class="text-indigo-600">"{{ $keyword }}"</span>
-        </h3>
-
-        @forelse($books as $book)
-        <div class="border-b pb-4 mb-4">
-            <h4 class="text-xl font-semibold text-indigo-900">
-                {{ $book->title }}
-            </h4>
-
-            <p class="text-sm text-gray-600">
-                ISBN: {{ $book->isbn }}
-            </p>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-sm">
-                <p><strong>Author:</strong> {{ $book->author->name ?? 'N/A' }}</p>
-                <p><strong>Category:</strong> {{ $book->category->name ?? 'N/A' }}</p>
-                <p><strong>Publisher:</strong> {{ $book->publisher->name ?? 'N/A' }}</p>
-                <p><strong>Supplier:</strong> {{ $book->supplier->name ?? 'N/A' }}</p>
-            </div>
-
-            {{-- Copies & Location --}}
-            <div class="mt-3">
-                <p class="font-semibold text-sm mb-2">Copies & Locations:</p>
-
-                <ul class="list-disc list-inside text-sm text-gray-700">
-                    @foreach($book->copies as $copy)
-                    <li>
-                        Copy #{{ $copy->copy_number }}
-                        —
-                        Shelf: <strong>{{ $copy->shelf_location }}</strong>
-                        —
-                        Status:
-                        <span class="font-semibold
-                                {{ $copy->status === 'available' ? 'text-green-600' : 'text-red-600' }}">
-                            {{ ucfirst($copy->status) }}
-                        </span>
-                    </li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
-        @empty
-        <p class="text-gray-500">No books found.</p>
-        @endforelse
-    </div>
-    @endif
-
 </section>
 @endsection
