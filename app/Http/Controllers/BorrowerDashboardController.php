@@ -1,7 +1,11 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Book;
+use App\Models\Borrow;
+
 use Illuminate\Http\Request;
+
 
 class BorrowerDashboardController extends Controller
 {
