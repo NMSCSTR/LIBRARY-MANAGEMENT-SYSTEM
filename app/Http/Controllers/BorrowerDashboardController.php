@@ -1,10 +1,10 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\Borrow;
 use App\Models\Reservation;
+use Illuminate\Http\Request;
 
 class BorrowerDashboardController extends Controller
 {
@@ -48,17 +48,20 @@ class BorrowerDashboardController extends Controller
             'copy_id' => 'required|exists:book_copies,id',
         ]);
 
-        $bookCopy = Book::find($request->book_id)->copies()->where('id', $request->copy_id)->first();
+        // Get the exact copy
+        $bookCopy = \App\Models\BookCopy::where('id', $request->copy_id)
+            ->where('book_id', $request->book_id)
+            ->first();
 
-        if (!$bookCopy || $bookCopy->status !== 'available') {
+        if (! $bookCopy || $bookCopy->status !== 'available') {
             return back()->with('error', 'This copy is not available for reservation.');
         }
 
         // Create reservation
         Reservation::create([
-            'user_id' => auth()->id(),
-            'book_id' => $request->book_id,
-            'status' => 'reserved',
+            'user_id'     => auth()->id(),
+            'book_id'     => $request->book_id,
+            'status'      => 'reserved',
             'reserved_at' => now(),
         ]);
 
