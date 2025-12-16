@@ -6,7 +6,7 @@
 <section class="bg-gray-50 min-h-screen">
 
     {{-- Top Navigation --}}
-    @include('components.admin.topnav')
+    @include('components.borrower.topnav')
 
     <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-10 gap-6 pt-10 mt-10">
 

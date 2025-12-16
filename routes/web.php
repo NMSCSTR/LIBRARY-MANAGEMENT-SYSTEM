@@ -15,6 +15,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\BorrowerDashboardController;
+use App\Http\Controllers\BorrowerProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -132,6 +133,11 @@ Route::middleware('auth')->group(function () {
         ->name('borrower.reserve');
     Route::delete('/borrower/reservation/{reservation}', [BorrowerDashboardController::class, 'cancelReservation'])
         ->name('borrower.cancelReservation');
+
+    Route::get('/borrower/profile', [BorrowerProfileController::class, 'edit'])
+        ->name('borrower.profile');
+    Route::put('/borrower/profile', [BorrowerProfileController::class, 'update'])
+        ->name('borrower.profile.update');
 
     Route::resource('reservations', ReservationController::class)->names([
         'index'   => 'reservations.index',
