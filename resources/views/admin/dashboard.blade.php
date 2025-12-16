@@ -16,6 +16,25 @@
 
             {{-- Main Content --}}
             <div class="lg:w-10/12 w-full">
+                {{-- Book Search --}}
+                <form method="GET" action="{{ route('admin.dashboard') }}" class="mb-6">
+                    <div class="flex gap-2">
+                        <input
+                            type="text"
+                            name="search"
+                            value="{{ $keyword }}"
+                            placeholder="Search book, author, category, publisher..."
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring"
+                        >
+                        <button
+                            type="submit"
+                            class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700"
+                        >
+                            Search
+                        </button>
+                    </div>
+                </form>
+
 
                 {{-- Search Results --}}
                 @if($keyword)
