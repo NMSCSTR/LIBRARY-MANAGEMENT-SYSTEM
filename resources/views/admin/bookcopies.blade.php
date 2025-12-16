@@ -156,10 +156,15 @@
                                             <span class="px-2 py-1 bg-green-200 text-green-800 rounded">Available</span>
                                         @elseif($copy->status == 'borrowed')
                                             <span class="px-2 py-1 bg-yellow-200 text-yellow-800 rounded">Borrowed</span>
-                                        @else
+                                        @elseif($copy->status == 'reserved')
+                                            <span class="px-2 py-1 bg-blue-200 text-blue-800 rounded">Reserved</span>
+                                        @elseif($copy->status == 'lost')
                                             <span class="px-2 py-1 bg-red-200 text-red-800 rounded">Lost</span>
+                                        @elseif($copy->status == 'damaged')
+                                            <span class="px-2 py-1 bg-gray-200 text-gray-800 rounded">Damaged</span>
                                         @endif
                                     </td>
+
                                     <td class="px-6 py-4">{{ $copy->shelf_location }}</td>
                                     <td class="px-6 py-4 flex gap-2">
 
