@@ -53,8 +53,8 @@ class BorrowController extends Controller
                     'user_id'      => $request->user_id,
                     'book_id'      => $bookId,
                     'book_copy_id' => $copy->id,
-                    'borrow_date'  => now(),
-                    'due_date'     => now()->addDays(3),
+                    'borrow_date'  => Carbon::now('Asia/Manila'),
+                    'due_date'     => Carbon::now('Asia/Manila')->addDays(3),
                     'status'       => 'borrowed',
                 ]);
 
@@ -74,7 +74,7 @@ class BorrowController extends Controller
         }
 
         $borrow->update([
-            'return_date' => now(),
+            'return_date' => Carbon::now('Asia/Manila'),
             'status'      => 'returned',
         ]);
 
