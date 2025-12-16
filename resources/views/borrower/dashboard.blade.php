@@ -10,9 +10,9 @@
     <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-10 gap-6">
 
         {{-- Sidebar --}}
-        <div class="lg:w-2/12 w-full">
+        {{-- <div class="lg:w-2/12 w-full">
             @include('components.admin.sidebar')
-        </div>
+        </div> --}}
 
         {{-- Main Content --}}
         <div class="lg:w-10/12 w-full space-y-8">
