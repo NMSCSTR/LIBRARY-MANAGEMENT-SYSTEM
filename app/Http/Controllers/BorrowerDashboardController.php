@@ -5,25 +5,48 @@ use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\Borrow;
 use App\Models\Reservation;
-
+use Illuminate\Support\Facades\DB;
 
 class BorrowerDashboardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-public function index(Request $request)
+    public function index(Request $request)
     {
         $keyword = $request->search ?? null;
 
+        // Search books
         $books = Book::with(['author', 'publisher', 'category', 'copies'])
             ->when($keyword, fn($q) => $q->where('title', 'like', "%$keyword%"))
             ->get();
 
-        $transactions = Borrow::with(['book', 'bookCopy'])
+        // Merge Borrow and Reservation records
+        $borrowed = Borrow::with(['book', 'bookCopy'])
             ->where('user_id', auth()->id())
-            ->orderBy('borrow_date', 'desc')
-            ->get();
+            ->get()
+            ->map(fn($b) => [
+                'id' => $b->id,
+                'book_title' => $b->book->title,
+                'copy_number' => $b->bookCopy->copy_number ?? '-',
+                'status' => $b->status,
+                'borrowed_at' => $b->borrow_date,
+                'due_date' => $b->due_date,
+                'returned_at' => $b->return_date,
+            ]);
+
+        $reserved = Reservation::with('book')
+            ->where('user_id', auth()->id())
+            ->get()
+            ->map(fn($r) => [
+                'id' => $r->id,
+                'book_title' => $r->book->title,
+                'copy_number' => '-', // reservation does not track copy number yet
+                'status' => 'reserved',
+                'borrowed_at' => $r->reserved_at,
+                'due_date' => null,
+                'returned_at' => null,
+            ]);
+
+        // Merge and sort by date
+        $transactions = $borrowed->merge($reserved)->sortByDesc('borrowed_at');
 
         return view('borrower.dashboard', compact('books', 'transactions', 'keyword'));
     }
@@ -49,57 +72,9 @@ public function index(Request $request)
             'reserved_at' => now(),
         ]);
 
-        // Optionally, mark copy as reserved
+        // Mark copy as reserved
         $bookCopy->update(['status' => 'reserved']);
 
         return back()->with('success', 'Book reserved successfully!');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

@@ -3,7 +3,7 @@
 @section('title', 'Borrower Dashboard | LMIS')
 
 @section('content')
-<section class="bg-gray-50 min-h-screen pt-24">
+<section class="bg-gray-50">
 
     @include('components.admin.topnav')
 
@@ -11,8 +11,7 @@
 
         {{-- Sidebar --}}
         {{-- <div class="lg:w-2/12 w-full">
-            @include('components.admin.sidebar')
-        </div> --}}
+
 
         {{-- Main Content --}}
         <div class="lg:w-10/12 w-full space-y-8">
