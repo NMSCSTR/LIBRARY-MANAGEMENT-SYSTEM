@@ -70,15 +70,19 @@
                             <p><strong>Supplier:</strong> {{ $book->supplier->name ?? 'N/A' }}</p>
                         </div>
 
+                        {{-- Copies & Shelf Locations --}}
                         <div class="mt-4">
-                            <p class="text-sm font-semibold mb-2">Copies</p>
+                            <p class="text-sm font-semibold mb-2">Copies & Shelf Locations</p>
+
                             <div class="flex flex-wrap gap-2">
                                 @foreach($book->copies as $copy)
-                                <span class="text-xs px-3 py-1 rounded-full
+                                <span class="text-xs px-3 py-1 rounded-full border
                                     {{ $copy->status === 'available'
-                                        ? 'bg-green-100 text-green-700'
-                                        : 'bg-red-100 text-red-700' }}">
-                                    #{{ $copy->copy_number }} · {{ ucfirst($copy->status) }}
+                                        ? 'bg-green-100 border-green-300 text-green-700'
+                                        : 'bg-red-100 border-red-300 text-red-700' }}">
+                                    Copy #{{ $copy->copy_number }}
+                                    · Shelf: <strong>{{ $copy->shelf_location }}</strong>
+                                    · {{ ucfirst($copy->status) }}
                                 </span>
                                 @endforeach
                             </div>
@@ -106,7 +110,6 @@
 
                 @foreach($cards as $card)
                 <div class="relative bg-white rounded-2xl shadow p-6 hover:shadow-xl transition">
-
                     <div class="absolute left-0 top-0 h-full w-1 bg-{{ $card['color'] }}-500 rounded-l-2xl"></div>
 
                     <div class="flex justify-between items-center">
