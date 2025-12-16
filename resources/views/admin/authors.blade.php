@@ -3,197 +3,142 @@
 @section('title', 'Authors | Admin Dashboard | LMIS')
 
 @section('content')
+<section class="bg-gray-50 min-h-screen pt-24">
 
-<section>
-    <div class="min-h-screen pt-24">
-        {{-- Include Top Navigation --}}
-        @include('components.admin.topnav')
-        <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-4 gap-6">
+    {{-- Top Navigation --}}
+    @include('components.admin.topnav')
 
-            {{-- Include Sidebar --}}
-            <div class="lg:w-2/12 w-full">
-                @include('components.admin.sidebar')
-            </div>
+    <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-10 gap-6">
 
-            {{-- Main Content --}}
-            <div class="lg:w-10/12 w-full">
+        {{-- Sidebar --}}
+        <div class="lg:w-2/12 w-full">
+            @include('components.admin.sidebar')
+        </div>
 
-                <div class="bg-white rounded-xl shadow-lg">
-                    <div class="px-6 py-6">
+        {{-- Main Content --}}
+        <div class="lg:w-10/12 w-full space-y-6">
 
-                        <!-- Breadcrumb -->
-                        <nav class="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-lg bg-gray-50"
-                            aria-label="Breadcrumb">
-                            <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-                                <li class="inline-flex items-center">
-                                    <a href="#"
-                                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
-                                        <svg class="w-3 h-3 me-2.5" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                            <path
-                                                d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
-                                        </svg>
-                                        Admin
-                                    </a>
-                                </li>
-                                <li>
-                                    <div class="flex items-center">
-                                        <svg class="rtl:rotate-180 block w-3 h-3 mx-1 text-gray-400" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="m1 9 4-4-4-4" />
-                                        </svg>
-                                        <a href="#"
-                                            class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2">Dashboard</a>
-                                    </div>
-                                </li>
-                                <li aria-current="page">
-                                    <div class="flex items-center">
-                                        <svg class="rtl:rotate-180 w-3 h-3 mx-1 text-gray-400" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="m1 9 4-4-4-4" />
-                                        </svg>
-                                        <span
-                                            class="ms-1 text-sm font-medium text-gray-500 md:ms-2">Authors</span>
-                                    </div>
-                                </li>
-                            </ol>
-                        </nav>
+            {{-- Header Card --}}
+            <div class="bg-white rounded-2xl shadow">
 
-                        <div class="flex justify-end py-2">
-                            <button id="defaultModalButton" data-modal-target="defaultModal"
-                                data-modal-toggle="defaultModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
-                                    focus:ring-4 focus:outline-none focus:ring-blue-300
-                                    font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition">
+                <div class="px-6 py-5 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-                                <!-- Plus Icon -->
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                                    stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                </svg>
+                    {{-- Breadcrumb --}}
+                    <nav class="flex text-gray-600 text-sm" aria-label="Breadcrumb">
+                        <ol class="inline-flex items-center space-x-2">
+                            <li class="inline-flex items-center">
+                                <span class="font-medium text-gray-700">Admin</span>
+                            </li>
+                            <li>/</li>
+                            <li class="text-gray-500">Authors</li>
+                        </ol>
+                    </nav>
 
-                                Add Author
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="relative overflow-x-auto sm:rounded-lg px-6 py-6 shadow-2xl">
-                        <table id="datatable"
-                            class="w-full text-sm text-left rtl:text-right text-gray-700">
-                            <thead
-                                class="text-xs text-gray-700 uppercase bg-gray-100 py-4">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Author's Name
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex justify-end">
-                                            <span class="sr-only">Actions</span>
-                                        </div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($authors as $author)
-                                <tr class="odd:bg-white even:bg-gray-50 border-b py-4">
-                                    <td class="px-6 py-4">{{ $author->name }}</td>
-                                    <td class="px-6 py-4 flex gap-2 justify-end">
-                                        {{-- Edit --}}
-                                        <a href="{{ route('authors.edit', $author->id) }}"
-                                            class="px-2 py-1 text-xs text-white bg-blue-700 hover:bg-blue-800">
-                                            Edit
-                                        </a>
-
-                                        {{-- Delete --}}
-                                        <button data-id="{{ $author->id }}"
-                                            class="delete-author-btn px-2 py-1 text-xs text-white bg-red-600 hover:bg-red-700">
-                                            Delete
-                                        </button>
-
-                                        <form id="delete-author-form-{{ $author->id }}"
-                                            action="{{ route('authors.destroy', $author->id) }}" method="POST"
-                                            class="hidden">
-                                            @csrf
-                                            @method('DELETE')
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                    {{-- Add Author Button --}}
+                    <button
+                        data-modal-target="defaultModal"
+                        data-modal-toggle="defaultModal"
+                        class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700
+                        text-white text-sm font-medium px-5 py-2.5 rounded-xl shadow transition"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Add Author
+                    </button>
                 </div>
+
+                {{-- Table --}}
+                <div class="overflow-x-auto p-6">
+                    <table class="w-full text-sm text-left text-gray-700">
+                        <thead class="text-xs uppercase bg-gray-100 rounded-lg">
+                            <tr>
+                                <th class="px-6 py-4">Author Name</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($authors as $author)
+                            <tr class="border-b hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 font-medium text-gray-800">
+                                    {{ $author->name }}
+                                </td>
+                                <td class="px-6 py-4 flex justify-end gap-2">
+
+                                    {{-- Edit --}}
+                                    <a href="{{ route('authors.edit', $author->id) }}"
+                                        class="inline-flex items-center gap-1 px-3 py-1.5
+                                        text-xs text-white bg-blue-600 hover:bg-blue-700
+                                        rounded-lg transition">
+                                        Edit
+                                    </a>
+
+                                    {{-- Delete --}}
+                                    <button
+                                        data-id="{{ $author->id }}"
+                                        class="delete-author-btn inline-flex items-center gap-1
+                                        px-3 py-1.5 text-xs text-white bg-red-600 hover:bg-red-700
+                                        rounded-lg transition">
+                                        Delete
+                                    </button>
+
+                                    <form id="delete-author-form-{{ $author->id }}"
+                                        action="{{ route('authors.destroy', $author->id) }}"
+                                        method="POST" class="hidden">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
+
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <!-- Main modal -->
+    {{-- Add Author Modal --}}
     <div id="defaultModal" tabindex="-1" aria-hidden="true"
         class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
 
-        <div class="relative w-full max-w-lg p-4">
-            <!-- Modal content -->
-            <div class="relative bg-white rounded-2xl shadow-2xl p-6">
+        <div class="w-full max-w-md p-4">
+            <div class="bg-white rounded-2xl shadow-2xl p-6">
 
-                <!-- Modal header -->
-                <div class="flex items-center justify-between border-b pb-3 mb-4">
-                    <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6 text-blue-600">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4.5 20.25a9 9 0 1115 0v.75H4.5v-.75z" />
-                        </svg>
-                        Add Author
-                    </h3>
-
-                    <button type="button"
-                        class="p-2 rounded-full hover:bg-gray-200 text-gray-500 hover:text-gray-800"
-                        data-modal-toggle="defaultModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                {{-- Modal Header --}}
+                <div class="flex justify-between items-center border-b pb-3 mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">Add Author</h3>
+                    <button data-modal-toggle="defaultModal"
+                        class="p-2 rounded-full hover:bg-gray-200 text-gray-500">
+                        ✕
                     </button>
                 </div>
 
-                <!-- Modal body -->
-                <form action="{{ route('authors.store') }}" method="POST" class="space-y-5">
+                {{-- Modal Body --}}
+                <form action="{{ route('authors.store') }}" method="POST" class="space-y-4">
                     @csrf
-                    <!-- Input field -->
-                    <div class="space-y-2">
-                        <label for="name" class="text-sm font-medium text-gray-700">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
                             Author Name
                         </label>
-
-                        <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="w-5 h-5 text-gray-500">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M4.5 20.25a9 9 0 1115 0v.75H4.5v-.75z" />
-                            </svg>
-
-                            <input type="text" name="name" id="name"
-                                class="w-full p-2.5 text-sm bg-transparent focus:outline-none"
-                                placeholder="Enter author's full name" required>
-                        </div>
+                        <input
+                            type="text"
+                            name="name"
+                            required
+                            placeholder="Enter full name"
+                            class="w-full px-4 py-2.5 border rounded-xl text-sm
+                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        >
                     </div>
 
-                    <!-- Submit button -->
                     <button type="submit"
-                        class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition-all">
-
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-
+                        class="w-full bg-indigo-600 hover:bg-indigo-700
+                        text-white font-medium py-2.5 rounded-xl transition">
                         Add Author
                     </button>
                 </form>
@@ -211,15 +156,15 @@
 <script>
     document.querySelectorAll('.delete-author-btn').forEach(button => {
         button.addEventListener('click', function () {
-            let authorId = this.getAttribute('data-id');
+            let authorId = this.dataset.id;
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "This author will be deleted permanently!",
+                text: 'This author will be deleted permanently!',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#4f46e5',
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
