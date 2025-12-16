@@ -17,16 +17,13 @@ class BorrowController extends Controller
 
     public function index()
     {
-        // Fetch borrows grouped by user and book with quantity
         $borrows = Borrow::with(['user', 'book'])
-            ->select('user_id', 'book_id', DB::raw('COUNT(*) as quantity'), DB::raw('MAX(borrow_date) as borrow_date'), DB::raw('MAX(due_date) as due_date'))
-            ->groupBy('user_id', 'book_id')
             ->orderByDesc('borrow_date')
             ->get();
 
-        // Pass to the view
         return view('admin.borrows', compact('borrows'));
     }
+
 
     /**
      * Show the form for creating a new resource.
