@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Book;
@@ -34,7 +33,9 @@ class BorrowController extends Controller
         ]);
 
         foreach ($request->books as $bookId => $data) {
-            if (!isset($data['selected'])) continue;
+            if (! isset($data['selected'])) {
+                continue;
+            }
 
             $quantity = (int) $data['quantity'];
 
@@ -65,7 +66,7 @@ class BorrowController extends Controller
         return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
     }
 
-    public function return($id)
+    public function return ($id)
     {
         $borrow = Borrow::findOrFail($id);
 
@@ -78,6 +79,7 @@ class BorrowController extends Controller
             'status'      => 'returned',
         ]);
 
+        // Mark the borrowed copy as available
         if ($borrow->bookCopy) {
             $borrow->bookCopy->update(['status' => 'available']);
         }
@@ -117,7 +119,8 @@ class BorrowController extends Controller
 
     public function destroy(Borrow $borrow)
     {
-        if ($borrow->status === 'borrowed' && $borrow->bookCopy) {
+
+        if ($borrow->bookCopy) {
             $borrow->bookCopy->update(['status' => 'available']);
         }
 
@@ -125,4 +128,5 @@ class BorrowController extends Controller
 
         return redirect()->route('borrows.index')->with('success', 'Borrow record deleted successfully.');
     }
+
 }
