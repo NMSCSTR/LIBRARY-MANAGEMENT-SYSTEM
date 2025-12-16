@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Book;
@@ -7,35 +8,24 @@ use App\Models\Borrow;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class BorrowController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-
     public function index()
     {
-        $borrows = Borrow::with(['user', 'book'])
+        $borrows = Borrow::with(['user', 'book', 'bookCopy'])
             ->orderByDesc('borrow_date')
             ->get();
 
-        return view('admin.borrows', compact('borrows'));
+        $books = Book::withCount(['copies as available_copies' => function ($q) {
+            $q->where('status', 'available');
+        }])->get();
+
+        $users = User::all();
+
+        return view('admin.borrows', compact('borrows', 'books', 'users'));
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -43,13 +33,8 @@ class BorrowController extends Controller
             'books'   => 'required|array',
         ]);
 
-        $borrowDate = Carbon::now();
-        $dueDate    = $borrowDate->copy()->addDays(3);
-
         foreach ($request->books as $bookId => $data) {
-            if (! isset($data['selected'])) {
-                continue;
-            }
+            if (!isset($data['selected'])) continue;
 
             $quantity = (int) $data['quantity'];
 
@@ -80,12 +65,12 @@ class BorrowController extends Controller
         return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
     }
 
-    public function return ($id)
+    public function return($id)
     {
         $borrow = Borrow::findOrFail($id);
 
-        if ($borrow->return_date !== null) {
-            return redirect()->back()->with('error', 'This book is already returned.');
+        if ($borrow->status === 'returned') {
+            return redirect()->back()->with('info', 'This book is already returned.');
         }
 
         $borrow->update([
@@ -93,23 +78,13 @@ class BorrowController extends Controller
             'status'      => 'returned',
         ]);
 
-        // Restore book count
-        $borrow->book->increment('copies_available');
+        if ($borrow->bookCopy) {
+            $borrow->bookCopy->update(['status' => 'available']);
+        }
 
         return redirect()->route('borrows.index')->with('success', 'Book returned successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Borrow $borrow)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Borrow $borrow)
     {
         $users = User::all();
@@ -118,9 +93,6 @@ class BorrowController extends Controller
         return view('admin.borrow-edit', compact('borrow', 'users', 'books'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Borrow $borrow)
     {
         $request->validate([
@@ -136,40 +108,21 @@ class BorrowController extends Controller
             'status'      => $request->return_date ? 'returned' : 'borrowed',
         ]);
 
-        if ($request->return_date && $borrow->wasChanged('return_date')) {
-            $borrow->book->increment('copies_available');
+        if ($request->return_date && $borrow->wasChanged('return_date') && $borrow->bookCopy) {
+            $borrow->bookCopy->update(['status' => 'available']);
         }
 
         return redirect()->route('borrows.index')->with('success', 'Borrow record updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Borrow $borrow)
     {
-        if ($borrow->status === 'borrowed') {
-            $borrow->book->increment('copies_available');
+        if ($borrow->status === 'borrowed' && $borrow->bookCopy) {
+            $borrow->bookCopy->update(['status' => 'available']);
         }
 
         $borrow->delete();
 
         return redirect()->route('borrows.index')->with('success', 'Borrow record deleted successfully.');
-    }
-
-    public function returnBook(Borrow $borrow)
-    {
-        if ($borrow->status === 'returned') {
-            return redirect()->back()->with('info', 'This book is already returned.');
-        }
-
-        $borrow->update([
-            'return_date' => Carbon::now(),
-            'status'      => 'returned',
-        ]);
-
-        $borrow->book->increment('copies_available');
-
-        return redirect()->back()->with('success', 'Book returned successfully.');
     }
 }

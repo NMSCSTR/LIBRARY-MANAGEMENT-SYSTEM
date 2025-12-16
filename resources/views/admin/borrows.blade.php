@@ -31,9 +31,8 @@
 
                         <!-- Add Button -->
                         <div class="flex justify-end py-4">
-                            <button data-modal-target="createBorrowModal"
-                                    data-modal-toggle="createBorrowModal"
-                                    class="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg shadow">
+                            <button data-modal-target="createBorrowModal" data-modal-toggle="createBorrowModal"
+                                class="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg shadow">
                                 +
                                 Add Borrow
                             </button>
@@ -70,17 +69,17 @@
                                     </td>
                                     <td class="px-6 py-4 capitalize">
                                         @if($borrow->status === 'returned')
-                                            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs">
-                                                Returned
-                                            </span>
+                                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs">
+                                            Returned
+                                        </span>
                                         @elseif($borrow->status === 'overdue')
-                                            <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs">
-                                                Overdue
-                                            </span>
+                                        <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs">
+                                            Overdue
+                                        </span>
                                         @else
-                                            <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs">
-                                                Borrowed
-                                            </span>
+                                        <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs">
+                                            Borrowed
+                                        </span>
                                         @endif
                                     </td>
 
@@ -88,25 +87,23 @@
 
                                         {{-- Return --}}
                                         @if($borrow->status !== 'returned')
-                                        <button data-id="{{ $borrow->id }}"
-                                                data-modal-target="returnBorrowModal"
-                                                data-modal-toggle="returnBorrowModal"
-                                                class="return-borrow-btn px-3 py-2 text-xs bg-green-600 text-white rounded">
+                                        <button data-id="{{ $borrow->id }}" data-modal-target="returnBorrowModal"
+                                            data-modal-toggle="returnBorrowModal"
+                                            class="return-borrow-btn px-3 py-2 text-xs bg-green-600 text-white rounded">
                                             Return
                                         </button>
                                         @endif
 
                                         {{-- Delete --}}
                                         <button data-id="{{ $borrow->id }}"
-                                                class="delete-borrow-btn px-3 py-2 text-xs bg-red-600 text-white rounded">
+                                            class="delete-borrow-btn px-3 py-2 text-xs bg-red-600 text-white rounded">
                                             Delete
                                         </button>
 
                                         {{-- ✅ FIXED ROUTE --}}
                                         <form method="POST"
                                             action="{{ route('borrows.destroy', ['borrow' => $borrow->id]) }}"
-                                            id="delete-borrow-form-{{ $borrow->id }}"
-                                            class="hidden">
+                                            id="delete-borrow-form-{{ $borrow->id }}" class="hidden">
                                             @csrf
                                             @method('DELETE')
                                         </form>
@@ -136,18 +133,59 @@
                 <p class="mb-4">Confirm marking this book as returned?</p>
 
                 <div class="flex justify-end gap-3">
-                    <button type="button" data-modal-toggle="returnBorrowModal"
-                            class="px-3 py-2 bg-gray-300 rounded">
+                    <button type="button" data-modal-toggle="returnBorrowModal" class="px-3 py-2 bg-gray-300 rounded">
                         Cancel
                     </button>
-                    <button type="submit"
-                            class="px-3 py-2 bg-green-600 text-white rounded">
+                    <button type="submit" class="px-3 py-2 bg-green-600 text-white rounded">
                         Return
                     </button>
                 </div>
             </form>
         </div>
     </div>
+
+    <!-- Add Borrow Modal -->
+    <div id="createBorrowModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-2xl">
+            <h3 class="text-lg font-bold mb-4">Add Borrow</h3>
+
+            <form action="{{ route('borrows.store') }}" method="POST">
+                @csrf
+
+                <div class="mb-4">
+                    <label for="user_id" class="block mb-2 font-medium">Select User</label>
+                    <select name="user_id" id="user_id" class="w-full border px-3 py-2 rounded">
+                        @foreach($users as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block mb-2 font-medium">Select Books</label>
+                    <div class="space-y-2 max-h-64 overflow-y-auto border p-3 rounded">
+                        @foreach($books as $book)
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" name="books[{{ $book->id }}][selected]" id="book-{{ $book->id }}">
+                            <label for="book-{{ $book->id }}">
+                                {{ $book->title }} (Available: {{ $book->available_copies }})
+                            </label>
+                            <input type="number" name="books[{{ $book->id }}][quantity]" min="1"
+                                max="{{ $book->available_copies }}" value="1" class="w-16 border px-2 py-1 rounded">
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <button type="button" data-modal-toggle="createBorrowModal"
+                        class="px-3 py-2 bg-gray-300 rounded">Cancel</button>
+                    <button type="submit" class="px-3 py-2 bg-blue-600 text-white rounded">Borrow</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
 </section>
 @endsection
@@ -156,7 +194,7 @@
 @include('components.alerts')
 
 <script>
-document.querySelectorAll('.delete-borrow-btn').forEach(btn => {
+    document.querySelectorAll('.delete-borrow-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const id = btn.dataset.id;
 

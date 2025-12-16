@@ -14,6 +14,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('book_id')->constrained()->onDelete('cascade');
+            $table->foreignId('book_copy_id')->nullable()->constrained('book_copies')->onDelete('cascade');
             $table->dateTime('borrow_date');
             $table->dateTime('due_date');
             $table->dateTime('return_date')->nullable();
