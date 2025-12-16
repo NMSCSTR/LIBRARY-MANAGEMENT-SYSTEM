@@ -45,7 +45,7 @@
                         <table id="datatable" class="w-full text-sm text-left text-gray-500">
                             <thead class="text-xs uppercase bg-gray-100">
                                 <tr>
-                                    <th class="px-6 py-3">User</th>
+                                    <th class="px-6 py-3">Borrower</th>
                                     <th class="px-6 py-3">Book</th>
                                     <th class="px-6 py-3">Qty</th>
                                     <th class="px-6 py-3">Borrow Date</th>
@@ -62,11 +62,12 @@
                                     <td class="px-6 py-4">{{ $borrow->user->name }}</td>
                                     <td class="px-6 py-4">{{ $borrow->book->title }}</td>
                                     <td class="px-6 py-4">{{ $borrow->quantity }}</td>
-                                    <td class="px-6 py-4">{{ $borrow->borrow_date->format('Y-m-d') }}</td>
-                                    <td class="px-6 py-4">{{ $borrow->due_date->format('Y-m-d') }}</td>
+                                    <td class="px-6 py-4">{{ $borrow->borrow_date->format('Y-m-d H:i:s') }}</td>
+                                    <td class="px-6 py-4">{{ $borrow->due_date->format('Y-m-d H:i:s') }}</td>
                                     <td class="px-6 py-4">
-                                        {{ $borrow->return_date ? $borrow->return_date->format('Y-m-d') : '-' }}
+                                        {{ $borrow->return_date ? $borrow->return_date->format('Y-m-d H:i:s') : '-' }}
                                     </td>
+
                                     <td class="px-6 py-4 capitalize">
                                         @if($borrow->status === 'returned')
                                         <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs">
