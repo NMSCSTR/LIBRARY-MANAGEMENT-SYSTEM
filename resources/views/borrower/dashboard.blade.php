@@ -8,13 +8,40 @@
     {{-- Top Navigation --}}
     @include('components.admin.topnav')
 
-    <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-10 gap-6">
-
-        {{-- Sidebar placeholder --}}
-        {{-- Add your sidebar here if needed --}}
+    <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-10 gap-6 pt-10 mt-10">
 
         {{-- Main Content --}}
         <div class="w-full space-y-8">
+
+            {{-- Header --}}
+            <div class="text-center lg:text-left">
+                <h1 class="text-2xl font-bold text-indigo-900">Borrower Dashboard</h1>
+                <p class="text-gray-600 mt-1">View your borrowed books, reservations, and search the library collection.</p>
+            </div>
+
+            {{-- Dashboard Summary Cards --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition">
+                    <span class="material-icons text-indigo-500 text-3xl mb-2">menu_book</span>
+                    <p class="text-sm text-gray-500">Total Books Borrowed</p>
+                    <p class="text-lg font-semibold text-indigo-900">{{ $summary['borrowed'] ?? 0 }}</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition">
+                    <span class="material-icons text-yellow-500 text-3xl mb-2">access_time</span>
+                    <p class="text-sm text-gray-500">Overdue Books</p>
+                    <p class="text-lg font-semibold text-red-600">{{ $summary['overdue'] ?? 0 }}</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition">
+                    <span class="material-icons text-green-500 text-3xl mb-2">check_circle</span>
+                    <p class="text-sm text-gray-500">Available Books</p>
+                    <p class="text-lg font-semibold text-green-600">{{ $summary['available'] ?? 0 }}</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition">
+                    <span class="material-icons text-indigo-500 text-3xl mb-2">schedule</span>
+                    <p class="text-sm text-gray-500">Reservations</p>
+                    <p class="text-lg font-semibold text-indigo-900">{{ $summary['reserved'] ?? 0 }}</p>
+                </div>
+            </div>
 
             {{-- Search Bar --}}
             <form method="GET" action="{{ route('borrower.dashboard') }}">
