@@ -14,6 +14,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\BorrowerDashboardController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -124,8 +125,12 @@ Route::middleware('auth')->group(function () {
     });
 
     // Other authenticated users
-    Route::get('/borrower/dashboard', fn() => view('borrower.dashboard'))->name('borrower.dashboard');
-    Route::get('/donor/dashboard', fn() => view('donor.dashboard'))->name('donor.dashboard');
+
+    Route::get('/borrower/dashboard', [BorrowerDashboardController::class, 'index'])
+         ->name('borrower.dashboard');
+
+    Route::post('/borrower/reserve', [BorrowerDashboardController::class, 'reserve'])
+         ->name('borrower.reserve');
 
     Route::resource('reservations', ReservationController::class)->names([
         'index'   => 'reservations.index',
