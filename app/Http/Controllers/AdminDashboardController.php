@@ -9,14 +9,40 @@ use App\Models\User;
 
 class AdminDashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $keyword = $request->search;
+
+        $books = Book::with([
+            'author',
+            'category',
+            'publisher',
+            'supplier',
+            'copies',
+        ])
+            ->when($keyword, function ($query) use ($keyword) {
+                $query->where('title', 'like', "%$keyword%")
+                    ->orWhere('isbn', 'like', "%$keyword%")
+                    ->orWhereHas('author', fn($q) =>
+                        $q->where('name', 'like', "%$keyword%")
+                    )
+                    ->orWhereHas('category', fn($q) =>
+                        $q->where('name', 'like', "%$keyword%")
+                    )
+                    ->orWhereHas('publisher', fn($q) =>
+                        $q->where('name', 'like', "%$keyword%")
+                    );
+            })
+            ->get();
+
         return view('admin.dashboard', [
             'totalUsers'        => User::count(),
             'totalBooks'        => Book::count(),
             'totalReservations' => Reservation::count(),
             'totalBorrows'      => Borrow::count(),
             'totalSuppliers'    => Supplier::count(),
+            'books'             => $books,
+            'keyword'           => $keyword,
         ]);
     }
 }
