@@ -5,8 +5,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reservation extends Model
 {
-    //
-    protected $fillable = ['user_id', 'book_id', 'status', 'reserved_at'];
+    protected $fillable = [
+        'user_id',
+        'book_id',
+        'copy_id', 
+        'status',
+        'reserved_at'
+    ];
 
     public function user()
     {
@@ -16,5 +21,10 @@ class Reservation extends Model
     public function book()
     {
         return $this->belongsTo(Book::class);
+    }
+
+    public function copy()
+    {
+        return $this->belongsTo(BookCopy::class, 'copy_id');
     }
 }
