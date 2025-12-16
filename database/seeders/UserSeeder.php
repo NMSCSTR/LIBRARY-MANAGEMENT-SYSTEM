@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
         User::create([
             'role_id'  => $librarian->id,
             'name'     => 'Main Librarian',
-            'email'    => 'librarian@lms.com',
+            'email'    => 'a',
             'password' => Hash::make('password'),
         ]);
 

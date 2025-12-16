@@ -23,10 +23,9 @@ class AuthController extends Controller
         $remember = $request->has('remember');
 
         if (Auth::attempt($credentials, $remember)) {
-
             $request->session()->regenerate();
 
-            // Log activity: LOGIN SUCCESS
+            // Log successful login
             ActivityLog::create([
                 'user_id'     => Auth::id(),
                 'action'      => 'login',
@@ -36,8 +35,7 @@ class AuthController extends Controller
             $role = Auth::user()->role->name;
 
             return match ($role) {
-                'admin'      => redirect()->route('admin.dashboard'),
-                'librarian'  => redirect()->route('librarian.dashboard'),
+                'admin', 'librarian' => redirect()->route('admin.dashboard'), // unified dashboard
                 'instructor' => redirect()->route('instructor.dashboard'),
                 'student'    => redirect()->route('student.dashboard'),
                 'donor'      => redirect()->route('donor.dashboard'),
