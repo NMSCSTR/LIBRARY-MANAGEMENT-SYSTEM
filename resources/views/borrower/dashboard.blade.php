@@ -3,20 +3,15 @@
 @section('title', 'Borrower Dashboard | LMIS')
 
 @section('content')
-<section class="bg-gray-50 min-h-screen pt-24">
+<section class="bg-gray-50 min-h-screen">
 
     {{-- Top Navigation --}}
     @include('components.admin.topnav')
 
-    <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-10 gap-6">
-
-        {{-- Sidebar --}}
-        <div class="lg:w-2/12 w-full">
-            @include('components.admin.sidebar')
-        </div>
+    <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-10 gap-6 pt-10 mt-10">
 
         {{-- Main Content --}}
-        <div class="lg:w-10/12 w-full space-y-8">
+        <div class="w-full space-y-8">
 
             {{-- Header --}}
             <div class="text-center lg:text-left">
@@ -26,10 +21,26 @@
 
             {{-- Dashboard Summary Cards --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <x-dashboard-card icon="menu_book" label="Total Books Borrowed" value="{{ $summary['borrowed'] ?? 0 }}" color="indigo" />
-                <x-dashboard-card icon="access_time" label="Overdue Books" value="{{ $summary['overdue'] ?? 0 }}" color="red" />
-                <x-dashboard-card icon="check_circle" label="Available Books" value="{{ $summary['available'] ?? 0 }}" color="green" />
-                <x-dashboard-card icon="schedule" label="Reservations" value="{{ $summary['reserved'] ?? 0 }}" color="indigo" />
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition">
+                    <span class="material-icons text-indigo-500 text-3xl mb-2">menu_book</span>
+                    <p class="text-sm text-gray-500">Total Books Borrowed</p>
+                    <p class="text-lg font-semibold text-indigo-900">{{ $summary['borrowed'] ?? 0 }}</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition">
+                    <span class="material-icons text-yellow-500 text-3xl mb-2">access_time</span>
+                    <p class="text-sm text-gray-500">Overdue Books</p>
+                    <p class="text-lg font-semibold text-red-600">{{ $summary['overdue'] ?? 0 }}</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition">
+                    <span class="material-icons text-green-500 text-3xl mb-2">check_circle</span>
+                    <p class="text-sm text-gray-500">Available Books</p>
+                    <p class="text-lg font-semibold text-green-600">{{ $summary['available'] ?? 0 }}</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition">
+                    <span class="material-icons text-indigo-500 text-3xl mb-2">schedule</span>
+                    <p class="text-sm text-gray-500">Reservations</p>
+                    <p class="text-lg font-semibold text-indigo-900">{{ $summary['reserved'] ?? 0 }}</p>
+                </div>
             </div>
 
             {{-- Search Bar --}}
@@ -120,14 +131,11 @@
                                 <td class="px-4 py-2">{{ $tran->book->title }}</td>
                                 <td class="px-4 py-2">{{ $tran->bookCopy->copy_number ?? '-' }}</td>
                                 <td class="px-4 py-2 capitalize">
-                                    @php
-                                        $status = $tran->status ?? ($tran instanceof \App\Models\Reservation ? 'reserved' : '');
-                                    @endphp
-                                    <span class="{{ $status === 'borrowed' ? 'text-yellow-600' : ($status === 'overdue' ? 'text-red-600 font-semibold' : 'text-green-600') }}">
-                                        {{ $status }}
+                                    <span class="{{ $tran->status === 'borrowed' ? 'text-yellow-600' : ($tran->status === 'overdue' ? 'text-red-600 font-semibold' : 'text-green-600') }}">
+                                        {{ $tran->status }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-2">{{ optional($tran->borrow_date ?? $tran->reserved_at)->format('M d, Y') ?? '-' }}</td>
+                                <td class="px-4 py-2">{{ optional($tran->borrow_date)->format('M d, Y') ?? '-' }}</td>
                                 <td class="px-4 py-2">{{ optional($tran->due_date)->format('M d, Y') ?? '-' }}</td>
                                 <td class="px-4 py-2">{{ optional($tran->return_date)->format('M d, Y') ?? '-' }}</td>
                             </tr>
