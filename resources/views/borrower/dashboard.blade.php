@@ -15,44 +15,42 @@
 
             {{-- Header --}}
             <div class="text-center lg:text-left">
-                <h1 class="text-2xl font-bold text-indigo-900">Borrower Dashboard</h1>
-                <p class="text-gray-600 mt-1">View your borrowed books, reservations, and search the library collection.
+                <h1 class="text-3xl font-bold text-indigo-900">Borrower Dashboard</h1>
+                <p class="text-gray-500 mt-2 text-sm sm:text-base">
+                    Keep track of your borrowed books, reservations, and explore the library collection.
                 </p>
             </div>
 
             {{-- Dashboard Summary Cards --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition">
-                    <span class="material-icons text-indigo-500 text-3xl mb-2">menu_book</span>
-                    <p class="text-sm text-gray-500">Total Books Borrowed</p>
-                    <p class="text-lg font-semibold text-indigo-900">{{ $summary['borrowed'] ?? 0 }}</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+                @php
+                    $cards = [
+                        ['icon'=>'menu_book','label'=>'Total Books Borrowed','value'=>$summary['borrowed'] ?? 0,'color'=>'indigo'],
+                        ['icon'=>'access_time','label'=>'Overdue Books','value'=>$summary['overdue'] ?? 0,'color'=>'red'],
+                        ['icon'=>'check_circle','label'=>'Available Books','value'=>$summary['available'] ?? 0,'color'=>'green'],
+                        ['icon'=>'schedule','label'=>'Reservations','value'=>$summary['reserved'] ?? 0,'color'=>'indigo'],
+                    ];
+                @endphp
+                @foreach($cards as $card)
+                <div class="bg-white rounded-2xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transform hover:scale-105 transition">
+                    <div class="p-3 rounded-full bg-{{ $card['color'] }}-100 mb-3">
+                        <span class="material-icons text-3xl text-{{ $card['color'] }}-600">{{ $card['icon'] }}</span>
+                    </div>
+                    <p class="text-sm text-gray-500">{{ $card['label'] }}</p>
+                    <p class="text-xl font-semibold text-{{ $card['color'] }}-900">{{ $card['value'] }}</p>
                 </div>
-                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition">
-                    <span class="material-icons text-yellow-500 text-3xl mb-2">access_time</span>
-                    <p class="text-sm text-gray-500">Overdue Books</p>
-                    <p class="text-lg font-semibold text-red-600">{{ $summary['overdue'] ?? 0 }}</p>
-                </div>
-                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition">
-                    <span class="material-icons text-green-500 text-3xl mb-2">check_circle</span>
-                    <p class="text-sm text-gray-500">Available Books</p>
-                    <p class="text-lg font-semibold text-green-600">{{ $summary['available'] ?? 0 }}</p>
-                </div>
-                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition">
-                    <span class="material-icons text-indigo-500 text-3xl mb-2">schedule</span>
-                    <p class="text-sm text-gray-500">Reservations</p>
-                    <p class="text-lg font-semibold text-indigo-900">{{ $summary['reserved'] ?? 0 }}</p>
-                </div>
+                @endforeach
             </div>
 
             {{-- Search Bar --}}
             <form method="GET" action="{{ route('borrower.dashboard') }}">
-                <div class="flex items-center gap-2 bg-white rounded-2xl shadow-md px-4 py-3">
+                <div class="flex items-center gap-2 bg-white rounded-full shadow-md px-4 py-3">
                     <span class="material-icons-outlined text-gray-400">search</span>
                     <input type="text" name="search" value="{{ request('search') }}"
                         placeholder="Search books, authors, categories, publishers..."
-                        class="w-full border-0 focus:ring-0 text-sm placeholder-gray-400">
+                        class="w-full border-0 focus:ring-0 text-sm placeholder-gray-400 rounded-full">
                     <button type="submit"
-                        class="bg-indigo-600 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-indigo-700 transition">
+                        class="bg-indigo-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-indigo-700 transition">
                         Search
                     </button>
                 </div>
@@ -70,7 +68,7 @@
                         <div class="flex justify-between items-start">
                             <div>
                                 <h4 class="text-lg font-semibold text-indigo-900">{{ $book->title }}</h4>
-                                <p class="text-xs text-gray-500">ISBN: {{ $book->isbn }}</p>
+                                <p class="text-xs text-gray-400">ISBN: {{ $book->isbn }}</p>
                             </div>
                             <span class="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
                                 {{ $book->category->name ?? 'N/A' }}
@@ -96,8 +94,7 @@
                                         class="text-xs px-3 py-1 rounded-full border
                                         {{ $copy->status === 'available' ? 'bg-green-100 border-green-300 text-green-700 hover:bg-green-200' : 'bg-red-100 border-red-300 text-red-700 cursor-not-allowed' }}"
                                         {{ $copy->status !== 'available' ? 'disabled' : '' }}>
-                                        Copy #{{ $copy->copy_number }} · Shelf: <strong>{{ $copy->shelf_location
-                                            }}</strong> · {{ ucfirst($copy->status) }}
+                                        Copy #{{ $copy->copy_number }} · Shelf: <strong>{{ $copy->shelf_location }}</strong> · {{ ucfirst($copy->status) }}
                                     </button>
                                 </form>
                                 @endforeach
@@ -116,8 +113,8 @@
                 <h3 class="text-lg font-semibold mb-4">Your Borrowing & Reservation Records</h3>
 
                 <div class="overflow-x-auto rounded-lg">
-                    <table class="min-w-full text-sm text-left">
-                        <thead class="bg-gray-100">
+                    <table class="min-w-full text-sm text-left border-collapse">
+                        <thead class="bg-gray-100 sticky top-0">
                             <tr>
                                 <th class="px-4 py-2">Book</th>
                                 <th class="px-4 py-2">Copy #</th>
@@ -125,6 +122,7 @@
                                 <th class="px-4 py-2">Borrowed At</th>
                                 <th class="px-4 py-2">Due Date</th>
                                 <th class="px-4 py-2">Returned At</th>
+                                <th class="px-4 py-2">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -134,16 +132,18 @@
                                 <td class="px-4 py-2">{{ $tran->bookCopy->copy_number ?? '-' }}</td>
                                 <td class="px-4 py-2 capitalize">
                                     @php
-                                    $status = $tran->status ?? ($tran instanceof \App\Models\Reservation ? 'reserved' :
-                                    '');
+                                        $status = $tran->status ?? ($tran instanceof \App\Models\Reservation ? 'reserved' : '');
+                                        $statusClasses = [
+                                            'borrowed'=>'text-yellow-600',
+                                            'overdue'=>'text-red-600 font-semibold',
+                                            'reserved'=>'text-blue-600'
+                                        ];
                                     @endphp
-                                    <span
-                                        class="{{ $status === 'borrowed' ? 'text-yellow-600' : ($status === 'overdue' ? 'text-red-600 font-semibold' : 'text-blue-600') }}">
+                                    <span class="{{ $statusClasses[$status] ?? 'text-gray-600' }}">
                                         {{ $status }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-2">{{ optional($tran->borrow_date ?? $tran->reserved_at)->format('M
-                                    d, Y') ?? '-' }}</td>
+                                <td class="px-4 py-2">{{ optional($tran->borrow_date ?? $tran->reserved_at)->format('M d, Y') ?? '-' }}</td>
                                 <td class="px-4 py-2">{{ optional($tran->due_date)->format('M d, Y') ?? '-' }}</td>
                                 <td class="px-4 py-2">{{ optional($tran->return_date)->format('M d, Y') ?? '-' }}</td>
                                 <td class="px-4 py-2">
@@ -168,7 +168,6 @@
                             </tr>
                             @endforelse
                         </tbody>
-
                     </table>
                 </div>
             </div>
