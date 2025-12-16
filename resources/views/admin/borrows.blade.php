@@ -103,13 +103,14 @@
                                         </button>
 
                                         {{-- ✅ FIXED ROUTE --}}
-                                        <form id="delete-borrow-form-{{ $borrow->id }}"
-                                              action="{{ route('borrows.destroy', $borrow) }}"
-                                              method="POST"
-                                              class="hidden">
+                                        <form method="POST"
+                                            action="{{ route('borrows.destroy', ['borrow' => $borrow->id]) }}"
+                                            id="delete-borrow-form-{{ $borrow->id }}"
+                                            class="hidden">
                                             @csrf
                                             @method('DELETE')
                                         </form>
+
                                     </td>
                                 </tr>
                                 @endforeach
