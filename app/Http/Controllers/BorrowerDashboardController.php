@@ -12,7 +12,7 @@ class BorrowerDashboardController extends Controller
     {
         $keyword = $request->search ?? null;
 
-        // Search books with related data
+        // Search books
         $books = Book::with(['author', 'publisher', 'category', 'copies'])
             ->when($keyword, fn($q) => $q->where('title', 'like', "%$keyword%"))
             ->get();
@@ -27,12 +27,10 @@ class BorrowerDashboardController extends Controller
             ->where('user_id', auth()->id())
             ->get();
 
-        // Merge and sort by date (borrow_date or reserved_at)
-        $transactions = $borrowed->concat($reserved)->sortByDesc(function($t) {
-            return $t->borrow_date ?? $t->reserved_at;
-        });
+        // Merge transactions
+        $transactions = $borrowed->concat($reserved)->sortByDesc(fn($t) => $t->borrow_date ?? $t->reserved_at);
 
-        // Dashboard summary counts
+        // Dashboard summary
         $summary = [
             'borrowed'  => $borrowed->count(),
             'overdue'   => $borrowed->where('status', 'overdue')->count(),
@@ -50,10 +48,7 @@ class BorrowerDashboardController extends Controller
             'copy_id' => 'required|exists:book_copies,id',
         ]);
 
-        $bookCopy = Book::find($request->book_id)
-            ->copies()
-            ->where('id', $request->copy_id)
-            ->first();
+        $bookCopy = Book::find($request->book_id)->copies()->where('id', $request->copy_id)->first();
 
         if (!$bookCopy || $bookCopy->status !== 'available') {
             return back()->with('error', 'This copy is not available for reservation.');
@@ -71,5 +66,23 @@ class BorrowerDashboardController extends Controller
         $bookCopy->update(['status' => 'reserved']);
 
         return back()->with('success', 'Book reserved successfully!');
+    }
+
+    public function cancelReservation(Reservation $reservation)
+    {
+        // Ensure the user owns the reservation
+        if ($reservation->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Update the book copy status back to available
+        $bookCopy = $reservation->book->copies()->where('status', 'reserved')->first();
+        if ($bookCopy) {
+            $bookCopy->update(['status' => 'available']);
+        }
+
+        $reservation->delete();
+
+        return back()->with('success', 'Reservation canceled successfully.');
     }
 }

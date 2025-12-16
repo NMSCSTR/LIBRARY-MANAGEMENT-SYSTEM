@@ -127,10 +127,11 @@ Route::middleware('auth')->group(function () {
     // Other authenticated users
 
     Route::get('/borrower/dashboard', [BorrowerDashboardController::class, 'index'])
-         ->name('borrower.dashboard');
-
+        ->name('borrower.dashboard');
     Route::post('/borrower/reserve', [BorrowerDashboardController::class, 'reserve'])
-         ->name('borrower.reserve');
+        ->name('borrower.reserve');
+    Route::delete('/borrower/reservation/{reservation}', [BorrowerDashboardController::class, 'cancelReservation'])
+        ->name('borrower.cancelReservation');
 
     Route::resource('reservations', ReservationController::class)->names([
         'index'   => 'reservations.index',

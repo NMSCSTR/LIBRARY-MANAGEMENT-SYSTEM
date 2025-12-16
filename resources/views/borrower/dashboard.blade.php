@@ -16,7 +16,8 @@
             {{-- Header --}}
             <div class="text-center lg:text-left">
                 <h1 class="text-2xl font-bold text-indigo-900">Borrower Dashboard</h1>
-                <p class="text-gray-600 mt-1">View your borrowed books, reservations, and search the library collection.</p>
+                <p class="text-gray-600 mt-1">View your borrowed books, reservations, and search the library collection.
+                </p>
             </div>
 
             {{-- Dashboard Summary Cards --}}
@@ -95,7 +96,8 @@
                                         class="text-xs px-3 py-1 rounded-full border
                                         {{ $copy->status === 'available' ? 'bg-green-100 border-green-300 text-green-700 hover:bg-green-200' : 'bg-red-100 border-red-300 text-red-700 cursor-not-allowed' }}"
                                         {{ $copy->status !== 'available' ? 'disabled' : '' }}>
-                                        Copy #{{ $copy->copy_number }} · Shelf: <strong>{{ $copy->shelf_location }}</strong> · {{ ucfirst($copy->status) }}
+                                        Copy #{{ $copy->copy_number }} · Shelf: <strong>{{ $copy->shelf_location
+                                            }}</strong> · {{ ucfirst($copy->status) }}
                                     </button>
                                 </form>
                                 @endforeach
@@ -131,20 +133,42 @@
                                 <td class="px-4 py-2">{{ $tran->book->title }}</td>
                                 <td class="px-4 py-2">{{ $tran->bookCopy->copy_number ?? '-' }}</td>
                                 <td class="px-4 py-2 capitalize">
-                                    <span class="{{ $tran->status === 'borrowed' ? 'text-yellow-600' : ($tran->status === 'overdue' ? 'text-red-600 font-semibold' : 'text-green-600') }}">
-                                        {{ $tran->status }}
+                                    @php
+                                    $status = $tran->status ?? ($tran instanceof \App\Models\Reservation ? 'reserved' :
+                                    '');
+                                    @endphp
+                                    <span
+                                        class="{{ $status === 'borrowed' ? 'text-yellow-600' : ($status === 'overdue' ? 'text-red-600 font-semibold' : 'text-blue-600') }}">
+                                        {{ $status }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-2">{{ optional($tran->borrow_date)->format('M d, Y') ?? '-' }}</td>
+                                <td class="px-4 py-2">{{ optional($tran->borrow_date ?? $tran->reserved_at)->format('M
+                                    d, Y') ?? '-' }}</td>
                                 <td class="px-4 py-2">{{ optional($tran->due_date)->format('M d, Y') ?? '-' }}</td>
                                 <td class="px-4 py-2">{{ optional($tran->return_date)->format('M d, Y') ?? '-' }}</td>
+                                <td class="px-4 py-2">
+                                    @if($tran instanceof \App\Models\Reservation)
+                                    <form action="{{ route('borrower.cancelReservation', $tran->id) }}" method="POST"
+                                        onsubmit="return confirm('Are you sure you want to cancel this reservation?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="text-xs px-3 py-1 rounded-full bg-red-100 border border-red-300 text-red-700 hover:bg-red-200">
+                                            Cancel
+                                        </button>
+                                    </form>
+                                    @else
+                                    <span class="text-gray-400 text-xs">-</span>
+                                    @endif
+                                </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="px-4 py-2 text-gray-500 text-center">No transactions yet.</td>
+                                <td colspan="7" class="px-4 py-2 text-gray-500 text-center">No transactions yet.</td>
                             </tr>
                             @endforelse
                         </tbody>
+
                     </table>
                 </div>
             </div>
