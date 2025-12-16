@@ -165,6 +165,7 @@
                     <label class="block mb-2 font-medium">Select Books</label>
                     <div class="space-y-2 max-h-64 overflow-y-auto border p-3 rounded">
                         @foreach($books as $book)
+                        @if($book->available_copies > 0)
                         <div class="flex items-center gap-2">
                             <input type="checkbox" name="books[{{ $book->id }}][selected]" id="book-{{ $book->id }}">
                             <label for="book-{{ $book->id }}">
@@ -173,6 +174,7 @@
                             <input type="number" name="books[{{ $book->id }}][quantity]" min="1"
                                 max="{{ $book->available_copies }}" value="1" class="w-16 border px-2 py-1 rounded">
                         </div>
+                        @endif
                         @endforeach
                     </div>
                 </div>
@@ -185,6 +187,7 @@
             </form>
         </div>
     </div>
+
 
 
 </section>
