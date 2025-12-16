@@ -3,26 +3,26 @@
 @section('title', 'Borrower Dashboard | LMIS')
 
 @section('content')
-<section class="bg-gray-50">
+<section class="bg-gray-50 min-h-screen">
 
+    {{-- Top Navigation --}}
     @include('components.admin.topnav')
 
     <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-10 gap-6">
 
-        {{-- Sidebar --}}
-        {{-- <div class="lg:w-2/12 w-full">
-
+        {{-- Sidebar placeholder --}}
+        {{-- Add your sidebar here if needed --}}
 
         {{-- Main Content --}}
-        <div class="lg:w-10/12 w-full space-y-8">
+        <div class="w-full space-y-8">
 
             {{-- Search Bar --}}
             <form method="GET" action="{{ route('borrower.dashboard') }}">
-                <div class="flex items-center gap-2 bg-white rounded-2xl shadow px-4 py-3">
+                <div class="flex items-center gap-2 bg-white rounded-2xl shadow-md px-4 py-3">
                     <span class="material-icons-outlined text-gray-400">search</span>
                     <input type="text" name="search" value="{{ request('search') }}"
                         placeholder="Search books, authors, categories, publishers..."
-                        class="w-full border-0 focus:ring-0 text-sm">
+                        class="w-full border-0 focus:ring-0 text-sm placeholder-gray-400">
                     <button type="submit"
                         class="bg-indigo-600 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-indigo-700 transition">
                         Search
@@ -32,20 +32,18 @@
 
             {{-- Search Results --}}
             @if($keyword)
-            <div class="bg-white rounded-2xl shadow p-6">
+            <div class="bg-white rounded-2xl shadow-md p-6">
                 <h3 class="text-lg font-semibold mb-4">
                     Search Results for <span class="text-indigo-600">“{{ $keyword }}”</span>
                 </h3>
                 <div class="space-y-4">
                     @forelse($books as $book)
-                    <div class="border rounded-xl p-5 hover:shadow-md transition">
-
+                    <div class="border rounded-xl p-5 hover:shadow-lg transition duration-300 ease-in-out">
                         <div class="flex justify-between items-start">
                             <div>
                                 <h4 class="text-lg font-semibold text-indigo-900">{{ $book->title }}</h4>
                                 <p class="text-xs text-gray-500">ISBN: {{ $book->isbn }}</p>
                             </div>
-
                             <span class="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
                                 {{ $book->category->name ?? 'N/A' }}
                             </span>
@@ -70,9 +68,7 @@
                                         class="text-xs px-3 py-1 rounded-full border
                                         {{ $copy->status === 'available' ? 'bg-green-100 border-green-300 text-green-700 hover:bg-green-200' : 'bg-red-100 border-red-300 text-red-700 cursor-not-allowed' }}"
                                         {{ $copy->status !== 'available' ? 'disabled' : '' }}>
-                                        Copy #{{ $copy->copy_number }}
-                                        · Shelf: <strong>{{ $copy->shelf_location }}</strong>
-                                        · {{ ucfirst($copy->status) }}
+                                        Copy #{{ $copy->copy_number }} · Shelf: <strong>{{ $copy->shelf_location }}</strong> · {{ ucfirst($copy->status) }}
                                     </button>
                                 </form>
                                 @endforeach
@@ -87,10 +83,10 @@
             @endif
 
             {{-- Borrower Transactions --}}
-            <div class="bg-white rounded-2xl shadow p-6">
+            <div class="bg-white rounded-2xl shadow-md p-6">
                 <h3 class="text-lg font-semibold mb-4">Your Borrowing & Reservation Records</h3>
 
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto rounded-lg">
                     <table class="min-w-full text-sm text-left">
                         <thead class="bg-gray-100">
                             <tr>
@@ -104,11 +100,11 @@
                         </thead>
                         <tbody>
                             @forelse($transactions as $tran)
-                            <tr class="border-b">
+                            <tr class="border-b even:bg-gray-50">
                                 <td class="px-4 py-2">{{ $tran->book->title }}</td>
                                 <td class="px-4 py-2">{{ $tran->bookCopy->copy_number ?? '-' }}</td>
                                 <td class="px-4 py-2 capitalize">
-                                    <span class="{{ $tran->status === 'borrowed' ? 'text-yellow-600' : ($tran->status === 'overdue' ? 'text-red-600' : 'text-green-600') }}">
+                                    <span class="{{ $tran->status === 'borrowed' ? 'text-yellow-600' : ($tran->status === 'overdue' ? 'text-red-600 font-semibold' : 'text-green-600') }}">
                                         {{ $tran->status }}
                                     </span>
                                 </td>
