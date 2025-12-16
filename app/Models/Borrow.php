@@ -9,7 +9,7 @@ class Borrow extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'book_id', 'borrow_date', 'due_date', 'return_date', 'status',
+        'user_id', 'book_id', 'book_copy_id', 'borrow_date', 'due_date', 'return_date', 'status',
     ];
 
     protected $casts = [
@@ -30,7 +30,7 @@ class Borrow extends Model
 
     public function bookCopy()
     {
-        return $this->belongsTo(BookCopy::class);
+        return $this->belongsTo(BookCopy::class, 'book_copy_id'); // explicitly define foreign key
     }
 
     public function getStatusAttribute($value)

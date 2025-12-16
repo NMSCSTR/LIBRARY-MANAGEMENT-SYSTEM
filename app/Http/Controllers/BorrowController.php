@@ -48,44 +48,45 @@ class BorrowController extends Controller
                 $book = Book::find($bookId);
                 return redirect()->back()->with('error', "Not enough copies for '{$book->title}'");
             }
+foreach ($availableCopies as $copy) {
+    Borrow::create([
+        'user_id'      => $request->user_id,
+        'book_id'      => $bookId,
+        'book_copy_id' => $copy->id,
+        'borrow_date'  => Carbon::now('Asia/Manila'),
+        'due_date'     => Carbon::now('Asia/Manila')->addDays(3),
+        'status'       => 'borrowed',
+    ]);
 
-            foreach ($availableCopies as $copy) {
-                Borrow::create([
-                    'user_id'      => $request->user_id,
-                    'book_id'      => $bookId,
-                    'book_copy_id' => $copy->id,
-                    'borrow_date'  => Carbon::now('Asia/Manila'),
-                    'due_date'     => Carbon::now('Asia/Manila')->addDays(3),
-                    'status'       => 'borrowed',
-                ]);
+    $copy->update(['status' => 'borrowed']);
+}
 
-                $copy->update(['status' => 'borrowed']);
-            }
         }
 
         return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
     }
 
-    public function return ($id)
-    {
-        $borrow = Borrow::findOrFail($id);
+public function return($id)
+{
+    $borrow = Borrow::findOrFail($id);
 
-        if ($borrow->status === 'returned') {
-            return redirect()->back()->with('info', 'This book is already returned.');
-        }
-
-        $borrow->update([
-            'return_date' => Carbon::now('Asia/Manila'),
-            'status'      => 'returned',
-        ]);
-
-        // Mark the borrowed copy as available
-        if ($borrow->bookCopy) {
-            $borrow->bookCopy->update(['status' => 'available']);
-        }
-
-        return redirect()->route('borrows.index')->with('success', 'Book returned successfully.');
+    if ($borrow->status === 'returned') {
+        return redirect()->back()->with('info', 'This book is already returned.');
     }
+
+    $borrow->update([
+        'return_date' => Carbon::now('Asia/Manila'),
+        'status'      => 'returned',
+    ]);
+
+    // Mark the borrowed copy as available
+    if ($borrow->bookCopy) {
+        $borrow->bookCopy->update(['status' => 'available']);
+    }
+
+    return redirect()->route('borrows.index')->with('success', 'Book returned successfully.');
+}
+
 
     public function edit(Borrow $borrow)
     {
