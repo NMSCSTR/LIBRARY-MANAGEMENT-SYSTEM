@@ -94,11 +94,13 @@
                                                 class="archive-user-btn px-3 py-2 text-xs text-white bg-red-600 hover:bg-red-700">
                                                 Archive
                                             </button>
-
-                                            <form id="archive-form-{{ $user->id }}"
-                                                action="{{ route('users.archive', $user->id) }}" method="POST"
-                                                class="hidden">
+                                            <form action="{{ route('users.archive', $user->id) }}" method="POST" class="inline">
                                                 @csrf
+                                                @method('PUT')
+                                                <button type="submit"
+                                                    class="px-3 py-2 text-xs text-white bg-yellow-500 hover:bg-yellow-600">
+                                                    Archive
+                                                </button>
                                             </form>
                                         </div>
                                     </td>
