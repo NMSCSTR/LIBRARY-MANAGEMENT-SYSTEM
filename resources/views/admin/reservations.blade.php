@@ -135,25 +135,6 @@
                                     <td class="px-6 py-4 capitalize">{{ $reservation->status }}</td>
                                     <td class="px-6 py-4">{{ $reservation->reserved_at }}</td>
                                     <td class="px-6 py-4 flex gap-2">
-                                        {{-- Edit --}}
-                                        <a href="{{ route('reservations.edit', $reservation->id) }}"
-                                            class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
-                                            Edit
-                                        </a>
-
-                                        {{-- Delete --}}
-                                        <button data-id="{{ $reservation->id }}"
-                                            class="delete-reservation-btn px-3 py-2 text-xs text-white bg-red-600 hover:bg-red-700">
-                                            Delete
-                                        </button>
-
-                                        <form id="delete-reservation-form-{{ $reservation->id }}"
-                                            action="{{ route('reservations.destroy', $reservation->id) }}" method="POST"
-                                            class="hidden">
-                                            @csrf
-                                            @method('DELETE')
-                                        </form>
-
                                         <form action="{{ route('reservations.reject', $reservation->id) }}"
                                             method="POST">
                                             @csrf
