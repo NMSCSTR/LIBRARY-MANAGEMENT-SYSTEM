@@ -83,7 +83,7 @@
 
                         {{-- Copies & Reserve --}}
                         <div class="mt-4">
-                            <p class="text-sm font-semibold mb-2">Copies & Shelf Locations</p>
+                            <p class="text-sm font-semibold mb-2">Copies & Shelf Locations : Click to reserve</p>
                             <div class="flex flex-wrap gap-2">
                                 @foreach($book->copies as $copy)
                                 <form action="{{ route('borrower.reserve') }}" method="POST" class="inline-block">
