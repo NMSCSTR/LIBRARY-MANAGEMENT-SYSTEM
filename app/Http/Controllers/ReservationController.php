@@ -18,7 +18,7 @@ class ReservationController extends Controller
     public function reject(Reservation $reservation)
     {
 
-        $reservation->status = 'rejected';
+        $reservation->status = 'declined';
         $reservation->save();
 
         if ($reservation->copy) {
@@ -27,7 +27,7 @@ class ReservationController extends Controller
         }
 
         return redirect()->route('reservations.index')
-                        ->with('success', 'Reservation rejected and book copy set to available.');
+                        ->with('success', 'Reservation declined and book copy set to available.');
     }
 
 
