@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookCopyController;
 use App\Http\Controllers\BorrowController;
+use App\Http\Controllers\BorrowerDashboardController;
 use App\Http\Controllers\BorrowProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DonationController;
