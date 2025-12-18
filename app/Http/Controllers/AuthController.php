@@ -37,7 +37,6 @@ class AuthController extends Controller
         return match ($role) {
             'admin', 'librarian' => redirect()->route('admin.dashboard'),
             'instructor', 'student' => redirect()->route('borrower.dashboard'),
-            'donor' => redirect()->route('donor.dashboard'),
             default => abort(403, 'Unknown role'),
         };
 

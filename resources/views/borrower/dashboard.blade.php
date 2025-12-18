@@ -11,7 +11,7 @@
     <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-10 gap-6 pt-10 mt-10">
 
         {{-- Main Content --}}
-        <div class="w-full space-y-8">
+        <div class="w-full space-y-8  mt-10">
 
             {{-- Header --}}
             <div class="text-center lg:text-left">
