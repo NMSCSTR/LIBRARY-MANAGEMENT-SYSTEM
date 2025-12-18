@@ -47,7 +47,7 @@ class AuthController extends Controller
         ]);
 
         // Redirect to login page with a success message
-        return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
+        return redirect()->route('users.login')->with('success', 'Registration successful! Please log in.');
     }
 
     public function login(Request $request)
