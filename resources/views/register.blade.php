@@ -3,91 +3,67 @@
 @section('title', 'Register | Library Management System')
 
 @section('content')
-<section class="flex items-center justify-center min-h-screen bg-gray-100">
+<section class="relative flex items-center justify-center min-h-screen overflow-hidden">
 
-    <div class="w-full max-w-md p-8 bg-white/70 rounded-xl shadow-lg border border-[#C49A6C]">
-
-        <h2 class="text-2xl font-bold text-center text-[#4C3B2A] mb-6">
-            Create Account
-        </h2>
-
-        {{-- Display Validation Errors --}}
-        @if ($errors->any())
-            <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                <ul class="list-disc pl-5">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    <div class="relative z-10 w-full max-w-md mx-auto p-8
+                bg-white/70 rounded-xl shadow-lg border border-[#C49A6C] animate-fade-in">
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-[#4C3B2A]">Create Account</h2>
+            <p class="text-sm text-[#4C3B2A]/80">Fill in the details below to register</p>
+        </div>
 
         <form method="POST" action="{{ route('register.submit') }}" class="space-y-4">
             @csrf
 
-            <input
-                name="name"
-                type="text"
-                placeholder="Name"
-                value="{{ old('name') }}"
-                required
-                class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#C49A6C]"
-            >
+            <div>
+                <label for="name" class="block text-sm font-medium text-[#4C3B2A]">Name</label>
+                <input type="text" id="name" name="name" required class="w-full px-4 py-2 mt-1 border rounded-lg">
+            </div>
 
-            <input
-                name="email"
-                type="email"
-                placeholder="Email"
-                value="{{ old('email') }}"
-                required
-                class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#C49A6C]"
-            >
+            <div>
+                <label for="email" class="block text-sm font-medium text-[#4C3B2A]">Email Address</label>
+                <input type="email" id="email" name="email" required class="w-full px-4 py-2 mt-1 border rounded-lg">
+            </div>
 
-            <input
-                name="contact_number"
-                type="text"
-                placeholder="Contact Number"
-                value="{{ old('contact_number') }}"
-                class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#C49A6C]"
-            >
+            <div>
+                <label for="password" class="block text-sm font-medium text-[#4C3B2A]">Password</label>
+                <input type="password" id="password" name="password" required class="w-full px-4 py-2 mt-1 border rounded-lg">
+            </div>
 
-            <input
-                name="address"
-                type="text"
-                placeholder="Address"
-                value="{{ old('address') }}"
-                class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#C49A6C]"
-            >
+            <div>
+                <label for="password_confirmation" class="block text-sm font-medium text-[#4C3B2A]">Confirm Password</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" required class="w-full px-4 py-2 mt-1 border rounded-lg">
+            </div>
 
-            <input
-                name="password"
-                type="password"
-                placeholder="Password"
-                required
-                class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#C49A6C]"
-            >
+            <div>
+                <label for="role" class="block text-sm font-medium text-[#4C3B2A]">Role</label>
+                <select name="role" id="role" required class="w-full px-4 py-2 mt-1 border rounded-lg">
+                    @foreach(\App\Models\Role::all() as $role)
+                        <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-            <input
-                name="password_confirmation"
-                type="password"
-                placeholder="Confirm Password"
-                required
-                class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#C49A6C]"
-            >
+            <div>
+                <label for="contact_number" class="block text-sm font-medium text-[#4C3B2A]">Contact Number</label>
+                <input type="text" id="contact_number" name="contact_number" class="w-full px-4 py-2 mt-1 border rounded-lg">
+            </div>
 
-            <button
-                type="submit"
-                class="w-full py-3 bg-[#4C3B2A] text-white rounded hover:bg-[#3a2b20] transition"
-            >
+            <div>
+                <label for="address" class="block text-sm font-medium text-[#4C3B2A]">Address</label>
+                <input type="text" id="address" name="address" class="w-full px-4 py-2 mt-1 border rounded-lg">
+            </div>
+
+            <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-[#8B5E3C] to-[#4C3B2A]
+                           text-white font-semibold rounded-lg shadow hover:shadow-xl
+                           hover:from-[#7a5032] hover:to-[#3c2f24] transition-all duration-300">
                 Register
             </button>
         </form>
 
-        <p class="mt-4 text-center text-sm text-gray-700">
-            Already registered?
-            <a href="{{ route('users.login') }}" class="text-[#C49A6C] font-semibold hover:underline">
-                Login
-            </a>
+        <p class="mt-6 text-center text-sm text-[#4C3B2A]">
+            Already have an account?
+            <a href="{{ route('users.login') }}" class="text-[#C49A6C] font-semibold hover:underline">Login</a>
         </p>
     </div>
 </section>

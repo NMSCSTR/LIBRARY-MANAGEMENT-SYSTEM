@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class AuthController extends Controller
+class UserController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
@@ -18,7 +18,7 @@ class AuthController extends Controller
     */
     public function showLoginForm()
     {
-        return view('auth.login');
+        return view('login');
     }
 
     public function login(Request $request)
@@ -43,7 +43,7 @@ class AuthController extends Controller
         return redirect()->route('borrower.dashboard');
     }
 
-    
+
     /*
     |--------------------------------------------------------------------------
     | Logout

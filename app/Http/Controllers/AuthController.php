@@ -1,31 +1,64 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Show Login Form
-    |--------------------------------------------------------------------------
-    */
     public function showLoginForm()
     {
         return view('login');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Login User
-    |--------------------------------------------------------------------------
-    */
+    public function showRegisterForm()
+{
+    return view('register');
+}
+
+public function register(Request $request)
+{
+    $validated = $request->validate([
+        'name'           => 'required|string|max:255',
+        'email'          => 'required|email|unique:users,email',
+        'password'       => 'required|string|min:8|confirmed',
+        'contact_number' => 'nullable|string|max:20',
+        'address'        => 'nullable|string|max:255',
+        'role'           => 'required|exists:roles,id',
+    ]);
+
+    $user = User::create([
+        'name'           => $validated['name'],
+        'email'          => $validated['email'],
+        'password'       => $validated['password'],
+        'contact_number' => $validated['contact_number'] ?? null,
+        'address'        => $validated['address'] ?? null,
+        'role_id'        => $validated['role'],
+    ]);
+
+    // Log registration
+    ActivityLog::create([
+        'user_id'     => $user->id,
+        'action'      => 'register',
+        'description' => $user->name . ' registered an account.',
+    ]);
+
+    // Auto-login
+    Auth::login($user);
+
+    // Redirect based on role
+    $role = $user->role->name;
+    return match ($role) {
+        'admin', 'librarian' => redirect()->route('admin.dashboard'),
+        'instructor', 'student' => redirect()->route('borrower.dashboard'),
+        default => abort(403, 'Unknown role'),
+    };
+}
+
+
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -35,94 +68,41 @@ class AuthController extends Controller
 
         $remember = $request->has('remember');
 
-        if (!Auth::attempt($credentials, $remember)) {
-            // Log failed login attempt
+        if (Auth::attempt($credentials, $remember)) {
+            $request->session()->regenerate();
+
+            // Log successful login
             ActivityLog::create([
-                'user_id'     => null,
-                'action'      => 'login_failed',
-                'description' => 'Failed login attempt for email: ' . $request->email,
+                'user_id'     => Auth::id(),
+                'action'      => 'login',
+                'description' => Auth::user()->name . ' logged in.',
             ]);
 
-            return back()->withErrors(['email' => 'Invalid credentials'])->onlyInput('email');
-        }
-
-        $request->session()->regenerate();
-
-        // Log successful login
-        ActivityLog::create([
-            'user_id'     => Auth::id(),
-            'action'      => 'login',
-            'description' => Auth::user()->name . ' logged in.',
-        ]);
-
-        // Role-based redirect
         $role = Auth::user()->role->name;
 
         return match ($role) {
             'admin', 'librarian' => redirect()->route('admin.dashboard'),
-            'borrower', 'student', 'instructor' => redirect()->route('borrower.dashboard'),
+            'instructor', 'student' => redirect()->route('borrower.dashboard'),
             default => abort(403, 'Unknown role'),
         };
-    }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Show Registration Form
-    |--------------------------------------------------------------------------
-    */
-    public function showRegisterForm()
-    {
-        return view('register'); 
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Register New User
-    |--------------------------------------------------------------------------
-    */
-    public function register(Request $request)
-    {
-        $request->validate([
-            'name'           => 'required|string|max:255',
-            'email'          => 'required|email|unique:users,email',
-            'password'       => 'required|string|min:6|confirmed',
-            'contact_number' => 'nullable|string|max:15',
-            'address'        => 'nullable|string|max:255',
-        ]);
-
-        $role = Role::where('name', 'borrower')->first();
-
-        if (!$role) {
-            abort(500, 'Borrower role not found. Please seed roles first.');
         }
 
-        $user = User::create([
-            'name'           => $request->name,
-            'email'          => $request->email,
-            'password'       => Hash::make($request->password),
-            'contact_number' => $request->contact_number,
-            'address'        => $request->address,
-            'role_id'        => $role->id,
-        ]);
-
+        // Log failed login attempt
         ActivityLog::create([
-            'user_id'     => $user->id,
-            'action'      => 'register',
-            'description' => "New user registered: {$user->name} (ID: {$user->id})",
+            'user_id'     => null,
+            'action'      => 'login_failed',
+            'description' => 'Failed login attempt for email: ' . $request->email,
         ]);
 
-        Auth::login($user);
-
-        return redirect()->route('borrower.dashboard')->with('success', 'Registration successful!');
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Logout User
-    |--------------------------------------------------------------------------
-    */
     public function logout(Request $request)
     {
+
         ActivityLog::create([
             'user_id'     => Auth::id(),
             'action'      => 'logout',
