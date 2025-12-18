@@ -14,50 +14,41 @@ class AuthController extends Controller
     }
 
     public function showRegisterForm()
-{
-    return view('register');
-}
+    {
+        return view('register');
+    }
 
-public function register(Request $request)
-{
-    $validated = $request->validate([
-        'name'           => 'required|string|max:255',
-        'email'          => 'required|email|unique:users,email',
-        'password'       => 'required|string|min:8|confirmed',
-        'contact_number' => 'nullable|string|max:20',
-        'address'        => 'nullable|string|max:255',
-        'role'           => 'required|exists:roles,id',
-    ]);
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'name'           => 'required|string|max:255',
+            'email'          => 'required|email|unique:users,email',
+            'password'       => 'required|string|min:8|confirmed',
+            'contact_number' => 'nullable|string|max:20',
+            'address'        => 'nullable|string|max:255',
+            'role'           => 'required|exists:roles,id',
+        ]);
 
-    $user = User::create([
-        'name'           => $validated['name'],
-        'email'          => $validated['email'],
-        'password'       => $validated['password'],
-        'contact_number' => $validated['contact_number'] ?? null,
-        'address'        => $validated['address'] ?? null,
-        'role_id'        => $validated['role'],
-    ]);
+        // Hash the password before saving
+        $user = User::create([
+            'name'           => $validated['name'],
+            'email'          => $validated['email'],
+            'password'       => bcrypt($validated['password']),
+            'contact_number' => $validated['contact_number'] ?? null,
+            'address'        => $validated['address'] ?? null,
+            'role_id'        => $validated['role'],
+        ]);
 
-    // Log registration
-    ActivityLog::create([
-        'user_id'     => $user->id,
-        'action'      => 'register',
-        'description' => $user->name . ' registered an account.',
-    ]);
+        // Log registration
+        ActivityLog::create([
+            'user_id'     => $user->id,
+            'action'      => 'register',
+            'description' => $user->name . ' registered an account.',
+        ]);
 
-    // Auto-login
-    Auth::login($user);
-
-    // Redirect based on role
-    $role = $user->role->name;
-    return match ($role) {
-        'admin', 'librarian' => redirect()->route('admin.dashboard'),
-        'instructor', 'student' => redirect()->route('borrower.dashboard'),
-        default => abort(403, 'Unknown role'),
-    };
-}
-
-
+        // Redirect to login page with a success message
+        return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
+    }
 
     public function login(Request $request)
     {
@@ -78,13 +69,13 @@ public function register(Request $request)
                 'description' => Auth::user()->name . ' logged in.',
             ]);
 
-        $role = Auth::user()->role->name;
+            $role = Auth::user()->role->name;
 
-        return match ($role) {
-            'admin', 'librarian' => redirect()->route('admin.dashboard'),
-            'instructor', 'student' => redirect()->route('borrower.dashboard'),
-            default => abort(403, 'Unknown role'),
-        };
+            return match ($role) {
+                'admin', 'librarian'    => redirect()->route('admin.dashboard'),
+                'instructor', 'student' => redirect()->route('borrower.dashboard'),
+                default => abort(403, 'Unknown role'),
+            };
 
         }
 

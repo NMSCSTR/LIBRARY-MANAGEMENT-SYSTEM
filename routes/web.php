@@ -130,6 +130,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
         ->name('admin.dashboard');
 
+    Route::put('/users/{id}/archive', [UserController::class, 'archive'])->name('users.archive');
+
 
     Route::resource('users', UserController::class)->names([
         'index'   => 'users.index',

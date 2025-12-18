@@ -119,6 +119,24 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User updated successfully!');
     }
 
+    public function archive($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Mark the user as archived
+        $user->archived_at = now();
+        $user->save();
+
+        // Optionally log the action
+        ActivityLog::create([
+            'user_id'     => auth()->id(),
+            'action'      => 'archive_user',
+            'description' => 'Archived user: ' . $user->name,
+        ]);
+
+        return redirect()->route('users.index')->with('success', 'User archived successfully.');
+    }
+
     /**
      * Remove the specified resource from storage.
      */
