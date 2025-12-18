@@ -178,6 +178,14 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/borrower/profile', [BorrowProfileController::class, 'update'])
         ->name('borrower.profile.update');
 
+    // Reserve a book copy
+    Route::post('/borrower/reserve', [BorrowerDashboardController::class, 'reserve'])
+        ->name('borrower.reserve');
+
+    // Cancel a reservation
+    Route::delete('/borrower/reservation/{reservation}', [BorrowerDashboardController::class, 'cancelReservation'])
+        ->name('borrower.cancelReservation');
+
     Route::get('/donor/dashboard', function () {
             return view('donor.dashboard');
         })->name('donor.dashboard');
