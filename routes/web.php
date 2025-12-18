@@ -131,7 +131,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->name('admin.dashboard');
 
     Route::put('/users/{id}/archive', [UserController::class, 'archive'])->name('users.archive');
-    Route::post('/users/{id}/unarchive', [UserController::class, 'unarchive'])->name('users.unarchive');
+    Route::put('/users/{user}/unarchive', [UserController::class, 'unarchive'])->name('users.unarchive');
+
 
 
 
