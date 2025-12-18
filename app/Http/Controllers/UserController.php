@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
@@ -7,54 +6,135 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login
-    |--------------------------------------------------------------------------
-    */
-    public function showLoginForm()
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
     {
-        return view('login');
+        $roles = Role::all();
+        $users = User::with('role')->get();
+        return view('admin.users', compact('users', 'roles'));
     }
 
-    public function login(Request $request)
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
-        $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name'           => 'required|string|max:255',
+            'email'          => 'required|email|unique:users,email',
+            'password'       => 'required|string|min:6|confirmed',
+            'contact_number' => 'nullable|string|max:15',
+            'address'        => 'nullable|string|max:255',
+            'role_id'        => 'nullable|exists:roles,id',
         ]);
 
-        if (!Auth::attempt($credentials, $request->remember)) {
-            return back()->withErrors(['email' => 'Invalid credentials']);
-        }
+        $user = User::create([
+            'name'           => $request->name,
+            'email'          => $request->email,
+            'password'       => bcrypt($request->password),
+            'contact_number' => $request->contact_number,
+            'address'        => $request->address,
+            'role_id'        => $request->role_id,
+        ]);
 
-        $request->session()->regenerate();
+        // Log creation
+        ActivityLog::create([
+            'user_id'     => Auth::id(),
+            'action'      => 'create',
+            'description' => "Created user '{$user->name}' (ID: {$user->id})",
+        ]);
 
-        // Role-based redirect
-        if (auth()->user()->role->name === 'admin'
-            || auth()->user()->role->name === 'librarian') {
-            return redirect()->route('admin.dashboard');
-        }
-
-        return redirect()->route('borrower.dashboard');
+        return redirect()->route('users.index')->with('success', 'User created successfully!');
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Logout
-    |--------------------------------------------------------------------------
-    */
-    public function logout(Request $request)
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        //
+    }
 
-        return redirect()->route('users.login');
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(User $user)
+    {
+        $roles = Role::all();
+        return view('admin.user-edit', compact('user', 'roles'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name'           => 'required|string|max:255',
+            'email'          => 'required|email|unique:users,email,' . $user->id,
+            'contact_number' => 'nullable|string|max:20',
+            'address'        => 'nullable|string|max:255',
+            'role_id'        => 'required|exists:roles,id',
+            'password'       => 'nullable|min:6|confirmed',
+        ]);
+
+        $oldData = $user->only(['name', 'email', 'contact_number', 'address', 'role_id']);
+
+        $data = [
+            'name'           => $request->name,
+            'email'          => $request->email,
+            'contact_number' => $request->contact_number,
+            'address'        => $request->address,
+            'role_id'        => $request->role_id,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $user->update($data);
+
+        // Log update
+        ActivityLog::create([
+            'user_id'     => Auth::id(),
+            'action'      => 'update',
+            'description' => "Updated user '{$oldData['name']}' (ID: {$user->id})",
+        ]);
+
+        return redirect()->route('users.index')->with('success', 'User updated successfully!');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(User $user)
+    {
+        $userName = $user->name;
+        $userId   = $user->id;
+        $user->delete();
+
+        // Log deletion
+        ActivityLog::create([
+            'user_id'     => Auth::id(),
+            'action'      => 'delete',
+            'description' => "Deleted user '{$userName}' (ID: {$userId})",
+        ]);
+
+        return redirect()->back()->with('success', 'User deleted successfully!');
     }
 }
