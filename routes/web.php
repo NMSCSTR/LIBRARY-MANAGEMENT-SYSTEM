@@ -27,25 +27,21 @@ Route::get('/', fn() => view('welcome'))->name('welcome');
 
 /*
 |--------------------------------------------------------------------------
-| Guest-only Routes
+| Guest-only Routes (Login & Register)
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('users.login');
+    Route::post('/login', [AuthController::class, 'login'])->name('users.login.submit');
 
-    // Login
-    Route::get('/login', [AuthController::class, 'showLoginForm'])
-        ->name('users.login');
-
-    Route::post('/login', [AuthController::class, 'login'])
-        ->name('users.login.submit');
-
-    // Registration
-    Route::get('/register', [AuthController::class, 'showRegisterForm'])
-        ->name('register');
-
-    Route::post('/register', [AuthController::class, 'register'])
-        ->name('register.submit');
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 });
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('users.logout');
+});
+
 
 /*
 |--------------------------------------------------------------------------
@@ -87,7 +83,6 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::middleware('role:admin')->group(function () {
-
         Route::resource('users', UserController::class);
         Route::resource('roles', RoleController::class);
     });
