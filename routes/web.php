@@ -173,8 +173,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/borrower/dashboard', [BorrowerDashboardController::class, 'index'])
     ->name('borrower.dashboard');
 
-    Route::get('/register', [BorrowerProfileController::class, 'edit'])
-        ->name('borrower.profile');
+    Route::get('/borrower-profile-update', [BorrowerProfileController::class, 'edit'])
+        ->name('borrower.profile.update');
 
     Route::get('/borrower/profile', [BorrowerProfileController::class, 'edit'])
         ->name('borrower.profile');
