@@ -137,8 +137,8 @@
                                     <td class="px-6 py-4 flex gap-2">
                                         {{-- Edit --}}
                                         <a href="{{ route('reservations.edit', $reservation->id) }}"
-                                           class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
-                                           Edit
+                                            class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
+                                            Edit
                                         </a>
 
                                         {{-- Delete --}}
@@ -148,11 +148,22 @@
                                         </button>
 
                                         <form id="delete-reservation-form-{{ $reservation->id }}"
-                                              action="{{ route('reservations.destroy', $reservation->id) }}"
-                                              method="POST" class="hidden">
+                                            action="{{ route('reservations.destroy', $reservation->id) }}" method="POST"
+                                            class="hidden">
                                             @csrf
                                             @method('DELETE')
                                         </form>
+
+                                        <form action="{{ route('reservations.reject', $reservation->id) }}"
+                                            method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit"
+                                                class="px-3 py-2 text-xs text-white bg-gray-500 hover:bg-gray-600">
+                                                Reject
+                                            </button>
+                                        </form>
+
                                     </td>
                                 </tr>
                                 @endforeach
@@ -169,7 +180,7 @@
 @include('components.alerts')
 @push('scripts')
 <script>
-document.querySelectorAll('.delete-reservation-btn').forEach(button => {
+    document.querySelectorAll('.delete-reservation-btn').forEach(button => {
     button.addEventListener('click', function () {
         let reservationId = this.getAttribute('data-id');
 
@@ -188,6 +199,29 @@ document.querySelectorAll('.delete-reservation-btn').forEach(button => {
         });
     });
 });
+
+
+document.querySelectorAll('.reject-reservation-btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        let form = this.closest('form');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This reservation will be rejected!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, reject it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+});
+
 </script>
 @endpush
 @endpush

@@ -15,6 +15,22 @@ class ReservationController extends Controller
         return view('admin.reservations', compact('reservations'));
     }
 
+    public function reject(Reservation $reservation)
+    {
+
+        $reservation->status = 'rejected';
+        $reservation->save();
+
+        if ($reservation->copy) {
+            $reservation->copy->status = 'available';
+            $reservation->copy->save();
+        }
+
+        return redirect()->route('reservations.index')
+                        ->with('success', 'Reservation rejected and book copy set to available.');
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */
