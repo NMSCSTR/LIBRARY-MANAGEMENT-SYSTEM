@@ -51,6 +51,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
     Route::get('/librarian/dashboard', function () {
             return view('librarian.dashboard');
         })->name('librarian.dashboard');
+    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
+        ->name('admin.dashboard');
 
     Route::put('/reservations/{reservation}/reject', [ReservationController::class, 'reject'])
     ->name('reservations.reject');
