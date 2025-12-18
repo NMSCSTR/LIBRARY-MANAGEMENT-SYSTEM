@@ -15,8 +15,18 @@ class UserController extends Controller
     public function index()
     {
         $roles = Role::all();
-        $users = User::with('role')->get();
-        return view('admin.users', compact('users', 'roles'));
+
+        // Active users (not archived)
+        $users = User::with('role')
+            ->whereNull('archived_at')
+            ->get();
+
+        // Archived users (archived_at is not null)
+        $archivedUsers = User::with('role')
+            ->whereNotNull('archived_at')
+            ->get();
+
+        return view('admin.users', compact('users', 'archivedUsers', 'roles'));
     }
 
     /**
@@ -135,6 +145,14 @@ class UserController extends Controller
         ]);
 
         return redirect()->route('users.index')->with('success', 'User archived successfully.');
+    }
+
+    public function unarchive($id)
+    {
+        $user              = User::findOrFail($id);
+        $user->archived_at = null;
+        $user->save();
+        return back()->with('success', 'User unarchived successfully.');
     }
 
     /**
