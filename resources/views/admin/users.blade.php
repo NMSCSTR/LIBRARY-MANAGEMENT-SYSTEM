@@ -116,8 +116,80 @@
         </div>
     </div>
 
-    <!-- Create User Modal -->
-    @include('users.partials.create-user-modal')
+    <!-- Create User Modal (inline) -->
+    <div id="createUserModal" tabindex="-1" aria-hidden="true"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+
+        <div class="relative w-full max-w-lg p-4">
+            <div class="relative bg-white rounded-2xl shadow-2xl p-6">
+
+                <!-- Modal header -->
+                <div class="flex items-center justify-between border-b pb-3 mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                        Add User
+                    </h3>
+
+                    <button type="button" data-modal-toggle="createUserModal"
+                        class="p-2 rounded-full hover:bg-gray-200 text-gray-500 hover:text-gray-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Form -->
+                <form action="{{ route('users.store') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="text-sm font-medium">Full Name</label>
+                        <input type="text" name="name" required class="w-full p-2.5 border rounded-lg bg-gray-50" />
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium">Email</label>
+                        <input type="email" name="email" required class="w-full p-2.5 border rounded-lg bg-gray-50" />
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium">Password</label>
+                        <input type="password" name="password" required class="w-full p-2.5 border rounded-lg bg-gray-50" />
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium">Confirm Password</label>
+                        <input type="password" name="password_confirmation" required class="w-full p-2.5 border rounded-lg bg-gray-50" />
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium">Contact Number</label>
+                        <input type="text" name="contact_number" class="w-full p-2.5 border rounded-lg bg-gray-50" />
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium">Address</label>
+                        <input type="text" name="address" class="w-full p-2.5 border rounded-lg bg-gray-50" />
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium">Role</label>
+                        <select name="role_id" class="w-full p-2.5 border rounded-lg bg-gray-50" required>
+                            <option value="">Select Role</option>
+                            @foreach($roles as $role)
+                            <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-5 py-2.5">
+                        Add User
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
 
     <!-- Archive Users Modal -->
     <div id="archiveUserModal" tabindex="-1" aria-hidden="true"
@@ -175,6 +247,7 @@
 @include('components.alerts')
 
 <script>
+    // Archive Button
     document.querySelectorAll('.archive-user-btn').forEach(button => {
         button.addEventListener('click', function () {
             let userId = this.getAttribute('data-id');
