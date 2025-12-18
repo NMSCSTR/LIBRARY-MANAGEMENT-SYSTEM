@@ -49,7 +49,7 @@
                                     <th class="px-6 py-3">Book</th>
                                     <th class="px-6 py-3">Qty</th>
                                     <th class="px-6 py-3">Borrow Date</th>
-                                    <th class="px-6 py-3">Due Date</th>
+                                    {{-- <th class="px-6 py-3">Due Date</th> --}}
                                     <th class="px-6 py-3">Return Date</th>
                                     <th class="px-6 py-3">Status</th>
                                     <th class="px-6 py-3">Actions</th>
@@ -63,7 +63,7 @@
                                     <td class="px-6 py-4">{{ $borrow->book->title }}</td>
                                     <td class="px-6 py-4">{{ $borrow->quantity }}</td>
                                     <td class="px-6 py-4">{{ $borrow->borrow_date->timezone('Asia/Manila')->format('F j, Y g:i A') }}</td>
-                                    <td class="px-6 py-4">{{ $borrow->due_date->timezone('Asia/Manila')->format('F j, Y g:i A') }}</td>
+                                    {{-- <td class="px-6 py-4">{{ $borrow->due_date->timezone('Asia/Manila')->format('F j, Y g:i A') }}</td> --}}
                                     <td class="px-6 py-4">
                                         {{ $borrow->return_date ? $borrow->return_date->timezone('Asia/Manila')->format('F j, Y g:i A') : '-' }}
                                     </td>
