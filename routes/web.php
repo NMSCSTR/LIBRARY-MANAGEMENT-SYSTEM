@@ -172,6 +172,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/register', [BorrowProfileController::class, 'edit'])
         ->name('borrower.profile');
 
+    Route::get('/borrower/profile', [BorrowProfileController::class, 'edit'])
+        ->name('borrower.profile');
+
+    Route::put('/borrower/profile', [BorrowProfileController::class, 'update'])
+        ->name('borrower.profile.update');
+
     Route::get('/donor/dashboard', function () {
             return view('donor.dashboard');
         })->name('donor.dashboard');
