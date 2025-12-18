@@ -55,7 +55,7 @@
             </a>
 
             <!-- Register button -->
-            <a href="{{ route('register') }}"
+            <a href="{{ route('register.show') }}"
                 class="inline-flex items-center px-7 py-3.5 text-lg font-semibold
                        bg-white text-[#2C1A13] border border-[#A67C52]
                        rounded-xl shadow hover:bg-[#F2E9D8] hover:shadow-md
