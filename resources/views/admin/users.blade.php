@@ -228,7 +228,8 @@
                                     <td class="px-6 py-4 font-medium">{{ $user->name }}</td>
                                     <td class="px-6 py-4">{{ $user->email }}</td>
                                     <td class="px-6 py-4">{{ $user->role ? ucfirst($user->role->name) : 'No Role' }}</td>
-                                    <td class="px-6 py-4">{{ $user->archived_at->format('Y-m-d H:i') }}</td>
+                                    <td class="px-6 py-4">{{ \Carbon\Carbon::parse($user->archived_at)->format('Y-m-d H:i') }}</td>
+
                                 </tr>
                                 @endif
                             @endforeach
