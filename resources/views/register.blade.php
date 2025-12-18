@@ -38,11 +38,12 @@
             <div>
                 <label for="role" class="block text-sm font-medium text-[#4C3B2A]">Role</label>
                 <select name="role" id="role" required class="w-full px-4 py-2 mt-1 border rounded-lg">
-                    @foreach(\App\Models\Role::all() as $role)
+                    @foreach(\App\Models\Role::whereNotIn('name', ['admin', 'librarian'])->get() as $role)
                         <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
                     @endforeach
                 </select>
             </div>
+
 
             <div>
                 <label for="contact_number" class="block text-sm font-medium text-[#4C3B2A]">Contact Number</label>
