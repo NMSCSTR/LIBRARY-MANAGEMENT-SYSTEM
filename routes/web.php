@@ -7,7 +7,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookCopyController;
 use App\Http\Controllers\BorrowController;
 use App\Http\Controllers\BorrowerDashboardController;
-use App\Http\Controllers\BorrowProfileController;
+use App\Http\Controllers\BorrowerProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\PublisherController;
@@ -30,20 +30,20 @@ Route::middleware('auth')->group(function () {
         ->name('users.logout');
 });
 
-// Guest routes
-Route::middleware('guest')->group(function () {
+
     Route::get('/login', [AuthController::class, 'showLoginForm'])
         ->name('users.login');
 
     Route::post('/login', [AuthController::class, 'login'])
         ->name('users.login.submit');
 
-    Route::get('/register', [AuthController::class, 'showRegisterForm'])
-        ->name('register.show');
+Route::get('/signup', [AuthController::class, 'showRegisterForm'])
+    ->name('register.show');
+
+
 
     Route::post('/register', [AuthController::class, 'register'])
         ->name('register.submit');
-});
 
 
 
@@ -173,13 +173,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/borrower/dashboard', [BorrowerDashboardController::class, 'index'])
     ->name('borrower.dashboard');
 
-    Route::get('/register', [BorrowProfileController::class, 'edit'])
+    Route::get('/register', [BorrowerProfileController::class, 'edit'])
         ->name('borrower.profile');
 
-    Route::get('/borrower/profile', [BorrowProfileController::class, 'edit'])
+    Route::get('/borrower/profile', [BorrowerProfileController::class, 'edit'])
         ->name('borrower.profile');
 
-    Route::put('/borrower/profile', [BorrowProfileController::class, 'update'])
+    Route::put('/borrower/profile', [BorrowerProfileController::class, 'update'])
         ->name('borrower.profile.update');
 
     // Reserve a book copy
