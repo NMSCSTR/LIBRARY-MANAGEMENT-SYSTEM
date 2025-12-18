@@ -165,9 +165,8 @@ Route::middleware(['auth'])->group(function () {
             return view('student.dashboard');
         })->name('student.dashboard');
 
-    Route::get('/borrower/dashboard', function () {
-            return view('borrower.dashboard');
-        })->name('borrower.dashboard');
+    Route::get('/borrower/dashboard', [BorrowerDashboardController::class, 'index'])
+    ->name('borrower.dashboard');
 
     Route::get('/register', [BorrowProfileController::class, 'edit'])
         ->name('borrower.profile');
