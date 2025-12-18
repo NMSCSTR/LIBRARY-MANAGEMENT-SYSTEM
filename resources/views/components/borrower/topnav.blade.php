@@ -28,7 +28,7 @@
                 <!-- Dropdown Menu -->
                 <div id="profileMenu"
                     class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-20">
-                    <a href="{{ route('borrower.profile') }}"
+                    <a href="{{ route('borrower.profile.view') }}"
                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                     <form method="POST" action="{{ route('users.logout') }}">
                         @csrf
