@@ -135,7 +135,6 @@
                                     <td class="px-6 py-4 capitalize">{{ $reservation->status }}</td>
                                     <td class="px-6 py-4">{{ $reservation->reserved_at }}</td>
                                     <td class="px-6 py-4 flex gap-2">
-                                    <td class="px-6 py-4 flex gap-2">
                                         {{-- @if($reservation->status === 'pending') --}}
                                         {{-- Approve --}}
                                         <form action="{{ route('reservations.approve', $reservation->id) }}"
@@ -162,7 +161,6 @@
                                         <span class="text-gray-400 text-xs italic">No actions</span>
                                         @endif --}}
                                     </td>
-
                                     @endforeach
                             </tbody>
                         </table>
