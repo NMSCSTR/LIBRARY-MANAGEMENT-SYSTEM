@@ -3,186 +3,107 @@
 @section('title', 'Book Copies | Admin Dashboard | LMIS')
 
 @section('content')
-
 <section>
-    <div class="min-h-screen pt-24">
-        {{-- @include('components.admin.bg') --}}
-        {{-- Include Top Navigation --}}
+    <div class="min-h-screen pt-24 bg-gray-100">
         @include('components.admin.topnav')
-        <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-4 gap-6">
 
-            {{-- Include Sidebar --}}
+        <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-6 gap-6">
+
+            {{-- Sidebar --}}
             <div class="lg:w-2/12 w-full">
                 @include('components.admin.sidebar')
             </div>
 
             {{-- Main Content --}}
             <div class="lg:w-10/12 w-full">
+                <div class="bg-white rounded-xl shadow-md">
 
-                <div class="bg-white rounded-xl shadow-lg">
+                    {{-- Header --}}
                     <div class="px-6 py-6">
 
-
-                        <!-- Breadcrumb -->
-                        <nav class="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
-                            aria-label="Breadcrumb">
-                            <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-                                <li class="inline-flex items-center">
-                                    <a href="#"
-                                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-                                        <svg class="w-3 h-3 me-2.5" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                            <path
-                                                d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
-                                        </svg>
+                        {{-- Breadcrumb --}}
+                        <nav class="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-lg bg-gray-100">
+                            <ol class="inline-flex items-center space-x-2">
+                                <li>
+                                    <a href="#" class="text-sm font-medium text-gray-700 hover:text-blue-600">
                                         Admin
                                     </a>
                                 </li>
+                                <li class="text-gray-400">/</li>
                                 <li>
-                                    <div class="flex items-center">
-                                        <svg class="rtl:rotate-180 block w-3 h-3 mx-1 text-gray-400 " aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="m1 9 4-4-4-4" />
-                                        </svg>
-                                        <a href="#"
-                                            class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Dashboard</a>
-                                    </div>
+                                    <a href="#" class="text-sm font-medium text-gray-700 hover:text-blue-600">
+                                        Dashboard
+                                    </a>
                                 </li>
-                                <li aria-current="page">
-                                    <div class="flex items-center">
-                                        <svg class="rtl:rotate-180  w-3 h-3 mx-1 text-gray-400" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="m1 9 4-4-4-4" />
-                                        </svg>
-                                        <span
-                                            class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">Book
-                                            Copies</span>
-                                    </div>
+                                <li class="text-gray-400">/</li>
+                                <li class="text-sm font-medium text-gray-500">
+                                    Book Copies
                                 </li>
                             </ol>
                         </nav>
 
-                        <div class="flex justify-end py-4">
-                            <button id="defaultModalButton" data-modal-target="defaultModal"
-                                data-modal-toggle="defaultModal" class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700
-                                    focus:ring-4 focus:outline-none focus:ring-blue-300
-                                    font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition">
-
-                                <!-- Plus Icon -->
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                                    stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        {{-- Add Button --}}
+                        <div class="flex justify-end mt-4">
+                            <button
+                                data-modal-target="defaultModal"
+                                data-modal-toggle="defaultModal"
+                                class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg shadow">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
-
                                 Add Book Copy
                             </button>
                         </div>
-
                     </div>
 
-                    <div class="relative overflow-x-auto sm:rounded-lg  px-6 py-6">
-                        <table id="datatable"
-                            class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                            <thead
-                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 py-4">
+                    {{-- Table --}}
+                    <div class="relative overflow-x-auto px-6 pb-6">
+                        <table class="w-full text-sm text-left text-gray-600">
+                            <thead class="text-xs uppercase bg-gray-100 text-gray-700">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Book Title
-                                            <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg></a>
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Control Number
-                                            <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg></a>
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Status
-                                            <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg></a>
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Shelf Location
-                                            <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg></a>
-                                        </div>
-                                    </th>
-
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Actions
-                                            <a href="#"><svg class="w-3 h-3 ms-1.5" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg></a>
-                                        </div>
-                                    </th>
+                                    <th class="px-6 py-3">Book Title</th>
+                                    <th class="px-6 py-3">Control Number</th>
+                                    <th class="px-6 py-3">Status</th>
+                                    <th class="px-6 py-3">Shelf Location</th>
+                                    <th class="px-6 py-3">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($bookCopies as $copy)
-                                <tr class="odd:bg-white even:bg-gray-50 border-b">
+                                <tr class="odd:bg-white even:bg-gray-50 border-b border-gray-200">
                                     <td class="px-6 py-4">{{ $copy->book->title ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">{{ $copy->copy_number }}</td>
                                     <td class="px-6 py-4">
-                                        @if($copy->status == 'available')
-                                            <span class="px-2 py-1 bg-green-200 text-green-800 rounded">Available</span>
-                                        @elseif($copy->status == 'borrowed')
-                                            <span class="px-2 py-1 bg-yellow-200 text-yellow-800 rounded">Borrowed</span>
-                                        @elseif($copy->status == 'reserved')
-                                            <span class="px-2 py-1 bg-blue-200 text-blue-800 rounded">Reserved</span>
-                                        @elseif($copy->status == 'lost')
-                                            <span class="px-2 py-1 bg-red-200 text-red-800 rounded">Lost</span>
-                                        @elseif($copy->status == 'damaged')
-                                            <span class="px-2 py-1 bg-gray-200 text-gray-800 rounded">Damaged</span>
-                                        @endif
+                                        @php
+                                            $statusColors = [
+                                                'available' => 'bg-green-100 text-green-700',
+                                                'borrowed' => 'bg-yellow-100 text-yellow-700',
+                                                'reserved' => 'bg-blue-100 text-blue-700',
+                                                'lost' => 'bg-red-100 text-red-700',
+                                                'damaged' => 'bg-gray-200 text-gray-700'
+                                            ];
+                                        @endphp
+                                        <span class="px-2 py-1 rounded text-xs font-medium {{ $statusColors[$copy->status] ?? 'bg-gray-100 text-gray-600' }}">
+                                            {{ ucfirst($copy->status) }}
+                                        </span>
                                     </td>
-
                                     <td class="px-6 py-4">{{ $copy->shelf_location }}</td>
                                     <td class="px-6 py-4 flex gap-2">
-
-                                        {{-- Edit --}}
                                         <a href="{{ route('book-copies.edit', $copy->id) }}"
-                                            class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800">
+                                            class="px-3 py-2 text-xs text-white bg-blue-600 hover:bg-blue-700 rounded-md">
                                             Edit
                                         </a>
 
-                                        {{-- Delete --}}
                                         <button data-id="{{ $copy->id }}"
-                                            class="delete-copy-btn px-3 py-2 text-xs text-white bg-red-600 hover:bg-red-700">
+                                            class="delete-copy-btn px-3 py-2 text-xs text-white bg-red-500 hover:bg-red-600 rounded-md">
                                             Delete
                                         </button>
 
                                         <form id="delete-copy-form-{{ $copy->id }}"
-                                            action="{{ route('book-copies.destroy', $copy->id) }}" method="POST"
-                                            class="hidden">
+                                            action="{{ route('book-copies.destroy', $copy->id) }}"
+                                            method="POST" class="hidden">
                                             @csrf
                                             @method('DELETE')
                                         </form>
@@ -192,116 +113,104 @@
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 
+    {{-- Modal --}}
+    <div id="defaultModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+        <div class="w-full max-w-lg p-4">
+            <div class="bg-white rounded-2xl shadow-xl p-6">
 
-    <!-- Main modal -->
-    <div id="defaultModal" tabindex="-1" aria-hidden="true"
-        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-
-        <div class="relative w-full max-w-lg p-4">
-            <!-- Modal content -->
-            <div class="relative bg-white rounded-2xl shadow-2xl p-6 dark:bg-gray-800">
-
-                <!-- Modal header -->
                 <div class="flex items-center justify-between border-b pb-3 mb-4">
-                    <h3 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6 text-blue-600">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4.5 20.25a9 9 0 1115 0v.75H4.5v-.75z" />
-                        </svg>
+                    <h3 class="text-lg font-semibold text-gray-800">
                         Add Book Copy
                     </h3>
-
-                    <button type="button"
-                        class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 hover:text-gray-800 dark:text-gray-300"
-                        data-modal-toggle="defaultModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                    <button data-modal-toggle="defaultModal"
+                        class="text-gray-400 hover:text-gray-600">✕</button>
                 </div>
 
-                <!-- Modal body -->
-                <form action="{{ route('book-copies.store') }}" method="POST" class="space-y-5">
+                <form action="{{ route('book-copies.store') }}" method="POST" class="space-y-4">
                     @csrf
-                    <div class="space-y-2">
-                        <label for="book_id" class="text-sm font-medium text-gray-700 dark:text-gray-300">Book</label>
-                        <select name="book_id" id="book_id"
-                            class="w-full p-2.5 text-sm bg-transparent focus:outline-none dark:text-white" required>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Book
+                        </label>
+                        <select name="book_id"
+                            class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            required>
                             @foreach($books as $book)
-                            <option value="{{ $book->id }}">{{ $book->title }}</option>
+                                <option value="{{ $book->id }}">{{ $book->title }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="space-y-2">
-                        <label for="copy_number" class="text-sm font-medium text-gray-700 dark:text-gray-300">Copy
-                            Number</label>
-                        <input type="text" name="copy_number" id="copy_number"
-                            class="w-full p-2.5 text-sm bg-transparent focus:outline-none dark:text-white" required>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Copy Number
+                        </label>
+                        <input type="text" name="copy_number" required
+                            class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     </div>
 
-                    <div class="space-y-2">
-                        <label for="status" class="text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
-                        <select name="status" id="status"
-                            class="w-full p-2.5 text-sm bg-transparent focus:outline-none dark:text-white" required>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Status
+                        </label>
+                        <select name="status"
+                            class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            required>
                             <option value="available">Available</option>
                             <option value="borrowed">Borrowed</option>
                             <option value="reserved">Reserved</option>
+                            <option value="lost">Lost</option>
+                            <option value="damaged">Damaged</option>
                         </select>
                     </div>
 
-                    <div class="space-y-2">
-                        <label for="shelf_location" class="text-sm font-medium text-gray-700 dark:text-gray-300">Shelf
-                            Location</label>
-                        <input type="text" name="shelf_location" id="shelf_location"
-                            class="w-full p-2.5 text-sm bg-transparent focus:outline-none dark:text-white" required>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Shelf Location
+                        </label>
+                        <input type="text" name="shelf_location" required
+                            class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     </div>
 
                     <button type="submit"
-                        class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 shadow-md hover:shadow-lg transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-5 py-2.5 shadow">
                         Add Book Copy
                     </button>
                 </form>
+
             </div>
         </div>
+    </div>
 </section>
 @endsection
+
 @push('scripts')
 @include('components.alerts')
-@push('scripts')
 <script>
     document.querySelectorAll('.delete-copy-btn').forEach(button => {
-    button.addEventListener('click', function () {
-        let copyId = this.getAttribute('data-id');
-
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "This book copy will be deleted permanently!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById(`delete-copy-form-${copyId}`).submit();
-            }
+        button.addEventListener('click', function () {
+            let id = this.dataset.id;
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This book copy will be deleted permanently!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#2563eb',
+                confirmButtonText: 'Yes, delete it!'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    document.getElementById(`delete-copy-form-${id}`).submit();
+                }
+            });
         });
     });
-});
 </script>
-@endpush
 @endpush
