@@ -1,12 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Book;
 use App\Models\BookCopy;
 use App\Models\Borrow;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BorrowController extends Controller
 {
@@ -32,6 +34,8 @@ class BorrowController extends Controller
             'books'   => 'required|array',
         ]);
 
+        $borrowedBooks = [];
+
         foreach ($request->books as $bookId => $data) {
             if (! isset($data['selected'])) {
                 continue;
@@ -48,45 +52,60 @@ class BorrowController extends Controller
                 $book = Book::find($bookId);
                 return redirect()->back()->with('error', "Not enough copies for '{$book->title}'");
             }
-foreach ($availableCopies as $copy) {
-    Borrow::create([
-        'user_id'      => $request->user_id,
-        'book_id'      => $bookId,
-        'book_copy_id' => $copy->id,
-        'borrow_date'  => Carbon::now('Asia/Manila'),
-        'due_date'     => Carbon::now('Asia/Manila')->addDays(3),
-        'status'       => 'borrowed',
-    ]);
 
-    $copy->update(['status' => 'borrowed']);
-}
+            foreach ($availableCopies as $copy) {
+                $borrow = Borrow::create([
+                    'user_id'      => $request->user_id,
+                    'book_id'      => $bookId,
+                    'book_copy_id' => $copy->id,
+                    'borrow_date'  => Carbon::now('Asia/Manila'),
+                    'due_date'     => Carbon::now('Asia/Manila')->addDays(3),
+                    'status'       => 'borrowed',
+                ]);
 
+                $copy->update(['status' => 'borrowed']);
+                $borrowedBooks[] = $borrow;
+            }
+        }
+
+        // Log the borrow action
+        foreach ($borrowedBooks as $borrow) {
+            ActivityLog::create([
+                'user_id'     => Auth::id(),
+                'action'      => 'borrow',
+                'description' => Auth::user()->name . " borrowed '{$borrow->book->title}' (Copy ID: {$borrow->book_copy_id})",
+            ]);
         }
 
         return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
     }
 
-public function return($id)
-{
-    $borrow = Borrow::findOrFail($id);
+    public function return ($id)
+    {
+        $borrow = Borrow::findOrFail($id);
 
-    if ($borrow->status === 'returned') {
-        return redirect()->back()->with('info', 'This book is already returned.');
+        if ($borrow->status === 'returned') {
+            return redirect()->back()->with('info', 'This book is already returned.');
+        }
+
+        $borrow->update([
+            'return_date' => Carbon::now('Asia/Manila'),
+            'status'      => 'returned',
+        ]);
+
+        if ($borrow->bookCopy) {
+            $borrow->bookCopy->update(['status' => 'available']);
+        }
+
+        // Log return action
+        ActivityLog::create([
+            'user_id'     => Auth::id(),
+            'action'      => 'return',
+            'description' => Auth::user()->name . " returned '{$borrow->book->title}' (Copy ID: {$borrow->book_copy_id})",
+        ]);
+
+        return redirect()->route('borrows.index')->with('success', 'Book returned successfully.');
     }
-
-    $borrow->update([
-        'return_date' => Carbon::now('Asia/Manila'),
-        'status'      => 'returned',
-    ]);
-
-    // Mark the borrowed copy as available
-    if ($borrow->bookCopy) {
-        $borrow->bookCopy->update(['status' => 'available']);
-    }
-
-    return redirect()->route('borrows.index')->with('success', 'Book returned successfully.');
-}
-
 
     public function edit(Borrow $borrow)
     {
@@ -115,19 +134,31 @@ public function return($id)
             $borrow->bookCopy->update(['status' => 'available']);
         }
 
+        // Log update action
+        ActivityLog::create([
+            'user_id'     => Auth::id(),
+            'action'      => 'update_borrow',
+            'description' => Auth::user()->name . " updated borrow record for '{$borrow->book->title}' (Copy ID: {$borrow->book_copy_id})",
+        ]);
+
         return redirect()->route('borrows.index')->with('success', 'Borrow record updated successfully.');
     }
 
     public function destroy(Borrow $borrow)
     {
-
         if ($borrow->bookCopy) {
             $borrow->bookCopy->update(['status' => 'available']);
         }
 
         $borrow->delete();
 
+        // Log deletion
+        ActivityLog::create([
+            'user_id'     => Auth::id(),
+            'action'      => 'delete_borrow',
+            'description' => Auth::user()->name . " deleted borrow record for '{$borrow->book->title}' (Copy ID: {$borrow->book_copy_id})",
+        ]);
+
         return redirect()->route('borrows.index')->with('success', 'Borrow record deleted successfully.');
     }
-
 }
