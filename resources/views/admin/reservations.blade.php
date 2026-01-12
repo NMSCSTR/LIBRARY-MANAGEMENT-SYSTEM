@@ -136,7 +136,7 @@
                                     <td class="px-6 py-4">{{ $reservation->reserved_at }}</td>
                                     <td class="px-6 py-4 flex gap-2">
                                     <td class="px-6 py-4 flex gap-2">
-                                        @if($reservation->status === 'pending')
+                                        {{-- @if($reservation->status === 'pending') --}}
                                         {{-- Approve --}}
                                         <form action="{{ route('reservations.approve', $reservation->id) }}"
                                             method="POST">
@@ -163,7 +163,7 @@
                                         @endif
                                     </td>
 
-                                    @endforeach
+                                    {{-- @endforeach --}}
                             </tbody>
                         </table>
                     </div>

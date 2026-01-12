@@ -94,7 +94,7 @@ color pallete
 #F2E9D8 (parchment) #A67C52 (book spines) #6C4F3D (hardcover brown) #2C1A13 (ink)
 
 
-git fetch origin main
+    git fetch origin main
 git reset --hard FETCH_HEAD
 
 
