@@ -158,9 +158,9 @@
                                                 Reject
                                             </button>
                                         </form>
-                                        @else
+                                        {{-- @else
                                         <span class="text-gray-400 text-xs italic">No actions</span>
-                                        @endif
+                                        @endif --}}
                                     </td>
 
                                     {{-- @endforeach --}}
