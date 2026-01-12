@@ -32,7 +32,7 @@ class ReservationController extends Controller
 
     public function approve(Reservation $reservation)
     {
-        $reservation->status      = 'approved';
+        $reservation->status      = 'reserved';
         $reservation->reserved_at = now();
         $reservation->save();
 

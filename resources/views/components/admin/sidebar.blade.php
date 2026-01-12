@@ -65,7 +65,7 @@
         class="flex items-center justify-between my-4 {{ request()->routeIs('borrows.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
         <span class="flex items-center">
             <span class="material-icons-outlined pr-2">assignment_return</span>
-            Borrows
+            Borrowed books
         </span>
         <span class="material-icons-outlined">keyboard_arrow_right</span>
     </a>
