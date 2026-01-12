@@ -163,7 +163,7 @@
                                         @endif --}}
                                     </td>
 
-                                    {{-- @endforeach --}}
+                                    @endforeach
                             </tbody>
                         </table>
                     </div>
