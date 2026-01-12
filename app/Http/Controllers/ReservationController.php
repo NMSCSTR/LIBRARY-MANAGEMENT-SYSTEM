@@ -2,7 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reservation;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
 {
@@ -17,7 +19,6 @@ class ReservationController extends Controller
 
     public function reject(Reservation $reservation)
     {
-
         $reservation->status = 'declined';
         $reservation->save();
 
@@ -25,6 +26,13 @@ class ReservationController extends Controller
             $reservation->copy->status = 'available';
             $reservation->copy->save();
         }
+
+        // Log rejection
+        ActivityLog::create([
+            'user_id'     => Auth::id(),
+            'action'      => 'reject_reservation',
+            'description' => Auth::user()->name . " rejected reservation for '{$reservation->book->title}' (Reservation ID: {$reservation->id})",
+        ]);
 
         return redirect()->route('reservations.index')
             ->with('success', 'Reservation declined and book copy set to available.');
@@ -40,6 +48,13 @@ class ReservationController extends Controller
             $reservation->copy->status = 'reserved';
             $reservation->copy->save();
         }
+
+        // Log approval
+        ActivityLog::create([
+            'user_id'     => Auth::id(),
+            'action'      => 'approve_reservation',
+            'description' => Auth::user()->name . " approved reservation for '{$reservation->book->title}' (Reservation ID: {$reservation->id})",
+        ]);
 
         return redirect()->route('reservations.index')
             ->with('success', 'Reservation approved successfully.');
@@ -64,7 +79,7 @@ class ReservationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Reservations $reservations)
+    public function show(Reservation $reservation)
     {
         //
     }
@@ -72,7 +87,7 @@ class ReservationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Reservations $reservations)
+    public function edit(Reservation $reservation)
     {
         //
     }
@@ -80,7 +95,7 @@ class ReservationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Reservations $reservations)
+    public function update(Request $request, Reservation $reservation)
     {
         //
     }
@@ -88,7 +103,7 @@ class ReservationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Reservations $reservations)
+    public function destroy(Reservation $reservation)
     {
         //
     }
