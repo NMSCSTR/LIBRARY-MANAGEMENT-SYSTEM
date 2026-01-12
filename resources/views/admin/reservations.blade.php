@@ -135,19 +135,35 @@
                                     <td class="px-6 py-4 capitalize">{{ $reservation->status }}</td>
                                     <td class="px-6 py-4">{{ $reservation->reserved_at }}</td>
                                     <td class="px-6 py-4 flex gap-2">
+                                    <td class="px-6 py-4 flex gap-2">
+                                        @if($reservation->status === 'pending')
+                                        {{-- Approve --}}
+                                        <form action="{{ route('reservations.approve', $reservation->id) }}"
+                                            method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit"
+                                                class="approve-reservation-btn px-3 py-2 text-xs text-white bg-green-600 hover:bg-green-700">
+                                                Approve
+                                            </button>
+                                        </form>
+
+                                        {{-- Reject --}}
                                         <form action="{{ route('reservations.reject', $reservation->id) }}"
                                             method="POST">
                                             @csrf
                                             @method('PUT')
                                             <button type="submit"
-                                                class="px-3 py-2 text-xs text-white bg-gray-500 hover:bg-gray-600">
+                                                class="reject-reservation-btn px-3 py-2 text-xs text-white bg-gray-500 hover:bg-gray-600">
                                                 Reject
                                             </button>
                                         </form>
-
+                                        @else
+                                        <span class="text-gray-400 text-xs italic">No actions</span>
+                                        @endif
                                     </td>
-                                </tr>
-                                @endforeach
+
+                                    @endforeach
                             </tbody>
                         </table>
                     </div>

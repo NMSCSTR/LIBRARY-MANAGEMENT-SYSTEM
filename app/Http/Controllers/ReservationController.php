@@ -27,9 +27,23 @@ class ReservationController extends Controller
         }
 
         return redirect()->route('reservations.index')
-                        ->with('success', 'Reservation declined and book copy set to available.');
+            ->with('success', 'Reservation declined and book copy set to available.');
     }
 
+    public function approve(Reservation $reservation)
+    {
+        $reservation->status      = 'approved';
+        $reservation->reserved_at = now();
+        $reservation->save();
+
+        if ($reservation->copy) {
+            $reservation->copy->status = 'reserved';
+            $reservation->copy->save();
+        }
+
+        return redirect()->route('reservations.index')
+            ->with('success', 'Reservation approved successfully.');
+    }
 
     /**
      * Show the form for creating a new resource.

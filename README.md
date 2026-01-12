@@ -97,10 +97,4 @@ color pallete
 git fetch origin main
 git reset --hard FETCH_HEAD
 
-DYAN - 3K + 4K DALA SA HOSTING
-PAPA JESUS - 3K + 2K
-KIRT  - 1500
 
-7000
-5000
-1500

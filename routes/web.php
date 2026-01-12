@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\ActivityLogController;;
-use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookCopyController;
 use App\Http\Controllers\BorrowController;
@@ -15,49 +16,41 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\AdminDashboardController;
 use Illuminate\Support\Facades\Route;
-
-
 
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
-
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])
         ->name('users.logout');
 });
 
+Route::get('/login', [AuthController::class, 'showLoginForm'])
+    ->name('users.login');
 
-    Route::get('/login', [AuthController::class, 'showLoginForm'])
-        ->name('users.login');
-
-    Route::post('/login', [AuthController::class, 'login'])
-        ->name('users.login.submit');
+Route::post('/login', [AuthController::class, 'login'])
+    ->name('users.login.submit');
 
 Route::get('/signup', [AuthController::class, 'showRegisterForm'])
     ->name('register.show');
 
-
-
-    Route::post('/register', [AuthController::class, 'register'])
-        ->name('register.submit');
-
-
+Route::post('/register', [AuthController::class, 'register'])
+    ->name('register.submit');
 
 Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(function () {
     Route::get('/librarian/dashboard', function () {
-            return view('librarian.dashboard');
-        })->name('librarian.dashboard');
+        return view('librarian.dashboard');
+    })->name('librarian.dashboard');
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
         ->name('admin.dashboard');
 
     Route::put('/reservations/{reservation}/reject', [ReservationController::class, 'reject'])
-    ->name('reservations.reject');
+        ->name('reservations.reject');
 
-
+    Route::put('reservations/{reservation}/approve', [ReservationController::class, 'approve'])
+        ->name('reservations.approve');
 
     Route::resource('authors', AuthorController::class)->names([
         'index'   => 'authors.index',
@@ -67,8 +60,6 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'destroy' => 'authors.destroy',
     ]);
 
-
-
     Route::resource('books', BookController::class)->names([
         'index'   => 'books.index',
         'store'   => 'books.store',
@@ -76,7 +67,6 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'update'  => 'books.update',
         'destroy' => 'books.destroy',
     ]);
-
 
     Route::resource('categories', CategoryController::class)->names([
         'index'   => 'categories.index',
@@ -86,7 +76,6 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'destroy' => 'categories.destroy',
     ]);
 
-
     Route::resource('publishers', PublisherController::class)->names([
         'index'   => 'publishers.index',
         'store'   => 'publishers.store',
@@ -94,7 +83,6 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'update'  => 'publishers.update',
         'destroy' => 'publishers.destroy',
     ]);
-
 
     Route::resource('suppliers', SupplierController::class)->names([
         'index'   => 'suppliers.index',
@@ -104,7 +92,6 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'destroy' => 'suppliers.destroy',
     ]);
 
-
     Route::resource('book-copies', BookCopyController::class)->names([
         'index'   => 'book-copies.index',
         'store'   => 'book-copies.store',
@@ -112,7 +99,6 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
         'update'  => 'book-copies.update',
         'destroy' => 'book-copies.destroy',
     ]);
-
 
     Route::resource('borrows', BorrowController::class)->names([
         'index'   => 'borrows.index',
@@ -133,7 +119,6 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
     ]);
 });
 
-
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
     //     ->name('admin.dashboard');
@@ -141,16 +126,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/users/{id}/archive', [UserController::class, 'archive'])->name('users.archive');
     Route::put('/users/{user}/unarchive', [UserController::class, 'unarchive'])->name('users.unarchive');
 
-
-
-
     Route::resource('users', UserController::class)->names([
         'index'   => 'users.index',
         'store'   => 'users.store',
         'show'    => 'users.show',
         'destroy' => 'users.destroy',
     ]);
-
 
     Route::resource('roles', RoleController::class)->names([
         'index'   => 'roles.index',
@@ -161,19 +142,18 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     ]);
 });
 
-
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/instructor/dashboard', function () {
-            return view('instructor.dashboard');
-        })->name('instructor.dashboard');
+        return view('instructor.dashboard');
+    })->name('instructor.dashboard');
 
     Route::get('/student/dashboard', function () {
-            return view('student.dashboard');
-        })->name('student.dashboard');
+        return view('student.dashboard');
+    })->name('student.dashboard');
 
     Route::get('/borrower/dashboard', [BorrowerDashboardController::class, 'index'])
-    ->name('borrower.dashboard');
+        ->name('borrower.dashboard');
 
     Route::get('/borrower-profile-view', [BorrowerProfileController::class, 'edit'])
         ->name('borrower.profile.view');
@@ -193,8 +173,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('borrower.cancelReservation');
 
     Route::get('/donor/dashboard', function () {
-            return view('donor.dashboard');
-        })->name('donor.dashboard');
+        return view('donor.dashboard');
+    })->name('donor.dashboard');
 
     Route::resource('reservations', ReservationController::class)->names([
         'index'   => 'reservations.index',
