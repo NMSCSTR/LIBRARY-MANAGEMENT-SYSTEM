@@ -14,12 +14,17 @@ class BorrowerDashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $keyword = $request->search ?? null;
+        $keyword = $request->search;
 
-        // Fetch books with related data
+        // Fetch books (always), filter only if searching
         $books = Book::with(['author', 'publisher', 'category', 'copies'])
-            ->when($keyword, fn($q) => $q->where('title', 'like', "%$keyword%"))
-            ->get();
+            ->when($keyword, function ($q) use ($keyword) {
+                $q->where('title', 'like', "%{$keyword}%")
+                  ->orWhereHas('author', fn($a) => $a->where('name', 'like', "%{$keyword}%"))
+                  ->orWhereHas('category', fn($c) => $c->where('name', 'like', "%{$keyword}%"))
+                  ->orWhereHas('publisher', fn($p) => $p->where('name', 'like', "%{$keyword}%"));
+            })
+            ->paginate(10);
 
         // Fetch borrowed books for the logged-in user
         $borrowed = Borrow::with(['book', 'bookCopy'])
@@ -65,16 +70,16 @@ class BorrowerDashboardController extends Controller
             return back()->with('error', 'This copy is not available for reservation.');
         }
 
-        // Create reservation with copy_id
+        // Create reservation
         Reservation::create([
             'user_id'     => auth()->id(),
             'book_id'     => $request->book_id,
-            'copy_id'     => $bookCopy->id, // store exact copy
+            'copy_id'     => $bookCopy->id,
             'status'      => 'reserved',
             'reserved_at' => now(),
         ]);
 
-        // Update copy status to reserved
+        // Update copy status
         $bookCopy->update(['status' => 'reserved']);
 
         return back()->with('success', 'Book reserved successfully!');
@@ -85,18 +90,15 @@ class BorrowerDashboardController extends Controller
      */
     public function cancelReservation(Reservation $reservation)
     {
-        // Ensure the user owns the reservation
         if ($reservation->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Retrieve the reserved copy
         $bookCopy = BookCopy::find($reservation->copy_id);
         if ($bookCopy) {
             $bookCopy->update(['status' => 'available']);
         }
 
-        // Delete the reservation
         $reservation->delete();
 
         return back()->with('success', 'Reservation canceled successfully.');

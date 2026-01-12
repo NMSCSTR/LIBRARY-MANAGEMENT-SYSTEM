@@ -64,7 +64,7 @@
                             <thead class="text-xs uppercase bg-gray-100 text-gray-700">
                                 <tr>
                                     <th class="px-6 py-3">Book Title</th>
-                                    <th class="px-6 py-3">Control Number</th>
+                                    <th class="px-6 py-3">Call Number</th>
                                     <th class="px-6 py-3">Status</th>
                                     <th class="px-6 py-3">Shelf Location</th>
                                     <th class="px-6 py-3">Actions</th>
@@ -150,7 +150,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
-                            Copy Number
+                            Call Number
                         </label>
                         <input type="text" name="copy_number" required
                             class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">

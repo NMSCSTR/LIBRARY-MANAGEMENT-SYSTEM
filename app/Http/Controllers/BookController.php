@@ -49,6 +49,7 @@ class BookController extends Controller
             'supplier_id'      => 'required|exists:suppliers,id',
             'copies_available' => 'required|integer|min:1',
         ]);
+        //year_published, place_published
 
         $book = Book::create($validated);
 
