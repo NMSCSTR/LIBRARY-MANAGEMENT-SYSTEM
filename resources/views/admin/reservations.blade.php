@@ -175,7 +175,6 @@
 @endsection
 @push('scripts')
 @include('components.alerts')
-@push('scripts')
 <script>
     document.querySelectorAll('.delete-reservation-btn').forEach(button => {
     button.addEventListener('click', function () {
