@@ -11,7 +11,7 @@
     <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-10 gap-6 pt-10 mt-10">
 
         {{-- Main Content --}}
-        <div class="w-full space-y-8  mt-10">
+        <div class="w-full space-y-8 mt-10">
 
             {{-- Header --}}
             <div class="text-center lg:text-left">
@@ -56,12 +56,15 @@
                 </div>
             </form>
 
-            {{-- Search Results --}}
-            @if($keyword)
+            {{-- Books List --}}
             <div class="bg-white rounded-2xl shadow-md p-6">
                 <h3 class="text-lg font-semibold mb-4">
-                    Search Results for <span class="text-indigo-600">“{{ $keyword }}”</span>
+                    {{ $keyword ? 'Search Results for' : 'Available Books' }}
+                    @if($keyword)
+                        <span class="text-indigo-600">“{{ $keyword }}”</span>
+                    @endif
                 </h3>
+
                 <div class="space-y-4">
                     @forelse($books as $book)
                     <div class="border rounded-xl p-5 hover:shadow-lg transition duration-300 ease-in-out">
@@ -102,11 +105,15 @@
                         </div>
                     </div>
                     @empty
-                    <p class="text-gray-500 text-sm">No books found.</p>
+                        <p class="text-gray-500 text-sm">No books found.</p>
                     @endforelse
                 </div>
+
+                {{-- Pagination --}}
+                <div class="mt-6">
+                    {{ $books->withQueryString()->links() }}
+                </div>
             </div>
-            @endif
 
             {{-- Borrower Transactions --}}
             <div class="bg-white rounded-2xl shadow-md p-6">
