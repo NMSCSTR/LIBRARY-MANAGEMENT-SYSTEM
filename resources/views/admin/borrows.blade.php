@@ -140,19 +140,19 @@
         </div>
     </div>
 
-    <!-- Add Borrow Modal -->
+   <!-- Add Borrow Modal -->
 <div id="createBorrowModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
     <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-2xl">
         <h3 class="text-lg font-bold mb-4">Add Borrow</h3>
 
-        <form action="{{ route('borrows.store') }}" method="POST">
+        <form id="borrowForm" action="{{ route('borrows.store') }}" method="POST">
             @csrf
 
-            <!-- Select Borrower -->
+            <!-- Select User -->
             <div class="mb-4">
                 <label for="user_id" class="block mb-2 font-medium">Select Borrower</label>
                 <select name="user_id" id="user_id" class="w-full border px-3 py-2 rounded" required>
-                    <option value="">-- Choose User --</option>
+                    <option value="">-- Select User --</option>
                     @foreach($users as $user)
                         <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
                     @endforeach
@@ -162,44 +162,19 @@
             <!-- Select Book Copies -->
             <div class="mb-4">
                 <label class="block mb-2 font-medium">Select Book Copies</label>
-                <div class="space-y-2 max-h-64 overflow-y-auto border p-3 rounded">
-
-                    @foreach($books as $book)
-                        @foreach($book->copies as $copy)
-                            @php
-                                $canBorrow = $copy->status === 'available';
-                                $reservedByUser = $copy->status === 'reserved' && $copy->reservations->first()?->user_id === old('user_id');
-                            @endphp
-
-                            @if($canBorrow || $reservedByUser)
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" name="books[{{ $book->id }}][copy_ids][]"
-                                           value="{{ $copy->id }}"
-                                           id="copy-{{ $copy->id }}">
-                                    <label for="copy-{{ $copy->id }}">
-                                        {{ $book->title }} - Copy #{{ $copy->copy_number }}
-                                        (Status: {{ ucfirst($copy->status) }})
-                                        @if($reservedByUser)
-                                            - Reserved by this user
-                                        @endif
-                                    </label>
-                                </div>
-                            @endif
-
-                        @endforeach
-                    @endforeach
-
+                <div class="space-y-2 max-h-64 overflow-y-auto border p-3 rounded" id="bookCopiesContainer">
+                    <p class="text-gray-400 text-sm">Select a borrower first to see available/reserved copies.</p>
                 </div>
             </div>
 
             <div class="flex justify-end gap-3">
-                <button type="button" data-modal-toggle="createBorrowModal"
-                        class="px-3 py-2 bg-gray-300 rounded">Cancel</button>
+                <button type="button" data-modal-toggle="createBorrowModal" class="px-3 py-2 bg-gray-300 rounded">Cancel</button>
                 <button type="submit" class="px-3 py-2 bg-blue-600 text-white rounded">Borrow</button>
             </div>
         </form>
     </div>
 </div>
+
 
 
 </section>
@@ -209,35 +184,49 @@
 @include('components.alerts')
 
 <script>
-    // Delete borrow
-    document.querySelectorAll('.delete-borrow-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const id = btn.dataset.id;
+const books = @json($books);
 
-            Swal.fire({
-                title: 'Delete this borrow record?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33'
-            }).then(result => {
-                if (result.isConfirmed) {
-                    document.getElementById(`delete-borrow-form-${id}`).submit();
-                }
-            });
+document.getElementById('user_id').addEventListener('change', function() {
+    const userId = this.value;
+    const container = document.getElementById('bookCopiesContainer');
+    container.innerHTML = '';
+
+    if (!userId) {
+        container.innerHTML = '<p class="text-gray-400 text-sm">Select a borrower first to see available/reserved copies.</p>';
+        return;
+    }
+
+    books.forEach(book => {
+        // Filter copies: available or reserved by selected user
+        const availableCopies = book.copies.filter(copy => {
+            if(copy.status === 'available') return true;
+            if(copy.status === 'reserved') {
+                const reservation = copy.reservations.find(r => r.status === 'reserved');
+                return reservation && reservation.user_id == userId;
+            }
+            return false;
         });
-    });
 
-    // Return borrow modal
-    document.querySelectorAll('.return-borrow-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const copy = btn.dataset.copy;
-            const user = btn.dataset.user;
-            const id = btn.dataset.id;
+        if (availableCopies.length === 0) return;
 
-            document.getElementById('returnCopy').textContent = copy;
-            document.getElementById('returnUser').textContent = user;
-            document.getElementById('returnBorrowForm').action = `/admin/borrows/${id}/return`;
+        const bookDiv = document.createElement('div');
+        bookDiv.classList.add('mb-2');
+        bookDiv.innerHTML = `<p class="font-medium">${book.title}</p>`;
+
+        availableCopies.forEach(copy => {
+            const copyHtml = `
+            <div class="flex items-center gap-2 ml-3">
+                <input type="checkbox" name="books[${book.id}][copy_id]" value="${copy.id}" id="copy-${copy.id}">
+                <label for="copy-${copy.id}">
+                    Copy #${copy.copy_number} (${copy.status})
+                </label>
+            </div>`;
+            bookDiv.innerHTML += copyHtml;
         });
+
+        container.appendChild(bookDiv);
     });
+});
 </script>
+
 @endpush

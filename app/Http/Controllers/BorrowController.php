@@ -18,13 +18,17 @@ public function index()
         ->orderByDesc('borrow_date')
         ->get();
 
-    // Load books with copies and their reservations
-    $books = Book::with(['copies.reservations'])->get();
+    // Load books with available or reserved copies and their reservations
+    $books = Book::with(['copies' => function($q) {
+        $q->whereIn('status', ['available', 'reserved'])
+          ->with('reservations');
+    }])->get();
 
     $users = User::all();
 
     return view('admin.borrows', compact('borrows', 'books', 'users'));
 }
+
 
 
     public function store(Request $request)
