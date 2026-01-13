@@ -75,7 +75,7 @@ class BorrowerDashboardController extends Controller
             'user_id'     => auth()->id(),
             'book_id'     => $request->book_id,
             'copy_id'     => $bookCopy->id,
-            'status'      => 'reserved',
+            'status'      => 'pending',
             'reserved_at' => now(),
         ]);
 
