@@ -12,93 +12,114 @@ use Illuminate\Support\Facades\Auth;
 
 class BorrowController extends Controller
 {
-public function index()
-{
-    $borrows = Borrow::with(['user', 'book', 'bookCopy'])
-        ->orderByDesc('borrow_date')
-        ->get();
+    public function index()
+    {
+        $borrows = Borrow::with(['user', 'book', 'bookCopy'])
+            ->orderByDesc('borrow_date')
+            ->get();
 
-    // Load books with available or reserved copies and their reservations
-    $books = Book::with(['copies' => function($q) {
-        $q->whereIn('status', ['available', 'reserved'])
-          ->with('reservations');
-    }])->get();
+        // Load books with available or reserved copies and their reservations
+        $books = Book::with(['copies' => function ($q) {
+            $q->whereIn('status', ['available', 'reserved'])
+                ->with('reservations');
+        }])->get();
 
-    $users = User::all();
+        $users = User::all();
 
-    return view('admin.borrows', compact('borrows', 'books', 'users'));
-}
+        return view('admin.borrows', compact('borrows', 'books', 'users'));
+    }
 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'books'   => 'required|array',
+        ]);
 
+        $user          = User::findOrFail($request->user_id);
+        $borrowedBooks = [];
+        $errors        = [];
 
-public function store(Request $request)
-{
-    $request->validate([
-        'user_id' => 'required|exists:users,id',
-        'books'   => 'required|array',
-    ]);
+        \DB::beginTransaction(); // Start transaction
 
-    $user = User::findOrFail($request->user_id);
-    $borrowedBooks = [];
-    $errors = [];
+        try {
+            foreach ($request->books as $bookId => $data) {
+                if (! isset($data['copy_id'])) {
+                    continue;
+                }
 
-    foreach ($request->books as $bookId => $data) {
-        if (!isset($data['copy_id'])) continue;
+                $copy = BookCopy::find($data['copy_id']);
+                if (! $copy) {
+                    $errors[] = "Book copy ID {$data['copy_id']} not found.";
+                    continue;
+                }
 
-        $copy = BookCopy::with('reservations')->find($data['copy_id']);
-        if (!$copy) continue;
+                // Skip if the copy is borrowed, lost, or damaged
+                if (in_array($copy->status, ['borrowed', 'lost', 'damaged'])) {
+                    $errors[] = "Book copy #{$copy->copy_number} cannot be borrowed (status: {$copy->status}).";
+                    continue;
+                }
 
-        // Cannot borrow if status is borrowed, lost, or damaged
-        if (in_array($copy->status, ['borrowed', 'lost', 'damaged'])) {
-            $errors[] = "Book copy #{$copy->copy_number} cannot be borrowed (status: {$copy->status}).";
-            continue;
-        }
+                // Check if this copy is reserved by this user
+                $reservation = Reservation::where('copy_id', $copy->id)
+                    ->where('user_id', $user->id)
+                    ->where('status', 'reserved')
+                    ->first();
 
-        // If reserved, ensure the user is the reserver
-        if ($copy->status === 'reserved') {
-            $reservation = $copy->reservations->firstWhere('status', 'reserved');
-            if (!$reservation || $reservation->user_id != $user->id) {
-                $errors[] = "Book copy #{$copy->copy_number} is reserved by another user.";
-                continue; // Skip this copy but continue with others
+                // Skip if reserved by another user
+                if ($copy->status === 'reserved' && ! $reservation) {
+                    $errors[] = "Book copy #{$copy->copy_number} is reserved by another user.";
+                    continue;
+                }
+
+                // Create borrow record
+                $borrow = Borrow::create([
+                    'user_id'      => $user->id,
+                    'book_id'      => $bookId,
+                    'book_copy_id' => $copy->id,
+                    'borrow_date'  => now('Asia/Manila'),
+                    'due_date'     => now('Asia/Manila')->addDays(3),
+                    'status'       => 'borrowed',
+                ]);
+
+                // Update copy status to borrowed
+                $copy->update(['status' => 'borrowed']);
+
+                // Update reservation status if exists
+                if ($reservation) {
+                    $reservation->update(['status' => 'borrowed']);
+                }
+
+                // Log borrow action
+                ActivityLog::create([
+                    'user_id'     => Auth::id(),
+                    'action'      => 'borrow',
+                    'description' => Auth::user()->name . " borrowed '{$borrow->book->title}' (Copy #{$borrow->bookCopy->copy_number})",
+                ]);
+
+                $borrowedBooks[] = $borrow;
             }
-            $reservation->status = 'borrowed';
-            $reservation->save();
+
+            \DB::commit(); // Commit transaction
+
+        } catch (\Exception $e) {
+            \DB::rollBack(); // Rollback if anything fails
+            return redirect()->route('borrows.index')
+                ->with('error', 'Failed to borrow books: ' . $e->getMessage());
         }
 
-        // Record the borrow
-        $borrow = Borrow::create([
-            'user_id'      => $user->id,
-            'book_id'      => $bookId,
-            'book_copy_id' => $copy->id,
-            'borrow_date'  => now('Asia/Manila'),
-            'due_date'     => now('Asia/Manila')->addDays(3),
-            'status'       => 'borrowed',
-        ]);
+        // Build success/warning message
+        $message = count($borrowedBooks) > 0
+            ? 'Borrow records created successfully.'
+            : '';
 
-        $copy->update(['status' => 'borrowed']);
-        $borrowedBooks[] = $borrow;
+        if (! empty($errors)) {
+            $message .= ' Some copies could not be borrowed: ' . implode(' | ', $errors);
+            return redirect()->route('borrows.index')->with('warning', $message);
+        }
+
+        return redirect()->route('borrows.index')->with('success', $message);
     }
-
-    // Log all borrows
-    foreach ($borrowedBooks as $borrow) {
-        ActivityLog::create([
-            'user_id'     => Auth::id(),
-            'action'      => 'borrow',
-            'description' => Auth::user()->name . " borrowed '{$borrow->book->title}' (Copy #{$borrow->bookCopy->copy_number})",
-        ]);
-    }
-
-    // Return with success and/or errors
-    $message = 'Borrow records created successfully.';
-    if (!empty($errors)) {
-        $message .= ' Some copies could not be borrowed: ' . implode(', ', $errors);
-        return redirect()->route('borrows.index')->with('warning', $message);
-    }
-
-    return redirect()->route('borrows.index')->with('success', $message);
-}
-
-
 
     public function return ($id)
     {
