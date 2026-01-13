@@ -246,6 +246,15 @@ document.getElementById('user_id').addEventListener('change', function() {
         document.getElementById('returnUser').textContent = this.dataset.user;
     });
 });
+
+document.querySelectorAll('.delete-borrow-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        if(confirm('Are you sure you want to delete this borrow record?')) {
+            document.getElementById('delete-borrow-form-' + this.dataset.id).submit();
+        }
+    });
+});
+
 </script>
 
 @endpush
