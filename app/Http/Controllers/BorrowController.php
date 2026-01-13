@@ -33,60 +33,62 @@ class BorrowController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'books'   => 'required|array',
+            'user_id'          => 'required|exists:users,id',
+            'books'            => 'required|array',
+            'books.*.copy_ids' => 'required|array|min:1',
+        ], [
+            'books.*.copy_ids.required' => 'Please select at least one book copy to borrow.',
         ]);
 
         $borrowedBooks = [];
 
         foreach ($request->books as $bookId => $data) {
-
-            if (! isset($data['copy_id'])) {
+            if (! isset($data['copy_ids'])) {
                 continue;
             }
 
-            $copy = BookCopy::find($data['copy_id']);
+            foreach ($data['copy_ids'] as $copyId) {
+                $copy = BookCopy::with('reservations')->findOrFail($copyId);
 
-            // Cannot borrow if copy is borrowed, lost, or damaged
-            if (in_array($copy->status, ['borrowed', 'lost', 'damaged'])) {
-                return redirect()->back()->with('error', "Book copy {$copy->copy_number} cannot be borrowed.");
-            }
-
-            // Reserved copy check
-            if ($copy->status == 'reserved') {
-                $reservation = $copy->reservations()->where('status', 'reserved')->first();
-                if (! $reservation || $reservation->user_id != $request->user_id) {
-                    return redirect()->back()->with('error', "Book copy {$copy->copy_number} is reserved by another user.");
+                // Reserved copy check
+                if ($copy->status === 'reserved') {
+                    $reservation = $copy->reservations->where('status', 'reserved')->first();
+                    if (! $reservation || $reservation->user_id != $request->user_id) {
+                        return redirect()->back()->with('error', "Book copy #{$copy->copy_number} is reserved by another user.");
+                    }
+                    $reservation->update(['status' => 'borrowed']);
                 }
-                // Mark reservation as used
-                $reservation->status = 'borrowed';
-                $reservation->save();
+
+                // Cannot borrow if copy is already borrowed, lost, or damaged
+                if (in_array($copy->status, ['borrowed', 'lost', 'damaged'])) {
+                    return redirect()->back()->with('error', "Book copy #{$copy->copy_number} cannot be borrowed.");
+                }
+
+                // Create borrow record
+                $borrow = Borrow::create([
+                    'user_id'      => $request->user_id,
+                    'book_id'      => $bookId,
+                    'book_copy_id' => $copy->id,
+                    'borrow_date'  => now('Asia/Manila'),
+                    'due_date'     => now('Asia/Manila')->addDays(3),
+                    'status'       => 'borrowed',
+                ]);
+
+                $copy->update(['status' => 'borrowed']);
+                $borrowedBooks[] = $borrow;
             }
-
-            // Create borrow
-            $borrow = Borrow::create([
-                'user_id'      => $request->user_id,
-                'book_id'      => $bookId,
-                'book_copy_id' => $copy->id,
-                'borrow_date'  => Carbon::now('Asia/Manila'),
-                'due_date'     => Carbon::now('Asia/Manila')->addDays(3),
-                'status'       => 'borrowed',
-            ]);
-
-            $copy->update(['status' => 'borrowed']);
-            $borrowedBooks[] = $borrow;
         }
 
-        // Log borrow action
+        // Log activity
         foreach ($borrowedBooks as $borrow) {
             ActivityLog::create([
-                'user_id'     => Auth::id(),
+                'user_id'     => auth()->id(),
                 'action'      => 'borrow',
-                'description' => Auth::user()->name . " borrowed '{$borrow->book->title}' (Copy ID: {$borrow->book_copy_id})",
+                'description' => auth()->user()->name . " borrowed '{$borrow->book->title}' (Copy ID: {$borrow->book_copy_id})",
             ]);
         }
 
-        return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
+        return redirect()->route('borrows.index')->with('success', 'Borrow record(s) created successfully.');
     }
 
     public function return ($id)

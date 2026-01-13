@@ -140,48 +140,67 @@
         </div>
     </div>
 
-    {{-- Add Borrow Modal --}}
-    <div id="createBorrowModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-        <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-2xl">
-            <h3 class="text-lg font-bold mb-4">Add Borrow</h3>
+    <!-- Add Borrow Modal -->
+<div id="createBorrowModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-2xl">
+        <h3 class="text-lg font-bold mb-4">Add Borrow</h3>
 
-            <form action="{{ route('borrows.store') }}" method="POST">
-                @csrf
+        <form action="{{ route('borrows.store') }}" method="POST">
+            @csrf
 
-                <div class="mb-4">
-                    <label for="user_id" class="block mb-2 font-medium">Select User</label>
-                    <select name="user_id" id="user_id" class="w-full border px-3 py-2 rounded" required>
-                        @foreach($users as $user)
+            <!-- Select Borrower -->
+            <div class="mb-4">
+                <label for="user_id" class="block mb-2 font-medium">Select Borrower</label>
+                <select name="user_id" id="user_id" class="w-full border px-3 py-2 rounded" required>
+                    <option value="">-- Choose User --</option>
+                    @foreach($users as $user)
                         <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                        @endforeach
-                    </select>
-                </div>
+                    @endforeach
+                </select>
+            </div>
 
-                <div class="mb-4">
-                    <label class="block mb-2 font-medium">Select Book Copies</label>
-                    <div class="space-y-2 max-h-64 overflow-y-auto border p-3 rounded">
-                        @foreach($bookCopies as $copy)
-                            @if($copy->status === 'available' || ($copy->status === 'reserved' && $copy->reservation?->user_id == old('user_id')))
-                            <div class="flex items-center gap-2">
-                                <input type="checkbox" name="copies[]" value="{{ $copy->id }}" id="copy-{{ $copy->id }}">
-                                <label for="copy-{{ $copy->id }}">
-                                    {{ $copy->book->title }} - {{ $copy->copy_number }}
-                                    (Status: {{ ucfirst($copy->status) }})
-                                </label>
-                            </div>
+            <!-- Select Book Copies -->
+            <div class="mb-4">
+                <label class="block mb-2 font-medium">Select Book Copies</label>
+                <div class="space-y-2 max-h-64 overflow-y-auto border p-3 rounded">
+
+                    @foreach($books as $book)
+                        @foreach($book->copies as $copy)
+                            @php
+                                $canBorrow = $copy->status === 'available';
+                                $reservedByUser = $copy->status === 'reserved' && $copy->reservations->first()?->user_id === old('user_id');
+                            @endphp
+
+                            @if($canBorrow || $reservedByUser)
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" name="books[{{ $book->id }}][copy_ids][]"
+                                           value="{{ $copy->id }}"
+                                           id="copy-{{ $copy->id }}">
+                                    <label for="copy-{{ $copy->id }}">
+                                        {{ $book->title }} - Copy #{{ $copy->copy_number }}
+                                        (Status: {{ ucfirst($copy->status) }})
+                                        @if($reservedByUser)
+                                            - Reserved by this user
+                                        @endif
+                                    </label>
+                                </div>
                             @endif
-                        @endforeach
-                    </div>
-                </div>
 
-                <div class="flex justify-end gap-3">
-                    <button type="button" data-modal-toggle="createBorrowModal"
-                        class="px-3 py-2 bg-gray-300 rounded">Cancel</button>
-                    <button type="submit" class="px-3 py-2 bg-blue-600 text-white rounded">Borrow</button>
+                        @endforeach
+                    @endforeach
+
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button type="button" data-modal-toggle="createBorrowModal"
+                        class="px-3 py-2 bg-gray-300 rounded">Cancel</button>
+                <button type="submit" class="px-3 py-2 bg-blue-600 text-white rounded">Borrow</button>
+            </div>
+        </form>
     </div>
+</div>
+
 
 </section>
 @endsection
