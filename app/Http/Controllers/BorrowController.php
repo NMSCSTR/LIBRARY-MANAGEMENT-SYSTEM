@@ -63,7 +63,7 @@ class BorrowController extends Controller
             }
 
             // Update reservation to borrowed
-            $reservation->update(['status' => 'borrowed']);
+            // $reservation->update(['status' => 'borrowed']);
         }
 
         // Create borrow record
