@@ -249,9 +249,21 @@ document.getElementById('user_id').addEventListener('change', function() {
 
 document.querySelectorAll('.delete-borrow-btn').forEach(btn => {
     btn.addEventListener('click', function() {
-        if(confirm('Are you sure you want to delete this borrow record?')) {
-            document.getElementById('delete-borrow-form-' + this.dataset.id).submit();
-        }
+        const borrowId = this.dataset.id;
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This borrow record will be permanently deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-borrow-form-' + borrowId).submit();
+            }
+        });
     });
 });
 
