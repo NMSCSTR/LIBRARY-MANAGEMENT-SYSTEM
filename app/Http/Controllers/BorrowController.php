@@ -31,42 +31,41 @@ public function index()
 
 
 
-    public function store(Request $request)
+public function store(Request $request)
 {
     $request->validate([
         'user_id' => 'required|exists:users,id',
-        'books'   => 'required|array', // Each selected book should have a copy_id
+        'books'   => 'required|array',
     ]);
 
     $user = User::findOrFail($request->user_id);
     $borrowedBooks = [];
+    $errors = [];
 
     foreach ($request->books as $bookId => $data) {
-
         if (!isset($data['copy_id'])) continue;
 
         $copy = BookCopy::with('reservations')->find($data['copy_id']);
-
         if (!$copy) continue;
 
-        // Prevent borrowing if the copy is borrowed, lost, or damaged
+        // Cannot borrow if status is borrowed, lost, or damaged
         if (in_array($copy->status, ['borrowed', 'lost', 'damaged'])) {
-            return redirect()->back()->with('error', "Book copy #{$copy->copy_number} cannot be borrowed (status: {$copy->status}).");
+            $errors[] = "Book copy #{$copy->copy_number} cannot be borrowed (status: {$copy->status}).";
+            continue;
         }
 
-        // Reserved copy check
+        // If reserved, ensure the user is the reserver
         if ($copy->status === 'reserved') {
             $reservation = $copy->reservations->firstWhere('status', 'reserved');
             if (!$reservation || $reservation->user_id != $user->id) {
-                return redirect()->back()->with('error', "Book copy #{$copy->copy_number} is reserved by another user.");
+                $errors[] = "Book copy #{$copy->copy_number} is reserved by another user.";
+                continue; // Skip this copy but continue with others
             }
-
-            // Mark reservation as used
             $reservation->status = 'borrowed';
             $reservation->save();
         }
 
-        // Create borrow record
+        // Record the borrow
         $borrow = Borrow::create([
             'user_id'      => $user->id,
             'book_id'      => $bookId,
@@ -76,9 +75,7 @@ public function index()
             'status'       => 'borrowed',
         ]);
 
-        // Update copy status
         $copy->update(['status' => 'borrowed']);
-
         $borrowedBooks[] = $borrow;
     }
 
@@ -91,8 +88,16 @@ public function index()
         ]);
     }
 
-    return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
+    // Return with success and/or errors
+    $message = 'Borrow records created successfully.';
+    if (!empty($errors)) {
+        $message .= ' Some copies could not be borrowed: ' . implode(', ', $errors);
+        return redirect()->route('borrows.index')->with('warning', $message);
+    }
+
+    return redirect()->route('borrows.index')->with('success', $message);
 }
+
 
 
     public function return ($id)
