@@ -18,8 +18,8 @@ class BorrowController extends Controller
             ->orderByDesc('borrow_date')
             ->get();
 
-        $books = Book::withCount(['copies as available_copies' => function ($q) {
-            $q->where('status', 'available');
+        $books = Book::with(['copies' => function ($q) {
+            $q->whereIn('status', ['available', 'reserved']);
         }])->get();
 
         $users = User::all();
@@ -27,7 +27,7 @@ class BorrowController extends Controller
         return view('admin.borrows', compact('borrows', 'books', 'users'));
     }
 
-    public function store(Request $request)
+public function store(Request $request)
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -37,38 +37,42 @@ class BorrowController extends Controller
         $borrowedBooks = [];
 
         foreach ($request->books as $bookId => $data) {
-            if (! isset($data['selected'])) {
-                continue;
+
+            if (!isset($data['copy_id'])) continue;
+
+            $copy = BookCopy::find($data['copy_id']);
+
+            // Cannot borrow if copy is borrowed, lost, or damaged
+            if (in_array($copy->status, ['borrowed', 'lost', 'damaged'])) {
+                return redirect()->back()->with('error', "Book copy {$copy->copy_number} cannot be borrowed.");
             }
 
-            $quantity = (int) $data['quantity'];
-
-            $availableCopies = BookCopy::where('book_id', $bookId)
-                ->where('status', 'available')
-                ->take($quantity)
-                ->get();
-
-            if ($availableCopies->count() < $quantity) {
-                $book = Book::find($bookId);
-                return redirect()->back()->with('error', "Not enough copies for '{$book->title}'");
+            // Reserved copy check
+            if ($copy->status == 'reserved') {
+                $reservation = $copy->reservations()->where('status', 'reserved')->first();
+                if (!$reservation || $reservation->user_id != $request->user_id) {
+                    return redirect()->back()->with('error', "Book copy {$copy->copy_number} is reserved by another user.");
+                }
+                // Mark reservation as used
+                $reservation->status = 'borrowed';
+                $reservation->save();
             }
 
-            foreach ($availableCopies as $copy) {
-                $borrow = Borrow::create([
-                    'user_id'      => $request->user_id,
-                    'book_id'      => $bookId,
-                    'book_copy_id' => $copy->id,
-                    'borrow_date'  => Carbon::now('Asia/Manila'),
-                    'due_date'     => Carbon::now('Asia/Manila')->addDays(3),
-                    'status'       => 'borrowed',
-                ]);
+            // Create borrow
+            $borrow = Borrow::create([
+                'user_id'      => $request->user_id,
+                'book_id'      => $bookId,
+                'book_copy_id' => $copy->id,
+                'borrow_date'  => Carbon::now('Asia/Manila'),
+                'due_date'     => Carbon::now('Asia/Manila')->addDays(3),
+                'status'       => 'borrowed',
+            ]);
 
-                $copy->update(['status' => 'borrowed']);
-                $borrowedBooks[] = $borrow;
-            }
+            $copy->update(['status' => 'borrowed']);
+            $borrowedBooks[] = $borrow;
         }
 
-        // Log the borrow action
+        // Log borrow action
         foreach ($borrowedBooks as $borrow) {
             ActivityLog::create([
                 'user_id'     => Auth::id(),
@@ -79,6 +83,7 @@ class BorrowController extends Controller
 
         return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
     }
+
 
     public function return ($id)
     {

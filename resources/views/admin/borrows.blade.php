@@ -33,8 +33,7 @@
                         <div class="flex justify-end py-4">
                             <button data-modal-target="createBorrowModal" data-modal-toggle="createBorrowModal"
                                 class="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg shadow">
-                                +
-                                Add Borrow
+                                + Add Borrow
                             </button>
                         </div>
 
@@ -47,9 +46,8 @@
                                 <tr>
                                     <th class="px-6 py-3">Borrower</th>
                                     <th class="px-6 py-3">Book</th>
-                                    <th class="px-6 py-3">Qty</th>
+                                    <th class="px-6 py-3">Copy Number</th>
                                     <th class="px-6 py-3">Borrow Date</th>
-                                    {{-- <th class="px-6 py-3">Due Date</th> --}}
                                     <th class="px-6 py-3">Return Date</th>
                                     <th class="px-6 py-3">Status</th>
                                     <th class="px-6 py-3">Actions</th>
@@ -61,25 +59,18 @@
                                 <tr class="border-b">
                                     <td class="px-6 py-4">{{ $borrow->user->name }}</td>
                                     <td class="px-6 py-4">{{ $borrow->book->title }}</td>
-                                    <td class="px-6 py-4">{{ $borrow->quantity }}</td>
+                                    <td class="px-6 py-4">{{ $borrow->bookCopy->copy_number ?? '-' }}</td>
                                     <td class="px-6 py-4">{{ $borrow->borrow_date->timezone('Asia/Manila')->format('F j, Y g:i A') }}</td>
-                                    {{-- <td class="px-6 py-4">{{ $borrow->due_date->timezone('Asia/Manila')->format('F j, Y g:i A') }}</td> --}}
                                     <td class="px-6 py-4">
                                         {{ $borrow->return_date ? $borrow->return_date->timezone('Asia/Manila')->format('F j, Y g:i A') : '-' }}
                                     </td>
                                     <td class="px-6 py-4 capitalize">
                                         @if($borrow->status === 'returned')
-                                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs">
-                                            Returned
-                                        </span>
+                                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs">Returned</span>
                                         @elseif($borrow->status === 'overdue')
-                                        <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs">
-                                            Overdue
-                                        </span>
+                                        <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs">Overdue</span>
                                         @else
-                                        <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs">
-                                            Borrowed
-                                        </span>
+                                        <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs">Borrowed</span>
                                         @endif
                                     </td>
 
@@ -87,7 +78,8 @@
 
                                         {{-- Return --}}
                                         @if($borrow->status !== 'returned')
-                                        <button data-id="{{ $borrow->id }}" data-modal-target="returnBorrowModal"
+                                        <button data-id="{{ $borrow->id }}" data-copy="{{ $borrow->bookCopy->copy_number }}"
+                                            data-user="{{ $borrow->user->name }}" data-modal-target="returnBorrowModal"
                                             data-modal-toggle="returnBorrowModal"
                                             class="return-borrow-btn px-3 py-2 text-xs bg-green-600 text-white rounded">
                                             Return
@@ -100,7 +92,6 @@
                                             Delete
                                         </button>
 
-                                        {{-- ✅ FIXED ROUTE --}}
                                         <form method="POST"
                                             action="{{ route('borrows.destroy', ['borrow' => $borrow->id]) }}"
                                             id="delete-borrow-form-{{ $borrow->id }}" class="hidden">
@@ -130,21 +121,26 @@
                 @csrf
                 @method('PUT')
 
-                <p class="mb-4">Confirm marking this book as returned?</p>
+                <p class="mb-2 text-sm">
+                    Mark <span id="returnCopy" class="font-semibold"></span> borrowed by <span id="returnUser" class="font-semibold"></span> as returned?
+                </p>
+
+                <div class="mb-4">
+                    <label class="block mb-1 font-medium">Return Date</label>
+                    <input type="date" name="return_date" value="{{ now()->format('Y-m-d') }}" required
+                        class="w-full border px-3 py-2 rounded">
+                </div>
 
                 <div class="flex justify-end gap-3">
-                    <button type="button" data-modal-toggle="returnBorrowModal" class="px-3 py-2 bg-gray-300 rounded">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-3 py-2 bg-green-600 text-white rounded">
-                        Return
-                    </button>
+                    <button type="button" data-modal-toggle="returnBorrowModal"
+                        class="px-3 py-2 bg-gray-300 rounded">Cancel</button>
+                    <button type="submit" class="px-3 py-2 bg-green-600 text-white rounded">Return</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Add Borrow Modal -->
+    {{-- Add Borrow Modal --}}
     <div id="createBorrowModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
         <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-2xl">
             <h3 class="text-lg font-bold mb-4">Add Borrow</h3>
@@ -154,7 +150,7 @@
 
                 <div class="mb-4">
                     <label for="user_id" class="block mb-2 font-medium">Select User</label>
-                    <select name="user_id" id="user_id" class="w-full border px-3 py-2 rounded">
+                    <select name="user_id" id="user_id" class="w-full border px-3 py-2 rounded" required>
                         @foreach($users as $user)
                         <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
                         @endforeach
@@ -162,19 +158,18 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block mb-2 font-medium">Select Books</label>
+                    <label class="block mb-2 font-medium">Select Book Copies</label>
                     <div class="space-y-2 max-h-64 overflow-y-auto border p-3 rounded">
-                        @foreach($books as $book)
-                        @if($book->available_copies > 0)
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" name="books[{{ $book->id }}][selected]" id="book-{{ $book->id }}">
-                            <label for="book-{{ $book->id }}">
-                                {{ $book->title }} (Available: {{ $book->available_copies }})
-                            </label>
-                            <input type="number" name="books[{{ $book->id }}][quantity]" min="1"
-                                max="{{ $book->available_copies }}" value="1" class="w-16 border px-2 py-1 rounded">
-                        </div>
-                        @endif
+                        @foreach($bookCopies as $copy)
+                            @if($copy->status === 'available' || ($copy->status === 'reserved' && $copy->reservation?->user_id == old('user_id')))
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" name="copies[]" value="{{ $copy->id }}" id="copy-{{ $copy->id }}">
+                                <label for="copy-{{ $copy->id }}">
+                                    {{ $copy->book->title }} - {{ $copy->copy_number }}
+                                    (Status: {{ ucfirst($copy->status) }})
+                                </label>
+                            </div>
+                            @endif
                         @endforeach
                     </div>
                 </div>
@@ -188,8 +183,6 @@
         </div>
     </div>
 
-
-
 </section>
 @endsection
 
@@ -197,28 +190,35 @@
 @include('components.alerts')
 
 <script>
+    // Delete borrow
     document.querySelectorAll('.delete-borrow-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const id = btn.dataset.id;
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
 
-        Swal.fire({
-            title: 'Delete this borrow record?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33'
-        }).then(result => {
-            if (result.isConfirmed) {
-                document.getElementById(`delete-borrow-form-${id}`).submit();
-            }
+            Swal.fire({
+                title: 'Delete this borrow record?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    document.getElementById(`delete-borrow-form-${id}`).submit();
+                }
+            });
         });
     });
-});
 
-document.querySelectorAll('.return-borrow-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.getElementById('returnBorrowForm').action =
-            `/admin/borrows/${btn.dataset.id}/return`;
+    // Return borrow modal
+    document.querySelectorAll('.return-borrow-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const copy = btn.dataset.copy;
+            const user = btn.dataset.user;
+            const id = btn.dataset.id;
+
+            document.getElementById('returnCopy').textContent = copy;
+            document.getElementById('returnUser').textContent = user;
+            document.getElementById('returnBorrowForm').action = `/admin/borrows/${id}/return`;
+        });
     });
-});
 </script>
 @endpush
