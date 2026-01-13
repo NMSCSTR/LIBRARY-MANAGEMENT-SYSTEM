@@ -12,23 +12,20 @@ use Illuminate\Support\Facades\Auth;
 
 class BorrowController extends Controller
 {
-    public function index()
-    {
-        // All borrow records
-        $borrows = Borrow::with(['user', 'book', 'bookCopy'])
-            ->orderByDesc('borrow_date')
-            ->get();
+public function index()
+{
+    $borrows = Borrow::with(['user', 'book', 'bookCopy'])
+        ->orderByDesc('borrow_date')
+        ->get();
 
-        // All users
-        $users = User::all();
+    // Load books with copies and their reservations
+    $books = Book::with(['copies.reservations'])->get();
 
-        // All book copies that are available or reserved
-        $bookCopies = BookCopy::with('book', 'reservations')
-            ->whereIn('status', ['available', 'reserved'])
-            ->get();
+    $users = User::all();
 
-        return view('admin.borrows', compact('borrows', 'users', 'bookCopies'));
-    }
+    return view('admin.borrows', compact('borrows', 'books', 'users'));
+}
+
 
     public function store(Request $request)
     {
