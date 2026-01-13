@@ -207,13 +207,16 @@ document.getElementById('user_id').addEventListener('change', function() {
     books.forEach(book => {
         // Filter copies: available or reserved by selected user
         const availableCopies = book.copies.filter(copy => {
-            if(copy.status === 'available') return true;
-            if(copy.status === 'reserved') {
-                const reservation = copy.reservations.find(r => r.status === 'reserved');
-                return reservation && reservation.user_id == userId;
+            if (copy.status === 'available') return true;
+
+            if (copy.status === 'reserved') {
+                const reservation = copy.reservations.find(r => r.user_id == userId);
+                return reservation != null;
             }
+
             return false;
         });
+
 
         if (availableCopies.length === 0) return;
 
