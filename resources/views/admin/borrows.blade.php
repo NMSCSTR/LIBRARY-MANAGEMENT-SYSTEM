@@ -224,16 +224,39 @@ document.getElementById('user_id').addEventListener('change', function() {
         bookDiv.classList.add('mb-2');
         bookDiv.innerHTML = `<p class="font-medium">${book.title}</p>`;
 
-        availableCopies.forEach(copy => {
-            const copyHtml = `
-            <div class="flex items-center gap-2 ml-3">
-                <input type="checkbox" name="books[${book.id}][copy_id]" value="${copy.id}" id="copy-${copy.id}">
-                <label for="copy-${copy.id}">
-                    Copy #${copy.copy_number} (${copy.status})
-                </label>
-            </div>`;
-            bookDiv.innerHTML += copyHtml;
-        });
+availableCopies.forEach(copy => {
+
+    let isReservedForUser = false;
+
+    if (copy.status === 'reserved') {
+        const reservation = copy.reservations.find(r => r.user_id == userId);
+        if (reservation) {
+            isReservedForUser = true;
+        }
+    }
+
+    const checked = isReservedForUser ? 'checked' : '';
+    const labelBadge = isReservedForUser
+        ? '<span class="ml-2 text-xs text-blue-600 font-semibold">(Reserved for this borrower)</span>'
+        : '';
+
+    const copyHtml = `
+        <div class="flex items-center gap-2 ml-3">
+            <input type="checkbox"
+                   name="books[${book.id}][copy_ids][]"
+                   value="${copy.id}"
+                   id="copy-${copy.id}"
+                   ${checked}>
+            <label for="copy-${copy.id}">
+                Copy #${copy.copy_number} (${copy.status})
+                ${labelBadge}
+            </label>
+        </div>
+    `;
+
+    bookDiv.innerHTML += copyHtml;
+});
+
 
         container.appendChild(bookDiv);
     });
