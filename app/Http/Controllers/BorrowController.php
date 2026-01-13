@@ -14,20 +14,23 @@ class BorrowController extends Controller
 {
     public function index()
     {
+        // All borrow records
         $borrows = Borrow::with(['user', 'book', 'bookCopy'])
             ->orderByDesc('borrow_date')
             ->get();
 
-        $books = Book::with(['copies' => function ($q) {
-            $q->whereIn('status', ['available', 'reserved']);
-        }])->get();
-
+        // All users
         $users = User::all();
 
-        return view('admin.borrows', compact('borrows', 'books', 'users'));
+        // All book copies that are available or reserved
+        $bookCopies = BookCopy::with('book', 'reservations')
+            ->whereIn('status', ['available', 'reserved'])
+            ->get();
+
+        return view('admin.borrows', compact('borrows', 'users', 'bookCopies'));
     }
 
-public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -38,7 +41,9 @@ public function store(Request $request)
 
         foreach ($request->books as $bookId => $data) {
 
-            if (!isset($data['copy_id'])) continue;
+            if (! isset($data['copy_id'])) {
+                continue;
+            }
 
             $copy = BookCopy::find($data['copy_id']);
 
@@ -50,7 +55,7 @@ public function store(Request $request)
             // Reserved copy check
             if ($copy->status == 'reserved') {
                 $reservation = $copy->reservations()->where('status', 'reserved')->first();
-                if (!$reservation || $reservation->user_id != $request->user_id) {
+                if (! $reservation || $reservation->user_id != $request->user_id) {
                     return redirect()->back()->with('error', "Book copy {$copy->copy_number} is reserved by another user.");
                 }
                 // Mark reservation as used
@@ -83,7 +88,6 @@ public function store(Request $request)
 
         return redirect()->route('borrows.index')->with('success', 'Borrow records created successfully.');
     }
-
 
     public function return ($id)
     {
