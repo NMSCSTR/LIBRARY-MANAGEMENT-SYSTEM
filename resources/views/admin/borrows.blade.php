@@ -92,7 +92,7 @@
                                         </button>
                                         @endif
 
-                                        {{-- Delete --}}
+                                        {{-- Delete
                                         <button data-id="{{ $borrow->id }}"
                                             class="delete-borrow-btn px-3 py-2 text-xs bg-red-600 text-white rounded">
                                             Delete
@@ -103,7 +103,7 @@
                                             id="delete-borrow-form-{{ $borrow->id }}" class="hidden">
                                             @csrf
                                             @method('DELETE')
-                                        </form>
+                                        </form> --}}
 
                                     </td>
                                 </tr>
