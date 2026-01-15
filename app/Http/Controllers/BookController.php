@@ -48,6 +48,8 @@ class BookController extends Controller
             'publisher_id'     => 'required|exists:publishers,id',
             'supplier_id'      => 'required|exists:suppliers,id',
             'copies_available' => 'required|integer|min:1',
+            'year_published'   => 'nullable|digits:4|integer',
+            'place_published'  => 'nullable|string|max:255',
         ]);
         //year_published, place_published
 
@@ -110,6 +112,8 @@ class BookController extends Controller
             'publisher_id'     => 'required|exists:publishers,id',
             'supplier_id'      => 'required|exists:suppliers,id',
             'copies_available' => 'required|integer|min:0',
+            'year_published'   => 'nullable|digits:4|integer',
+            'place_published'  => 'nullable|string|max:255',
         ]);
 
         $book     = Book::findOrFail($id);

@@ -114,6 +114,34 @@
                                 </select>
                             </div>
                         </div>
+                        {{-- Year Published --}}
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-700">Year Published</label>
+                            <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-500">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                                </svg>
+                                <input type="number" name="year_published" min="1000" max="{{ date('Y') }}"
+                                    value="{{ $book->year_published ?? '' }}"
+                                    class="w-full p-2.5 bg-transparent focus:outline-none text-sm"
+                                    placeholder="e.g., 2023">
+                            </div>
+                        </div>
+                        {{-- Place Published --}}
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-700">Place Published</label>
+                            <div class="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-500">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                </svg>
+                                <input type="text" name="place_published"
+                                    value="{{ $book->place_published ?? '' }}"
+                                    class="w-full p-2.5 bg-transparent focus:outline-none text-sm"
+                                    placeholder="e.g., New York">
+                            </div>
+                        </div>
 
                         {{-- Supplier --}}
                         <div class="space-y-2">

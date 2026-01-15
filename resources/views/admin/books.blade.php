@@ -68,6 +68,8 @@
                                     <th class="px-6 py-3">Author</th>
                                     <th class="px-6 py-3">Category</th>
                                     <th class="px-6 py-3">Publisher</th>
+                                    <th class="px-6 py-3">Year Published</th>
+                                    <th class="px-6 py-3">Place Published</th>
                                     <th class="px-6 py-3">Supplier</th>
                                     <th class="px-6 py-3">Copies</th>
                                     <th class="px-6 py-3">Actions</th>
@@ -81,6 +83,8 @@
                                     <td class="px-6 py-4">{{ $book->author?->name ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">{{ $book->category?->name ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">{{ $book->publisher?->name ?? 'N/A' }}</td>
+                                    <td class="px-6 py-4">{{ $book->year_published ?? 'N/A' }}</td>
+                                    <td class="px-6 py-4">{{ $book->place_published ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">{{ $book->supplier?->name ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">{{ $book->copies_available ?? $book->copies->count() }}</td>
                                     <td class="px-6 py-4 flex gap-2">
@@ -164,6 +168,21 @@
                             </select>
                         </div>
                     @endforeach
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Year Published</label>
+                        <input type="number" name="year_published" min="1000" max="{{ date('Y') }}"
+                            class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            placeholder="e.g., 2023">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Place Published</label>
+                        <input type="text" name="place_published"
+                            class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            placeholder="e.g., New York">
+                    </div>
+
 
                     <button type="submit"
                         class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-5 py-2.5 shadow">
