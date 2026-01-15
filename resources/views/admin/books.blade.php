@@ -86,7 +86,7 @@
                                     <td class="px-6 py-4">{{ $book->year_published ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">{{ $book->place_published ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">{{ $book->supplier?->name ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4">{{ $book->copies_available ?? $book->copies->count() }}</td>
+                                    <td class="px-6 py-4">{{ $book->copies_available ?? 'N/A' }}</td>
                                     <td class="px-6 py-4 flex gap-2">
                                         <a href="{{ route('books.edit', $book->id) }}"
                                             class="px-3 py-2 text-xs text-white bg-blue-600 hover:bg-blue-700 rounded-md">
