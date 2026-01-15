@@ -30,7 +30,7 @@ class Borrow extends Model
 
     public function bookCopy()
     {
-        return $this->belongsTo(BookCopy::class, 'book_copy_id'); 
+        return $this->belongsTo(BookCopy::class, 'book_copy_id');
     }
 
     public function getStatusAttribute($value)

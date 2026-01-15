@@ -18,10 +18,16 @@ class BookCopy extends Model
         return $this->belongsTo(Book::class);
     }
 
+    // public function borrows()
+    // {
+    //     return $this->hasMany(Borrow::class, 'book_id');
+    // }
+
     public function borrows()
-    {
-        return $this->hasMany(Borrow::class, 'book_id');
-    }
+{
+    return $this->hasMany(Borrow::class, 'book_copy_id');
+}
+
 
     public function reservations()
     {

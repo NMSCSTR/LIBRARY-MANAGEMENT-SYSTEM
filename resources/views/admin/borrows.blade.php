@@ -84,13 +84,15 @@
                                         {{-- Return --}}
                                         @if($borrow->status !== 'returned')
                                         <button data-id="{{ $borrow->id }}"
-                                            data-copy="{{ $borrow->bookCopy->copy_number }}"
+                                            data-copy="{{ $borrow->bookCopy?->copy_number ?? 'N/A' }}"
                                             data-user="{{ $borrow->user->name }}" data-modal-target="returnBorrowModal"
                                             data-modal-toggle="returnBorrowModal"
                                             class="return-borrow-btn px-3 py-2 text-xs bg-green-600 text-white rounded">
                                             Return
                                         </button>
                                         @endif
+
+
 
                                         {{-- Delete
                                         <button data-id="{{ $borrow->id }}"
