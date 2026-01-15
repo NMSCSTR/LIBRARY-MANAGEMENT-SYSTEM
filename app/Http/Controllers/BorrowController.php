@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
@@ -21,7 +20,7 @@ class BorrowController extends Controller
 
         $books = Book::with(['copies' => function ($q) {
             $q->whereIn('status', ['available', 'reserved'])
-              ->with('reservations');
+                ->with('reservations');
         }])->get();
 
         $users = User::all();
@@ -39,16 +38,20 @@ class BorrowController extends Controller
         $user = User::findOrFail($request->user_id);
 
         $borrowedBooks = [];
-        $errors = [];
+        $errors        = [];
 
         foreach ($request->books as $bookId => $data) {
 
-            if (!isset($data['copy_ids'])) continue;
+            if (! isset($data['copy_ids'])) {
+                continue;
+            }
 
             foreach ($data['copy_ids'] as $copyId) {
 
                 $copy = BookCopy::with('reservations')->find($copyId);
-                if (!$copy) continue;
+                if (! $copy) {
+                    continue;
+                }
 
                 // Block invalid statuses
                 if (in_array($copy->status, ['borrowed', 'lost', 'damaged'])) {
@@ -59,7 +62,7 @@ class BorrowController extends Controller
                 // Handle reserved copy
                 if ($copy->status === 'reserved') {
                     $reservation = $copy->reservations->firstWhere('user_id', $user->id);
-                    if (!$reservation) {
+                    if (! $reservation) {
                         $errors[] = "Copy #{$copy->copy_number} is reserved by another user.";
                         continue;
                     }
@@ -88,14 +91,14 @@ class BorrowController extends Controller
                 'user_id'     => Auth::id(),
                 'action'      => 'borrow',
                 'description' => Auth::user()->name .
-                    " borrowed '{$borrow->book->title}' (Copy #{$borrow->bookCopy->copy_number})",
+                " borrowed '{$borrow->book->title}' (Copy #{$borrow->bookCopy->copy_number})",
             ]);
         }
 
         // Feedback
         $message = 'Borrow records created successfully.';
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             $message .= ' Some copies could not be borrowed: ' . implode(', ', $errors);
             return redirect()->route('borrows.index')->with('warning', $message);
         }
@@ -103,7 +106,7 @@ class BorrowController extends Controller
         return redirect()->route('borrows.index')->with('success', $message);
     }
 
-    public function return(Request $request, $id)
+    public function return (Request $request, $id)
     {
         $borrow = Borrow::with('bookCopy', 'book')->findOrFail($id);
 
@@ -126,7 +129,8 @@ class BorrowController extends Controller
             'user_id'     => Auth::id(),
             'action'      => 'return',
             'description' => Auth::user()->name .
-                " returned '{$borrow->book->title}' (Copy #{$borrow->bookCopy->copy_number})",
+            " returned '{$borrow->book->title}' (Copy #" .
+            ($borrow->bookCopy ? $borrow->bookCopy->copy_number : 'N/A') . ")",
         ]);
 
         return redirect()->route('borrows.index')->with('success', 'Book returned successfully.');
@@ -144,8 +148,8 @@ class BorrowController extends Controller
             'user_id'     => Auth::id(),
             'action'      => 'delete_borrow',
             'description' => Auth::user()->name .
-                " deleted borrow record for '{$borrow->book->title}' (Copy #" .
-                ($borrow->bookCopy ? $borrow->bookCopy->copy_number : 'N/A') . ")",
+            " deleted borrow record for '{$borrow->book->title}' (Copy #" .
+            ($borrow->bookCopy ? $borrow->bookCopy->copy_number : 'N/A') . ")",
         ]);
 
         return redirect()->route('borrows.index')->with('success', 'Borrow record deleted successfully.');
