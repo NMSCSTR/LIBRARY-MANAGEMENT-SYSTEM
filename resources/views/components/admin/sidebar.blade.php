@@ -91,14 +91,14 @@
         <span class="material-icons-outlined">keyboard_arrow_right</span>
     </a>
 
-    <a href="{{ route('donations.index') }}"
+    {{-- <a href="{{ route('donations.index') }}"
         class="flex items-center justify-between my-4 {{ request()->routeIs('donations.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
         <span class="flex items-center">
             <span class="material-icons-outlined pr-2">volunteer_activism</span>
             Donations
         </span>
         <span class="material-icons-outlined">keyboard_arrow_right</span>
-    </a>
+    </a> --}}
 
     <!-- Administration (Admin-only links) -->
     @if(auth()->user()->role->name === 'admin')
