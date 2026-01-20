@@ -1,183 +1,163 @@
 @extends('components.default')
-@section('title', 'Reservations | Admin Dashboard | LMIS')
+
+@section('title', 'Reservation Queue | LMIS')
+
 @section('content')
+<section class="bg-gray-50/50 min-h-screen pt-24 pb-12">
+    @include('components.admin.topnav')
 
-<section>
-    <div class="min-h-screen pt-24">
-        {{-- @include('components.admin.bg') --}}
-        {{-- Include Top Navigation --}}
-        @include('components.admin.topnav')
-        <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-4 gap-6">
+    <div class="flex flex-col lg:flex-row px-4 lg:px-10 gap-6">
 
-            {{-- Include Sidebar --}}
-            <div class="lg:w-2/12 w-full">
-                @include('components.admin.sidebar')
+        {{-- Sidebar --}}
+        <div class="lg:w-2/12 w-full">
+            @include('components.admin.sidebar')
+        </div>
+
+        {{-- Main Content --}}
+        <div class="lg:w-10/12 w-full space-y-6">
+
+            {{-- Header --}}
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-black text-gray-900 tracking-tight">Reservation Queue</h1>
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Approve or decline hold requests from borrowers</p>
+                </div>
+                <div class="bg-white px-6 py-3 rounded-2xl shadow-sm border border-gray-100">
+                    <span class="text-[10px] font-black uppercase text-gray-400 block">Pending Requests</span>
+                    <span class="text-xl font-black text-orange-500">{{ $reservations->where('status', 'pending')->count() }}</span>
+                </div>
             </div>
 
-            {{-- Main Content --}}
-            <div class="lg:w-10/12 w-full">
+            {{-- Table Container --}}
+            <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 overflow-hidden border border-gray-100">
+                <div class="overflow-x-auto">
+                    <table id="datatable" class="w-full text-sm text-left text-gray-600">
+                        <thead class="text-[10px] uppercase bg-gray-50/50 text-gray-400 font-black tracking-widest border-b border-gray-100">
+                            <tr>
+                                <th class="px-8 py-5">Requestor</th>
+                                <th class="px-8 py-5">Book Details</th>
+                                <th class="px-8 py-5">Status</th>
+                                <th class="px-8 py-5">Timeline</th>
+                                <th class="px-8 py-5 text-right">Decision Hub</th>
+                            </tr>
+                        </thead>
 
-                <div class="bg-white rounded-xl shadow-lg">
-                    <div class="px-6 py-6">
-
-                        <!-- Breadcrumb -->
-                        <nav class="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-lg bg-gray-50"
-                            aria-label="Breadcrumb">
-                            <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-                                <li class="inline-flex items-center">
-                                    <a href="#"
-                                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
-                                        <svg class="w-3 h-3 me-2.5" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                            <path
-                                                d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
-                                        </svg>
-                                        Admin
-                                    </a>
-                                </li>
-                                <li>
-                                    <div class="flex items-center">
-                                        <svg class="rtl:rotate-180 block w-3 h-3 mx-1 text-gray-400 " aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="m1 9 4-4-4-4" />
-                                        </svg>
-                                        <a href="#"
-                                            class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2">Dashboard</a>
+                        <tbody class="divide-y divide-gray-50">
+                            @forelse($reservations as $reservation)
+                            <tr class="hover:bg-indigo-50/20 transition group">
+                                <td class="px-8 py-6">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-sm border border-indigo-100">
+                                            {{ substr($reservation->user->name ?? '?', 0, 1) }}
+                                        </div>
+                                        <div>
+                                            <p class="font-black text-gray-900 leading-tight">{{ $reservation->user->name ?? 'Unknown User' }}</p>
+                                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">{{ $reservation->user->email ?? 'N/A' }}</p>
+                                        </div>
                                     </div>
-                                </li>
-                                <li aria-current="page">
-                                    <div class="flex items-center">
-                                        <svg class="rtl:rotate-180  w-3 h-3 mx-1 text-gray-400" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="m1 9 4-4-4-4" />
-                                        </svg>
-                                        <span
-                                            class="ms-1 text-sm font-medium text-gray-500 md:ms-2">Reservation</span>
+                                </td>
+                                <td class="px-8 py-6">
+                                    <p class="font-black text-gray-800 leading-tight">{{ $reservation->book->title ?? 'N/A' }}</p>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-[10px] font-bold text-indigo-500 uppercase">Copy #{{ $reservation->copy->copy_number ?? 'N/A' }}</span>
+                                        <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Loc: {{ $reservation->copy->shelf_location ?? 'N/A' }}</span>
                                     </div>
-                                </li>
-                            </ol>
-                        </nav>
+                                </td>
+                                <td class="px-8 py-6">
+                                    @php
+                                        $statusStyles = [
+                                            'pending'  => 'bg-orange-100 text-orange-600 border-orange-200 animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.1)]',
+                                            'reserved' => 'bg-blue-100 text-blue-700 border-blue-200',
+                                            'declined' => 'bg-red-50 text-red-400 border-red-100',
+                                        ];
+                                        $currentStyle = $statusStyles[$reservation->status] ?? 'bg-gray-100 text-gray-500';
+                                    @endphp
+                                    <span class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border {{ $currentStyle }}">
+                                        {{ $reservation->status }}
+                                    </span>
+                                </td>
+                                <td class="px-8 py-6 text-xs">
+                                    <div class="flex flex-col gap-0.5">
+                                        <span class="font-black text-gray-700">Req: {{ $reservation->created_at->format('M d, Y') }}</span>
+                                        @if($reservation->reserved_at)
+                                            <span class="font-bold text-emerald-500 italic">App: {{ \Carbon\Carbon::parse($reservation->reserved_at)->format('M d, Y') }}</span>
+                                        @else
+                                            <span class="font-bold text-gray-300 italic">Waiting...</span>
+                                        @endif
+                                    </div>
+                                </td>
 
-                    </div>
+                                <td class="px-8 py-6 text-right">
+                                    @if($reservation->status === 'pending')
+                                    <div class="flex justify-end gap-2">
+                                        {{-- Approve Button --}}
+                                        <button
+                                            onclick="confirmAction('{{ route('reservations.approve', $reservation->id) }}', 'Approve this reservation?')"
+                                            class="bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest px-5 py-3 rounded-2xl shadow-xl shadow-gray-200 hover:bg-black transition-all active:scale-95">
+                                            Approve
+                                        </button>
 
-                    <div class="relative overflow-x-auto sm:rounded-lg px-6 py-6">
-                        <table id="datatable"
-                            class="w-full text-sm text-left rtl:text-right text-gray-700">
-                            <thead
-                                class="text-xs text-gray-700 uppercase bg-gray-100 py-4">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            User
+                                        {{-- Reject Button --}}
+                                        <button
+                                            onclick="confirmAction('{{ route('reservations.reject', $reservation->id) }}', 'Decline this reservation?', 'warning', '#d33')"
+                                            class="bg-white border border-gray-200 text-red-500 text-[10px] font-black uppercase tracking-widest px-5 py-3 rounded-2xl hover:bg-red-50 transition-all">
+                                            Decline
+                                        </button>
+                                    </div>
+                                    @else
+                                        <div class="flex items-center justify-end gap-2 text-gray-300">
+                                            <span class="text-[10px] font-black uppercase tracking-widest">Logged</span>
+                                            <span class="material-icons-outlined text-lg">history_edu</span>
                                         </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Book
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Status
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Reserve At
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Actions
-                                        </div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($reservations as $reservation)
-                                <tr class="odd:bg-white even:bg-gray-50 border-b">
-                                    <td class="px-6 py-4">{{ $reservation->user->name ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4">{{ $reservation->book->title ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4 capitalize">{{ $reservation->status }}</td>
-                                    <td class="px-6 py-4">{{ $reservation->reserved_at }}</td>
-                                    <td class="px-6 py-4 flex gap-2">
-                                        {{-- Approve --}}
-                                        <form action="{{ route('reservations.approve', $reservation->id) }}"
-                                            method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit"
-                                                class="approve-reservation-btn px-3 py-2 text-xs text-white bg-green-600 hover:bg-green-700">
-                                                Approve
-                                            </button>
-                                        </form>
-
-                                        {{-- Reject --}}
-                                        <form action="{{ route('reservations.reject', $reservation->id) }}"
-                                            method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit"
-                                                class="reject-reservation-btn px-3 py-2 text-xs text-white bg-gray-500 hover:bg-gray-600">
-                                                Reject
-                                            </button>
-                                        </form>
-                                    </td>
-                                    @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                                    @endif
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="px-8 py-20 text-center">
+                                    <div class="opacity-20 flex flex-col items-center">
+                                        <span class="material-icons text-6xl">hourglass_empty</span>
+                                        <p class="font-black uppercase tracking-widest mt-4">No reservations currently in queue</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+
+    {{-- Hidden Action Forms --}}
+    <form id="action-form" method="POST" class="hidden">
+        @csrf
+        @method('PUT')
+    </form>
 </section>
 @endsection
 
 @push('scripts')
 @include('components.alerts')
 <script>
-    document.querySelectorAll('.delete-reservation-btn').forEach(button => {
-    button.addEventListener('click', function () {
-        let reservationId = this.getAttribute('data-id');
-
+    function confirmAction(url, title, icon = 'question', confirmColor = '#000') {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "This reservation will be deleted permanently!",
-            icon: 'warning',
+            title: title,
+            text: "This action will update the inventory status automatically.",
+            icon: icon,
             showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonColor: confirmColor,
+            cancelButtonColor: '#9ca3af',
+            confirmButtonText: 'Confirm Action',
+            cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById(`delete-reservation-form-${reservationId}`).submit();
-            }
-        });
-    });
-});
-
-document.querySelectorAll('.reject-reservation-btn').forEach(button => {
-    button.addEventListener('click', function(e) {
-        e.preventDefault();
-        let form = this.closest('form');
-
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "This reservation will be rejected!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, reject it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
+                const form = document.getElementById('action-form');
+                form.action = url;
                 form.submit();
             }
         });
-    });
-});
+    }
 </script>
 @endpush

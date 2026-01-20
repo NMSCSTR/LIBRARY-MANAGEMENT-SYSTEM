@@ -98,6 +98,6 @@ Advanced search - mana
 Pag borrow
 Pag add   -isahon ra tanan sa UI ang details sa book - mana
 Dli e load tanan nga naka list type
-Bali ang borrow date & return date 
-Penalty sa pag borrow
+Bali ang borrow date & return date -mana
+Penalty sa pag borrow -mana
 Reporting ( tanan na area)
