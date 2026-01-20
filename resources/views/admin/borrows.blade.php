@@ -30,7 +30,7 @@
             </div>
 
             {{-- Table Container --}}
-            <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 overflow-hidden border border-gray-100">
+            <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 overflow-hidden border border-gray-100 p-6">
                 <div class="overflow-x-auto">
                     <table id="datatable" class="w-full text-sm text-left text-gray-600">
                         <thead
