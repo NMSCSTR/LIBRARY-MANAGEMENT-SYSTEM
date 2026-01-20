@@ -16,6 +16,16 @@
 
             {{-- Main Content --}}
             <div class="lg:w-10/12 w-full">
+
+                {{-- Global Search Bar --}}
+                <div class="mb-6 relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                    <input type="text" id="hubSearch" placeholder="Search across current tab..."
+                        class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-2xl leading-5 bg-white shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all">
+                </div>
+
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
 
                     {{-- Navigation Tabs --}}
@@ -55,7 +65,7 @@
                                 </button>
                             </div>
                             <div class="overflow-x-auto">
-                                <table class="w-full text-sm text-left text-gray-600">
+                                <table class="w-full text-sm text-left text-gray-600 search-table">
                                     <thead class="text-xs uppercase bg-gray-50 text-gray-700 font-semibold">
                                         <tr>
                                             <th class="py-3 px-4">Title</th>
@@ -66,12 +76,12 @@
                                     </thead>
                                     <tbody class="divide-y divide-gray-100">
                                         @foreach($books as $book)
-                                        <tr class="hover:bg-gray-50 transition">
-                                            <td class="py-3 px-4 font-bold text-gray-900">{{ $book->title }}</td>
+                                        <tr class="hover:bg-gray-50 transition search-item">
+                                            <td class="py-3 px-4 font-bold text-gray-900 search-text">{{ $book->title }}</td>
                                             <td class="py-3 px-4 text-center">
                                                 <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-md font-mono text-xs">{{ $book->copies->count() }}</span>
                                             </td>
-                                            <td class="py-3 px-4">{{ $book->author?->name ?? 'N/A' }}</td>
+                                            <td class="py-3 px-4 search-text">{{ $book->author?->name ?? 'N/A' }}</td>
                                             <td class="py-3 px-4 text-right">
                                                 <a href="{{ route('books.edit', $book->id) }}" class="text-blue-600 hover:underline mr-3 text-xs font-bold uppercase">Edit</a>
                                                 <button data-id="{{ $book->id }}" class="delete-book-btn text-red-600 hover:underline text-xs font-bold uppercase">Delete</button>
@@ -91,7 +101,7 @@
                                 <a href="{{ route('book-copies.index') }}" class="text-blue-600 text-xs font-bold uppercase hover:underline">Manage All Copies &rarr;</a>
                             </div>
                             <div class="overflow-x-auto">
-                                <table class="w-full text-sm text-left text-gray-600">
+                                <table class="w-full text-sm text-left text-gray-600 search-table">
                                     <thead class="text-xs uppercase bg-gray-50 text-gray-700 font-semibold">
                                         <tr>
                                             <th class="py-3 px-4">Call #</th>
@@ -101,14 +111,14 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-100">
-                                        @foreach($books->take(20) as $book) {{-- Limit display for performance --}}
+                                        @foreach($books->take(50) as $book)
                                             @foreach($book->copies as $copy)
-                                            <tr class="hover:bg-gray-50 transition">
-                                                <td class="py-3 px-4 font-mono text-xs">#{{ $copy->copy_number }}</td>
-                                                <td class="py-3 px-4 text-gray-800">{{ $book->title }}</td>
-                                                <td class="py-3 px-4">{{ $copy->shelf_location }}</td>
+                                            <tr class="hover:bg-gray-50 transition search-item">
+                                                <td class="py-3 px-4 font-mono text-xs search-text">#{{ $copy->copy_number }}</td>
+                                                <td class="py-3 px-4 text-gray-800 search-text">{{ $book->title }}</td>
+                                                <td class="py-3 px-4 search-text">{{ $copy->shelf_location }}</td>
                                                 <td class="py-3 px-4">
-                                                    <span class="px-2 py-0.5 rounded-full text-[10px] uppercase font-bold {{ $copy->status == 'available' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                                    <span class="px-2 py-0.5 rounded-full text-[10px] uppercase font-bold {{ $copy->status == 'available' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }} search-text">
                                                         {{ $copy->status }}
                                                     </span>
                                                 </td>
@@ -122,14 +132,11 @@
 
                         {{-- 3. AUTHORS --}}
                         <div class="p-6 hidden tab-pane" id="authors-content">
-                            <div class="flex justify-between items-center mb-6">
-                                <h2 class="text-xl font-bold text-gray-800">Categories</h2>
-                                <a href="{{ route('authors.index') }}" class="text-blue-600 text-xs font-bold uppercase hover:underline font-bold">Manage All Authors &rarr;</a>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <h2 class="text-xl font-bold text-gray-800 mb-6">Library Authors</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="authors-grid">
                                 @foreach($authors as $author)
-                                <div class="p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex items-center justify-between">
-                                    <span class="font-bold text-gray-700">{{ $author->name }}</span>
+                                <div class="p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex items-center justify-between search-item">
+                                    <span class="font-bold text-gray-700 search-text">{{ $author->name }}</span>
                                     <a href="{{ route('authors.edit', $author->id) }}" class="p-1 hover:bg-blue-50 text-blue-600 rounded">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                     </a>
@@ -140,14 +147,11 @@
 
                         {{-- 4. CATEGORIES --}}
                         <div class="p-6 hidden tab-pane" id="categories-content">
-                            <div class="flex justify-between items-center mb-6">
-                                <h2 class="text-xl font-bold text-gray-800">Categories</h2>
-                                <a href="{{ route('categories.index') }}" class="text-blue-600 text-xs font-bold uppercase hover:underline font-bold">Manage All Categories &rarr;</a>
-                            </div>
+                            <h2 class="text-xl font-bold text-gray-800 mb-6">Categories</h2>
                             <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
                                 @foreach($categories as $category)
-                                <div class="p-3 bg-gray-50 border rounded-lg text-center font-semibold text-gray-600 text-sm">
-                                    {{ $category->name }}
+                                <div class="p-3 bg-gray-50 border rounded-lg text-center font-semibold text-gray-600 text-sm search-item">
+                                    <span class="search-text">{{ $category->name }}</span>
                                 </div>
                                 @endforeach
                             </div>
@@ -155,14 +159,11 @@
 
                         {{-- 5. PUBLISHERS --}}
                         <div class="p-6 hidden tab-pane" id="publishers-content">
-                            <div class="flex justify-between items-center mb-6">
-                                <h2 class="text-xl font-bold text-gray-800">Publishers</h2>
-                                <a href="{{ route('publishers.index') }}" class="text-blue-600 text-xs font-bold uppercase hover:underline font-bold">Manage All Publishers &rarr;</a>
-                            </div>
+                            <h2 class="text-xl font-bold text-gray-800 mb-6">Publishers</h2>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 @foreach($publishers as $pub)
-                                <div class="p-4 border border-gray-200 rounded-xl flex justify-between items-center">
-                                    <span class="font-bold text-gray-800">{{ $pub->name }}</span>
+                                <div class="p-4 border border-gray-200 rounded-xl flex justify-between items-center search-item">
+                                    <span class="font-bold text-gray-800 search-text">{{ $pub->name }}</span>
                                     <a href="{{ route('publishers.edit', $pub->id) }}" class="text-blue-600">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     </a>
@@ -171,29 +172,22 @@
                             </div>
                         </div>
 
-                        {{-- 6. SUPPLIERS (FIXED) --}}
+                        {{-- 6. SUPPLIERS --}}
                         <div class="p-6 hidden tab-pane" id="suppliers-content">
-                            <div class="flex justify-between items-center mb-6">
-                                <h2 class="text-xl font-bold text-gray-800">Suppliers</h2>
-                                <a href="{{ route('suppliers.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow-sm">
-                                    Manage All Suppliers &rarr;
-                                </a>
-                            </div>
+                            <h2 class="text-xl font-bold text-gray-800 mb-6 text-center">Suppliers</h2>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 @forelse($suppliers as $supplier)
-                                <div class="p-5 bg-white border border-gray-200 rounded-2xl shadow-sm hover:border-blue-300 transition-all flex justify-between items-center">
+                                <div class="p-5 bg-white border border-gray-200 rounded-2xl shadow-sm hover:border-blue-300 transition-all flex justify-between items-center search-item">
                                     <div>
-                                        <h4 class="font-bold text-gray-900">{{ $supplier->name }}</h4>
-                                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">{{ $supplier->contact_person ?? 'No Contact' }}</p>
+                                        <h4 class="font-bold text-gray-900 search-text">{{ $supplier->name }}</h4>
+                                        <p class="text-[10px] text-gray-400 uppercase tracking-widest search-text">{{ $supplier->contact_person ?? 'No Contact' }}</p>
                                     </div>
                                     <a href="{{ route('suppliers.edit', $supplier->id) }}" class="p-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-600 hover:text-white transition">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     </a>
                                 </div>
                                 @empty
-                                <div class="col-span-full py-10 text-center text-gray-400">
-                                    <p>No suppliers registered yet.</p>
-                                </div>
+                                <div class="col-span-full py-10 text-center text-gray-400">No suppliers found.</div>
                                 @endforelse
                             </div>
                         </div>
@@ -259,8 +253,41 @@
             document.querySelector(this.dataset.target).classList.remove('hidden');
             this.classList.add('active-tab', 'border-blue-600', 'text-blue-600');
             this.classList.remove('border-transparent', 'text-gray-500');
+
+            // Clear search when switching tabs
+            document.getElementById('hubSearch').value = '';
+            filterItems('');
         });
     });
+
+    // Search Filtering Logic
+    const searchInput = document.getElementById('hubSearch');
+
+    searchInput.addEventListener('input', function() {
+        filterItems(this.value.toLowerCase());
+    });
+
+    function filterItems(query) {
+        const activePane = document.querySelector('.tab-pane:not(.hidden)');
+        const items = activePane.querySelectorAll('.search-item');
+
+        items.forEach(item => {
+            const textElements = item.querySelectorAll('.search-text');
+            let match = false;
+
+            textElements.forEach(el => {
+                if (el.textContent.toLowerCase().includes(query)) {
+                    match = true;
+                }
+            });
+
+            if (match) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
 
     // Delete Book confirmation
     document.querySelectorAll('.delete-book-btn').forEach(btn => {
@@ -268,11 +295,9 @@
             const id = btn.dataset.id;
             Swal.fire({
                 title: 'Delete this book?',
-                text: "Removing a book will also delete all associated physical copies!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#dc2626',
-                confirmButtonText: 'Yes, delete it'
             }).then(res => {
                 if (res.isConfirmed) document.getElementById(`delete-book-form-${id}`).submit();
             });
