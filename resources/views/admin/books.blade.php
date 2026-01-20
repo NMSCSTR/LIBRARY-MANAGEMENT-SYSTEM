@@ -14,7 +14,7 @@
                 @include('components.admin.sidebar')
             </div>
 
-            {{-- Main Content --}}
+            {{-- Main Content --}}p
             <div class="lg:w-10/12 w-full">
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
 
