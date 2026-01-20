@@ -12,7 +12,7 @@
 
     <!-- Cataloging Section -->
     <p class="text-xs font-semibold text-gray-400 mt-6 mb-2 uppercase">Cataloging</p>
-
+{{--
     <a href="{{ route('authors.index') }}"
         class="flex items-center justify-between my-4 {{ request()->routeIs('authors.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
         <span class="flex items-center">
@@ -20,8 +20,8 @@
             Authors
         </span>
         <span class="material-icons-outlined">keyboard_arrow_right</span>
-    </a>
-
+    </a> --}}
+{{--
     <a href="{{ route('publishers.index') }}"
         class="flex items-center justify-between my-4 {{ request()->routeIs('publishers.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
         <span class="flex items-center">
@@ -29,8 +29,8 @@
             Publishers
         </span>
         <span class="material-icons-outlined">keyboard_arrow_right</span>
-    </a>
-
+    </a> --}}
+{{--
     <a href="{{ route('categories.index') }}"
         class="flex items-center justify-between my-4 {{ request()->routeIs('categories.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
         <span class="flex items-center">
@@ -38,7 +38,7 @@
             Categories
         </span>
         <span class="material-icons-outlined">keyboard_arrow_right</span>
-    </a>
+    </a> --}}
 
     <a href="{{ route('books.index') }}"
         class="flex items-center justify-between my-4 {{ request()->routeIs('books.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
@@ -48,7 +48,7 @@
         </span>
         <span class="material-icons-outlined">keyboard_arrow_right</span>
     </a>
-
+{{--
     <a href="{{ route('book-copies.index') }}"
         class="flex items-center justify-between my-4 {{ request()->routeIs('book-copies.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
         <span class="flex items-center">
@@ -56,7 +56,7 @@
             Book Copies
         </span>
         <span class="material-icons-outlined">keyboard_arrow_right</span>
-    </a>
+    </a> --}}
 
     <!-- Circulation -->
     <p class="text-xs font-semibold text-gray-400 mt-6 mb-2 uppercase">Circulation</p>
@@ -80,7 +80,7 @@
     </a>
 
     <!-- Acquisitions -->
-    <p class="text-xs font-semibold text-gray-400 mt-6 mb-2 uppercase">Acquisitions</p>
+    {{-- <p class="text-xs font-semibold text-gray-400 mt-6 mb-2 uppercase">Acquisitions</p>
 
     <a href="{{ route('suppliers.index') }}"
         class="flex items-center justify-between my-4 {{ request()->routeIs('suppliers.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
@@ -89,7 +89,7 @@
             Suppliers
         </span>
         <span class="material-icons-outlined">keyboard_arrow_right</span>
-    </a>
+    </a> --}}
 
     {{-- <a href="{{ route('donations.index') }}"
         class="flex items-center justify-between my-4 {{ request()->routeIs('donations.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
