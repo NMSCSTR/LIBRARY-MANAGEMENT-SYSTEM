@@ -182,24 +182,51 @@
 
                         {{-- Publishers & Categories (Simplified for Hub) --}}
                         <div class="hidden tab-pane animate-in fade-in slide-in-from-bottom-4 duration-500" id="categories-content">
+                            {{-- Header with Manage Button --}}
+                            <div class="flex justify-between items-center mb-8">
+                                <h2 class="text-3xl font-black text-gray-900">Categories</h2>
+                                <a href="{{ route('categories.index') }}"
+                                class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs font-black uppercase tracking-widest px-6 py-3 rounded-2xl transition-all active:scale-95">
+                                Manage All Categories &rarr;
+                                </a>
+                            </div>
+
+                            {{-- Categories Grid --}}
                             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
                                 @foreach($categories as $category)
-                                    <div class="p-4 bg-white border border-gray-100 rounded-2xl text-center shadow-sm search-item hover:border-blue-500 transition-colors">
-                                        <span class="font-black text-[10px] uppercase text-gray-400 search-text tracking-widest">{{ $category->name }}</span>
+                                    <div class="p-4 bg-white border border-gray-100 rounded-2xl text-center shadow-sm search-item hover:border-blue-500 transition-colors group">
+                                        <span class="font-black text-[10px] uppercase text-gray-400 group-hover:text-blue-600 search-text tracking-widest transition-colors">
+                                            {{ $category->name }}
+                                        </span>
                                     </div>
                                 @endforeach
                             </div>
                         </div>
 
                         <div class="hidden tab-pane animate-in fade-in slide-in-from-bottom-4 duration-500" id="publishers-content">
-                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {{-- Header with Manage Button --}}
+                            <div class="flex justify-between items-center mb-8">
+                                <h2 class="text-3xl font-black text-gray-900">Publishers</h2>
+                                <a href="{{ route('publishers.index') }}"
+                                class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs font-black uppercase tracking-widest px-6 py-3 rounded-2xl transition-all active:scale-95">
+                                Manage All Publishers &rarr;
+                                </a>
+                            </div>
+
+                            {{-- Publishers Grid --}}
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 @foreach($publishers as $pub)
-                                <div class="p-6 bg-white border border-gray-100 rounded-3xl flex justify-between items-center search-item">
-                                    <span class="font-black text-gray-800 search-text">{{ $pub->name }}</span>
-                                    <a href="{{ route('publishers.edit', $pub->id) }}" class="text-blue-600 font-bold text-xs uppercase">View</a>
+                                <div class="p-6 bg-white border border-gray-100 rounded-3xl flex justify-between items-center search-item hover:shadow-md transition-shadow">
+                                    <div class="flex items-center gap-4">
+                                        {{-- Decorative Initial Circle --}}
+                                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-sm">
+                                            {{ substr($pub->name, 0, 1) }}
+                                        </div>
+                                        <span class="font-black text-gray-800 search-text">{{ $pub->name }}</span>
+                                    </div>
                                 </div>
                                 @endforeach
-                             </div>
+                            </div>
                         </div>
 
                     </div>
