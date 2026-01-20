@@ -13,7 +13,7 @@
                 alt="Book Icon"
                 class="w-24 h-24 mx-auto mb-4 rounded-lg shadow-md border-2 border-[#8B5E3C] object-cover">
 
-            <h2 class="text-2xl font-bold text-[#4C3B2A]">Welcome Back</h2>
+            <h2 class="text-2xl font-bold text-[#4C3B2A]">Welcome Backs</h2>
             <p class="text-sm text-[#4C3B2A]/80">Please login to your account</p>
         </div>
 

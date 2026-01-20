@@ -93,3 +93,11 @@ color pallete
 
 #F2E9D8 (parchment) #A67C52 (book spines) #6C4F3D (hardcover brown) #2C1A13 (ink)
 
+
+Advanced search 
+Pag borrow
+Pag add   -isahon ra tanan sa UI ang details sa book
+Dli e load tanan nga naka list type
+Bali ang borrow date & return date 
+Penalty sa pag borrow
+Reporting ( tanan na area)
