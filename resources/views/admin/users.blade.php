@@ -40,7 +40,7 @@
             </div>
 
             {{-- Users Registry Table --}}
-            <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-200/50 overflow-hidden border border-gray-100">
+            <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-200/50 overflow-hidden border border-gray-100 p-6">
                 <div class="overflow-x-auto">
                     <table id="datatable" class="w-full text-sm text-left text-gray-600">
                         <thead class="text-[10px] uppercase bg-gray-50/50 text-gray-400 font-black tracking-widest border-b border-gray-100">
