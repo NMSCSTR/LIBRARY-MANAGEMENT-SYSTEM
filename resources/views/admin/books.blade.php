@@ -122,7 +122,10 @@
 
                         {{-- 3. AUTHORS --}}
                         <div class="p-6 hidden tab-pane" id="authors-content">
-                            <h2 class="text-xl font-bold text-gray-800 mb-6">Library Authors</h2>
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-xl font-bold text-gray-800">Categories</h2>
+                                <a href="{{ route('authors.index') }}" class="text-blue-600 text-xs font-bold uppercase hover:underline font-bold">Manage All Authors &rarr;</a>
+                            </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 @foreach($authors as $author)
                                 <div class="p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex items-center justify-between">
