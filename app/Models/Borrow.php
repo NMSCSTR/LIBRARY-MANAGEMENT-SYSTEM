@@ -19,23 +19,16 @@ class Borrow extends Model
     ];
 
     public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
+    {return $this->belongsTo(User::class);}
     public function book()
-    {
-        return $this->belongsTo(Book::class);
-    }
-
+    {return $this->belongsTo(Book::class);}
     public function bookCopy()
-    {
-        return $this->belongsTo(BookCopy::class, 'book_copy_id');
-    }
+    {return $this->belongsTo(BookCopy::class, 'book_copy_id');}
 
+    // Automated Penalty Logic: If not returned and past 3 days, status is overdue
     public function getStatusAttribute($value)
     {
-        if ($value === 'borrowed' && $this->due_date < now()) {
+        if ($value === 'borrowed' && $this->due_date < now('Asia/Manila')) {
             return 'overdue';
         }
         return $value;
