@@ -7,8 +7,8 @@ use App\Models\Borrow;
 use App\Models\Reservation;
 use App\Models\Supplier;
 use App\Models\User;
-use App\Models\Category; // Add this
-use App\Models\Author;   // Add this
+use App\Models\Category;
+use App\Models\Author;   
 use Illuminate\Http\Request;
 
 class AdminDashboardController extends Controller
@@ -27,7 +27,7 @@ class AdminDashboardController extends Controller
             'supplier',
             'copies',
         ])
-        // Filter by Keyword (Title, ISBN, etc.)
+
         ->when($keyword, function ($query) use ($keyword) {
             $query->where(function ($q) use ($keyword) {
                 $q->where('title', 'like', "%{$keyword}%")
@@ -36,15 +36,15 @@ class AdminDashboardController extends Controller
                     ->orWhereHas('category', fn($q2) => $q2->where('name', 'like', "%{$keyword}%"));
             });
         })
-        // Filter by specific Category dropdown
+
         ->when($categoryFilter, function ($query) use ($categoryFilter) {
             $query->where('category_id', $categoryFilter);
         })
-        // Filter by specific Author dropdown
+
         ->when($authorFilter, function ($query) use ($authorFilter) {
             $query->where('author_id', $authorFilter);
         })
-        // Filter by Status dropdown (checks the 'copies' relationship)
+
         ->when($statusFilter, function ($query) use ($statusFilter) {
             $query->whereHas('copies', function ($q) use ($statusFilter) {
                 $q->where('status', $statusFilter);
@@ -53,18 +53,16 @@ class AdminDashboardController extends Controller
         ->get();
 
         return view('admin.dashboard', [
-            // Dashboard Stats
+
             'totalUsers'        => User::count(),
             'totalBooks'        => Book::count(),
             'totalReservations' => Reservation::count(),
             'totalBorrows'      => Borrow::count(),
             'totalSuppliers'    => Supplier::count(),
 
-            // Search Data
             'books'             => $books,
             'keyword'           => $keyword,
 
-            // Missing Variables to fix the ErrorException
             'categories'        => Category::orderBy('name')->get(),
             'authors'           => Author::orderBy('name')->get(),
         ]);
