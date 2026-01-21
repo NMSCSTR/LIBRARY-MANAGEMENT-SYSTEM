@@ -336,7 +336,7 @@
                                 <th class="px-6 py-4">Loan Item</th>
                                 <th class="px-6 py-4 text-center">Status</th>
                                 <th class="px-6 py-4">Borrowing Timeline</th>
-                                <th class="px-6 py-4">Remaining Time</th>
+                                {{-- <th class="px-6 py-4">Remaining Time</th> --}}
                                 <th class="px-6 py-4 text-right">Action</th>
                             </tr>
                         </thead>
@@ -363,27 +363,27 @@
                                         <span class="text-xs font-black text-orange-500 italic">Due: {{ $tran->due_date->format('M d, Y') }}</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-8">
-    @if($tran->status === 'borrowed' && $tran->due_date)
-        @php
-            // We use parse to ensure it's a Carbon object, then diffInDays for a whole number
-            $dueDate = \Carbon\Carbon::parse($tran->due_date);
-            $daysLeft = (int) now()->diffInDays($dueDate, false);
-        @endphp
+                                {{-- <td class="px-6 py-8">
+                                    @if($tran->status === 'borrowed' && $tran->due_date)
+                                        @php
+                                            // We use parse to ensure it's a Carbon object, then diffInDays for a whole number
+                                            $dueDate = \Carbon\Carbon::parse($tran->due_date);
+                                            $daysLeft = (int) now()->diffInDays($dueDate, false);
+                                        @endphp
 
-        <span class="text-xs font-bold {{ $daysLeft < 0 ? 'text-red-600' : 'text-emerald-600' }}">
-            @if($daysLeft < 0)
-                {{ abs($daysLeft) }} {{ abs($daysLeft) == 1 ? 'Day' : 'Days' }} Overdue
-            @elseif($daysLeft == 0)
-                Due Today
-            @else
-                {{ $daysLeft }} {{ $daysLeft == 1 ? 'Day' : 'Days' }} Left
-            @endif
-        </span>
-    @else
-        <span class="text-gray-300 text-xs">--</span>
-    @endif
-</td>
+                                        <span class="text-xs font-bold {{ $daysLeft < 0 ? 'text-red-600' : 'text-emerald-600' }}">
+                                            @if($daysLeft < 0)
+                                                {{ abs($daysLeft) }} {{ abs($daysLeft) == 1 ? 'Day' : 'Days' }} Overdue
+                                            @elseif($daysLeft == 0)
+                                                Due Today
+                                            @else
+                                                {{ $daysLeft }} {{ $daysLeft == 1 ? 'Day' : 'Days' }} Left
+                                            @endif
+                                        </span>
+                                    @else
+                                        <span class="text-gray-300 text-xs">--</span>
+                                    @endif
+                                </td> --}}
                                 <td class="px-6 py-8 text-right">
                                     @if($tran instanceof \App\Models\Reservation)
                                     <form action="{{ route('borrower.cancelReservation', $tran->id) }}" method="POST">
