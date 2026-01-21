@@ -261,6 +261,16 @@
                                 @foreach($categories as $category) <option value="{{ $category->id }}">{{ $category->name }}</option> @endforeach
                             </select>
                         </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <select name="author_id" class="border-none bg-gray-100/50 rounded-2xl p-5 font-bold" required>
+                                <option value="">Publisher</option>
+                                @foreach($publishers as $pub) <option value="{{ $author->id }}">{{ $pub->name }}</option> @endforeach
+                            </select>
+                            <select name="category_id" class="border-none bg-gray-100/50 rounded-2xl p-5 font-bold" required>
+                                <option value="">Category</option>
+                                @foreach($suppliers as $sup) <option value="{{ $category->id }}">{{ $sup->name }}</option> @endforeach
+                            </select>
+                        </div>
                     </div>
                     <button type="submit" class="w-full bg-gray-900 hover:bg-black text-white font-black py-5 rounded-[2rem] shadow-2xl shadow-gray-200 transition-all active:scale-95">Register Book</button>
                 </form>
