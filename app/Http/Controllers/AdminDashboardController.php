@@ -16,12 +16,14 @@ class AdminDashboardController extends Controller
 {
     public function index(Request $request)
     {
+        // Get search and filter inputs
         $keyword = trim($request->search);
         $categoryFilter = $request->category;
         $authorFilter = $request->author;
         $statusFilter = $request->status;
 
-        // Condition: Only search if at least one input is provided
+        // Determine if we should show results
+        // We only proceed if there is a keyword or a specific filter selected
         $isSearching = !empty($keyword) || !empty($categoryFilter) || !empty($authorFilter) || !empty($statusFilter);
 
         if ($isSearching) {
@@ -48,7 +50,7 @@ class AdminDashboardController extends Controller
                 ->paginate(10)
                 ->withQueryString();
         } else {
-            // Return an empty paginator instance to prevent 'undefined' errors in Blade
+            // If not searching, return an empty paginator
             $books = new LengthAwarePaginator([], 0, 10);
         }
 
@@ -60,9 +62,14 @@ class AdminDashboardController extends Controller
             'totalSuppliers'    => Supplier::count(),
             'books'             => $books,
             'keyword'           => $keyword,
-            'isSearching'       => $isSearching,
             'categories'        => Category::orderBy('name')->get(),
             'authors'           => Author::orderBy('name')->get(),
+            'summary'           => [ // Added to prevent errors in your blade cards
+                'borrowed' => Borrow::where('status', 'borrowed')->count(),
+                'overdue'  => Borrow::where('status', 'overdue')->count(),
+                'available' => \App\Models\BookCopy::where('status', 'available')->count(),
+                'reserved'  => Reservation::count(),
+            ]
         ]);
     }
 }
