@@ -365,10 +365,26 @@
                                 </td>
                                 <td class="px-6 py-8">
                                     @if($tran->status === 'borrowed' && $tran->due_date)
-                                        @php $diff = now()->diffInDays($tran->due_date, false); @endphp
-                                        <span class="text-xs font-bold {{ $diff < 0 ? 'text-red-600' : 'text-emerald-600' }}">
-                                            {{ $diff < 0 ? abs($diff) . ' Days Overdue' : $diff . ' Days Left' }}
-                                        </span>
+                                        @php
+                                            $now = now('Asia/Manila');
+                                            $due = \Carbon\Carbon::parse($tran->due_date);
+                                            // diffInDays returns a clean integer
+                                            $daysLeft = $now->diffInDays($due, false);
+                                        @endphp
+
+                                        @if($daysLeft < 0)
+                                            <span class="text-xs font-black text-red-600 animate-pulse">
+                                                ⚠️ {{ abs($daysLeft) }} {{ abs($daysLeft) == 1 ? 'Day' : 'Days' }} Overdue
+                                            </span>
+                                        @elseif($daysLeft == 0)
+                                            <span class="text-xs font-black text-orange-500">
+                                                Due Today
+                                            </span>
+                                        @else
+                                            <span class="text-xs font-bold text-emerald-600">
+                                                {{ $daysLeft }} {{ $daysLeft == 1 ? 'Day' : 'Days' }} Left
+                                            </span>
+                                        @endif
                                     @else
                                         <span class="text-gray-300 text-xs">--</span>
                                     @endif
