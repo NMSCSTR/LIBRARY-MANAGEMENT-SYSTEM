@@ -87,19 +87,29 @@
                                     <span class="text-[10px] font-black text-indigo-500 bg-white border border-indigo-100 px-3 py-1.5 rounded-xl uppercase">{{ $book->category->name ?? 'General' }}</span>
                                 </td>
                                 <td class="px-6 py-8">
-                                    <div class="flex justify-end gap-2">
-                                        @foreach($book->copies as $copy)
-                                        <button
-                                            @click="openModal=true; modalBookId={{ $book->id }}; modalCopyId={{ $copy->id }}"
-                                            class="flex flex-col items-center justify-center w-28 py-3 rounded-2xl border-2 transition-all active:scale-90
-                                                {{ $copy->status === 'available'
-                                                    ? 'bg-white border-gray-100 text-gray-800 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 shadow-sm'
-                                                    : 'bg-gray-100 border-transparent text-gray-300 cursor-not-allowed opacity-50' }}"
-                                            {{ $copy->status !== 'available' ? 'disabled' : '' }}>
-                                            <span class="text-[9px] font-black uppercase tracking-tighter">Copy #{{ $copy->copy_number }}</span>
-                                            <span class="text-[10px] font-black">{{ $copy->status === 'available' ? 'REQUEST' : 'UNAVAILABLE' }}</span>
-                                        </button>
-                                        @endforeach
+                                    <div class="flex justify-end">
+                                        @php
+                                            // Find the first copy that is actually available
+                                            $availableCopy = $book->copies->where('status', 'available')->first();
+                                        @endphp
+
+                                        @if($availableCopy)
+                                            {{-- Only one button is shown, regardless of how many copies exist --}}
+                                            <button
+                                                @click="openModal=true; modalBookId={{ $book->id }}; modalCopyId={{ $availableCopy->id }}"
+                                                class="flex flex-col items-center justify-center w-32 py-3 rounded-2xl border-2 transition-all active:scale-90 bg-white border-gray-100 text-gray-800 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 shadow-sm">
+                                                <span class="text-[9px] font-black uppercase tracking-tighter">Availability: Yes</span>
+                                                <span class="text-[10px] font-black">REQUEST HOLD</span>
+                                            </button>
+                                        @else
+                                            {{-- Show a single disabled button if no copies are available --}}
+                                            <button
+                                                disabled
+                                                class="flex flex-col items-center justify-center w-32 py-3 rounded-2xl border-2 bg-gray-100 border-transparent text-gray-300 cursor-not-allowed opacity-50">
+                                                <span class="text-[9px] font-black uppercase tracking-tighter">Out of Stock</span>
+                                                <span class="text-[10px] font-black">UNAVAILABLE</span>
+                                            </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
