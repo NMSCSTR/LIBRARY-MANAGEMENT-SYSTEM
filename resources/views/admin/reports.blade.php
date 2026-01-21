@@ -18,7 +18,7 @@
             {{-- Professional Header --}}
             <div class="flex flex-col md:flex-row md:items-center justify-between bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
                 <div>
-                    <h1 class="text-4xl font-black text-gray-900 tracking-tight">System Analytics</h1>
+                    <h1 class="text-4xl font-black text-gray-900 tracking-tight">System Report</h1>
                     <p class="text-sm font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">Audit Trail & Circulation History</p>
                 </div>
 
