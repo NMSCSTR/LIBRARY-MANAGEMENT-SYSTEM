@@ -104,6 +104,15 @@
     @if(auth()->user()->role->name === 'admin')
     <p class="text-xs font-semibold text-gray-400 mt-6 mb-2 uppercase">Administration</p>
 
+    <a href="{{ route('reports.index') }}"
+        class="flex items-center justify-between my-4 {{ request()->routeIs('reports.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
+        <span class="flex items-center">
+            <span class="material-icons-outlined pr-2">analytics</span>
+            System Reports
+        </span>
+        <span class="material-icons-outlined">keyboard_arrow_right</span>
+    </a>
+    
     <a href="{{ route('users.index') }}"
         class="flex items-center justify-between my-4 {{ request()->routeIs('users.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-black' }}">
         <span class="flex items-center">

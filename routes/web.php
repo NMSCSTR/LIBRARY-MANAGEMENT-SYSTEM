@@ -52,6 +52,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
     Route::put('reservations/{reservation}/approve', [ReservationController::class, 'approve'])
         ->name('reservations.approve');
 
+    Route::get('/admin/reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+
     Route::resource('authors', AuthorController::class)->names([
         'index'   => 'authors.index',
         'store'   => 'authors.store',
