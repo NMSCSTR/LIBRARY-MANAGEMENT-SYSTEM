@@ -87,29 +87,29 @@
                                     <span class="text-[10px] font-black text-indigo-500 bg-white border border-indigo-100 px-3 py-1.5 rounded-xl uppercase">{{ $book->category->name ?? 'General' }}</span>
                                 </td>
                                 <td class="px-6 py-8">
-                                    <div class="flex justify-end">
-                                        @php
-                                            // Find the first copy that is actually available
-                                            $availableCopy = $book->copies->where('status', 'available')->first();
-                                        @endphp
+                                    <div class="flex flex-col items-end gap-2" x-data="{ selectedCopy: '' }">
+                                        <select
+                                            x-model="selectedCopy"
+                                            class="text-[10px] font-bold border-gray-200 rounded-xl bg-gray-50 focus:ring-indigo-500 py-2 px-3 w-40">
+                                            <option value="">Select a Copy...</option>
+                                            @foreach($book->copies as $copy)
+                                                <option
+                                                    value="{{ $copy->id }}"
+                                                    {{ $copy->status !== 'available' ? 'disabled' : '' }}>
+                                                    Copy #{{ $copy->copy_number }} ({{ strtoupper($copy->status) }})
+                                                </option>
+                                            @endforeach
+                                        </select>
 
-                                        @if($availableCopy)
-                                            {{-- Only one button is shown, regardless of how many copies exist --}}
-                                            <button
-                                                @click="openModal=true; modalBookId={{ $book->id }}; modalCopyId={{ $availableCopy->id }}"
-                                                class="flex flex-col items-center justify-center w-32 py-3 rounded-2xl border-2 transition-all active:scale-90 bg-white border-gray-100 text-gray-800 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 shadow-sm">
-                                                <span class="text-[9px] font-black uppercase tracking-tighter">Availability: Yes</span>
-                                                <span class="text-[10px] font-black">REQUEST HOLD</span>
-                                            </button>
-                                        @else
-                                            {{-- Show a single disabled button if no copies are available --}}
-                                            <button
-                                                disabled
-                                                class="flex flex-col items-center justify-center w-32 py-3 rounded-2xl border-2 bg-gray-100 border-transparent text-gray-300 cursor-not-allowed opacity-50">
-                                                <span class="text-[9px] font-black uppercase tracking-tighter">Out of Stock</span>
-                                                <span class="text-[10px] font-black">UNAVAILABLE</span>
-                                            </button>
-                                        @endif
+                                        <button
+                                            @click="openModal=true; modalBookId={{ $book->id }}; modalCopyId=selectedCopy"
+                                            :disabled="!selectedCopy"
+                                            class="w-40 py-3 rounded-2xl border-2 transition-all active:scale-95 font-black uppercase tracking-widest text-[10px]
+                                                disabled:bg-gray-100 disabled:text-gray-300 disabled:border-transparent disabled:cursor-not-allowed
+                                                bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100 hover:bg-indigo-700"
+                                        >
+                                            Confirm Selection
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
