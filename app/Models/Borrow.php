@@ -17,6 +17,7 @@ class Borrow extends Model
         'due_date'    => 'datetime',
         'return_date' => 'datetime',
     ];
+    
 
     public function user()
     {return $this->belongsTo(User::class);}

@@ -8,7 +8,7 @@ class Reservation extends Model
     protected $fillable = [
         'user_id',
         'book_id',
-        'copy_id', 
+        'copy_id',
         'status',
         'reserved_at'
     ];
@@ -27,4 +27,9 @@ class Reservation extends Model
     {
         return $this->belongsTo(BookCopy::class, 'copy_id');
     }
+
+protected $casts = [
+    'due_date' => 'datetime',
+    'borrow_date' => 'datetime',
+];
 }
