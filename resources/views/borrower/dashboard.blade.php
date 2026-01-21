@@ -7,8 +7,6 @@
     @include('components.borrower.topnav')
 
     <div class="flex flex-col lg:flex-row px-4 lg:px-10 gap-6">
-
-        {{-- Main Content --}}
         <div class="w-full space-y-8 mt-6">
 
             {{-- Welcome Header --}}
@@ -19,13 +17,11 @@
                         Manage your loans, track due dates, and explore the catalog.
                     </p>
                 </div>
-                <div class="flex gap-4">
-                    <div class="bg-white px-6 py-4 rounded-[1.5rem] shadow-sm border border-gray-100 text-center">
-                        <span class="text-[10px] font-black uppercase text-gray-400 block mb-1">Account Standing</span>
-                        <span class="text-xs font-black {{ ($summary['overdue'] ?? 0) > 0 ? 'text-red-500' : 'text-emerald-500' }} uppercase italic">
-                            {{ ($summary['overdue'] ?? 0) > 0 ? 'Action Required' : 'Good Standing' }}
-                        </span>
-                    </div>
+                <div class="bg-white px-6 py-4 rounded-[1.5rem] shadow-sm border border-gray-100 text-center">
+                    <span class="text-[10px] font-black uppercase text-gray-400 block mb-1">Account Standing</span>
+                    <span class="text-xs font-black {{ ($summary['overdue'] ?? 0) > 0 ? 'text-red-500' : 'text-emerald-500' }} uppercase italic">
+                        {{ ($summary['overdue'] ?? 0) > 0 ? 'Action Required' : 'Good Standing' }}
+                    </span>
                 </div>
             </div>
 
@@ -33,13 +29,12 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 @php
                     $cards = [
-                        ['icon' => 'auto_stories', 'label' => 'Out Now', 'value' => $summary['borrowed'] ?? 0, 'color' => 'blue'],
-                        ['icon' => 'notification_important', 'label' => 'Overdue', 'value' => $summary['overdue'] ?? 0, 'color' => 'red'],
-                        ['icon' => 'book', 'label' => 'Available', 'value' => $summary['available'] ?? 0, 'color' => 'emerald'],
-                        ['icon' => 'bookmark_added', 'label' => 'Waitlisted', 'value' => $summary['reserved'] ?? 0, 'color' => 'indigo'],
+                        ['icon' => 'auto_stories', 'label' => 'Out Now', 'value' => $summary['borrowed'] ?? 0],
+                        ['icon' => 'notification_important', 'label' => 'Overdue', 'value' => $summary['overdue'] ?? 0],
+                        ['icon' => 'book', 'label' => 'Available', 'value' => $summary['available'] ?? 0],
+                        ['icon' => 'bookmark_added', 'label' => 'Waitlisted', 'value' => $summary['reserved'] ?? 0],
                     ];
                 @endphp
-
                 @foreach($cards as $card)
                 <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-8 flex flex-col items-center hover:shadow-2xl transition-all group overflow-hidden relative">
                     <div class="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:scale-150 transition-transform">
@@ -58,11 +53,10 @@
             <div class="bg-white rounded-[3rem] shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100 p-8" x-data="{ openModal: false, modalBookId: null, modalCopyId: null }">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <h3 class="text-2xl font-black text-gray-900 tracking-tight">Catalog Explorer</h3>
-
                     <form method="GET" action="{{ route('borrower.dashboard') }}" class="w-full md:w-1/2 relative group">
-                        <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-indigo-600 transition-colors">search</span>
+                        <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-indigo-600">search</span>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Search by title, author, or category..."
+                            placeholder="Type title, author, or category to start..."
                             class="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-indigo-100">
                     </form>
                 </div>
@@ -84,72 +78,78 @@
                                     <p class="text-xs font-bold text-gray-400 mt-2 uppercase tracking-wide">By {{ $book->author->name ?? 'Unknown Author' }}</p>
                                 </td>
                                 <td class="px-6 py-8">
-                                    <span class="text-[10px] font-black text-indigo-500 bg-white border border-indigo-100 px-3 py-1.5 rounded-xl uppercase">{{ $book->category->name ?? 'General' }}</span>
+                                    <span class="text-[10px] font-black text-indigo-500 bg-white border border-indigo-100 px-3 py-1.5 rounded-xl uppercase">
+                                        {{ $book->category->name ?? 'General' }}
+                                    </span>
                                 </td>
                                 <td class="px-6 py-8">
-                                    <div class="flex justify-end gap-2">
+                                    <div class="flex flex-wrap justify-end gap-2 max-w-[320px] ml-auto max-h-[120px] overflow-y-auto p-1 custom-scrollbar">
                                         @foreach($book->copies as $copy)
                                         <button
                                             @click="openModal=true; modalBookId={{ $book->id }}; modalCopyId={{ $copy->id }}"
-                                            class="flex flex-col items-center justify-center w-28 py-3 rounded-2xl border-2 transition-all active:scale-90
+                                            class="flex flex-col items-center justify-center min-w-[70px] py-2 rounded-xl border-2 transition-all active:scale-90
                                                 {{ $copy->status === 'available'
                                                     ? 'bg-white border-gray-100 text-gray-800 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 shadow-sm'
                                                     : 'bg-gray-100 border-transparent text-gray-300 cursor-not-allowed opacity-50' }}"
                                             {{ $copy->status !== 'available' ? 'disabled' : '' }}>
-                                            <span class="text-[9px] font-black uppercase tracking-tighter">Copy #{{ $copy->copy_number }}</span>
-                                            <span class="text-[10px] font-black">{{ $copy->status === 'available' ? 'REQUEST' : 'UNAVAILABLE' }}</span>
+                                            <span class="text-[8px] font-black uppercase">#{{ $copy->copy_number }}</span>
+                                            <span class="text-[9px] font-black">HOLD</span>
                                         </button>
                                         @endforeach
                                     </div>
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="3" class="px-4 py-16 text-center text-gray-300 font-bold uppercase tracking-widest">The library shelf is empty for this search</td></tr>
+                            <tr>
+                                <td colspan="3" class="px-4 py-20 text-center">
+                                    <div class="flex flex-col items-center space-y-3">
+                                        <span class="material-icons text-5xl text-gray-200">
+                                            {{ request('search') ? 'search_off' : 'manage_search' }}
+                                        </span>
+                                        <p class="text-gray-400 font-black uppercase tracking-widest text-xs">
+                                            {{ request('search') ? 'No books found for "' . request('search') . '"' : 'The catalog is hidden. Use the search bar to find books.' }}
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
+                <div class="mt-8">{{ $books->links() }}</div>
 
-                <div class="mt-8">{{ $books->withQueryString()->links() }}</div>
-
-                {{-- RESERVE CONFIRMATION MODAL --}}
+                {{-- RESERVE MODAL --}}
                 <div x-show="openModal" x-transition.opacity class="fixed inset-0 bg-gray-900/80 backdrop-blur-md flex items-center justify-center z-[100] p-4" style="display: none;">
                     <div @click.away="openModal = false" class="bg-white rounded-[3.5rem] shadow-2xl w-full max-w-lg p-12 border border-white/20">
                         <div class="w-20 h-20 bg-indigo-50 rounded-3xl flex items-center justify-center mb-8">
                             <span class="material-icons text-4xl text-indigo-600">bookmark_added</span>
                         </div>
                         <h3 class="text-4xl font-black text-gray-900 tracking-tighter mb-4">Request Hold</h3>
-                        <p class="mb-10 text-gray-400 font-medium leading-relaxed">
-                            A reservation will hold this copy for <span class="text-gray-900 font-bold">24 hours</span>. Please visit the desk to claim your book.
-                        </p>
-
+                        <p class="mb-10 text-gray-400 font-medium">This book will be reserved for <span class="text-gray-900 font-bold">24 hours</span>.</p>
                         <form method="POST" action="{{ route('borrower.reserve') }}" class="flex gap-4">
                             @csrf
                             <input type="hidden" name="book_id" :value="modalBookId">
                             <input type="hidden" name="copy_id" :value="modalCopyId">
-
-                            <button type="button" @click="openModal=false" class="flex-1 py-5 rounded-2xl bg-gray-100 text-gray-500 font-black uppercase tracking-widest text-xs">Cancel</button>
-                            <button type="submit" class="flex-1 py-5 rounded-2xl bg-indigo-600 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-indigo-200">Confirm Hold</button>
+                            <button type="button" @click="openModal=false" class="flex-1 py-5 rounded-2xl bg-gray-100 text-gray-500 font-black uppercase text-xs">Cancel</button>
+                            <button type="submit" class="flex-1 py-5 rounded-2xl bg-indigo-600 text-white font-black uppercase text-xs shadow-xl shadow-indigo-200">Confirm</button>
                         </form>
                     </div>
                 </div>
             </div>
 
-            {{-- 3. PERSONAL TRANSACTION REGISTRY --}}
+            {{-- 3. TRANSACTION TIMELINE --}}
             <div class="bg-white rounded-[3rem] shadow-xl shadow-gray-200/40 overflow-hidden border border-gray-100 p-8">
                 <h3 class="text-2xl font-black text-gray-800 tracking-tight mb-8">My Transaction Timeline</h3>
-
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left">
                         <thead class="text-[10px] uppercase bg-gray-50 text-gray-400 font-black tracking-widest">
                             <tr>
                                 <th class="px-6 py-4">Loan Item</th>
                                 <th class="px-6 py-4 text-center">Status</th>
-                                <th class="px-6 py-4">Borrowing Timeline (3-Day Limit)</th>
+                                <th class="px-6 py-4">Timeline</th>
                                 <th class="px-6 py-4 text-right">Actions</th>
                             </tr>
                         </thead>
-
                         <tbody class="divide-y divide-gray-50">
                             @forelse($transactions as $tran)
                             <tr class="hover:bg-gray-50/50 transition">
@@ -158,66 +158,41 @@
                                     <p class="text-[10px] font-bold text-gray-400 uppercase mt-1">Copy #{{ $tran->bookCopy->copy_number ?? '-' }}</p>
                                 </td>
                                 <td class="px-6 py-8 text-center">
-                                    @php
-                                        $statusClass = [
-                                            'returned' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
-                                            'overdue'  => 'bg-red-50 text-red-600 border-red-200 animate-pulse',
-                                            'borrowed' => 'bg-blue-50 text-blue-600 border-blue-100'
-                                        ];
-                                        $curStatus = $tran->status ?? 'Reserved';
-                                    @endphp
-                                    <span class="px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border {{ $statusClass[$curStatus] ?? 'bg-gray-50 text-gray-400 border-gray-200' }}">
-                                        {{ $curStatus }}
+                                    <span class="px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border
+                                        {{ $tran->status === 'returned' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-blue-50 text-blue-600 border-blue-100' }}">
+                                        {{ $tran->status ?? 'Reserved' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-8">
-                                    <div class="flex flex-col gap-2">
-                                        <div class="flex items-center gap-2">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
-                                            <span class="text-xs font-bold text-gray-600">Start: {{ optional($tran->borrow_date ?? $tran->reserved_at)->format('M d, Y | g:i A') }}</span>
-                                        </div>
-
-                                        @if($tran->due_date)
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-1.5 h-1.5 rounded-full {{ now('Asia/Manila') > $tran->due_date && $tran->status !== 'returned' ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-orange-400' }}"></div>
-                                                <span class="text-xs font-black {{ now('Asia/Manila') > $tran->due_date && $tran->status !== 'returned' ? 'text-red-500' : 'text-orange-500' }} italic">
-                                                    Due: {{ $tran->due_date->format('M d, Y | g:i A') }}
-                                                </span>
-                                            </div>
-                                        @endif
-
-                                        @if($tran->return_date)
-                                            <div class="flex items-center gap-2 mt-1">
-                                                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-md {{ $tran->return_date > $tran->due_date ? 'bg-red-50 text-red-400 border border-red-100' : 'bg-emerald-50 text-emerald-500 border border-emerald-100' }}">
-                                                    {{ $tran->return_date > $tran->due_date ? '⚠️ Returned Late' : '✓ Returned On Time' }}
-                                                </span>
-                                            </div>
-                                        @endif
-                                    </div>
+                                <td class="px-6 py-8 text-xs font-bold text-gray-600">
+                                    {{ optional($tran->borrow_date ?? $tran->reserved_at)->format('M d, Y') }}
                                 </td>
                                 <td class="px-6 py-8 text-right">
                                     @if($tran instanceof \App\Models\Reservation)
-                                    <form action="{{ route('borrower.cancelReservation', $tran->id) }}" method="POST" onsubmit="return confirm('Abort this reservation?');">
+                                    <form action="{{ route('borrower.cancelReservation', $tran->id) }}" method="POST">
                                         @csrf @method('DELETE')
-                                        <button class="text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-600">Cancel</button>
+                                        <button class="text-[10px] font-black uppercase text-red-400">Cancel</button>
                                     </form>
                                     @else
-                                        <span class="material-icons-outlined text-gray-200">lock_clock</span>
+                                    <span class="material-icons-outlined text-gray-200">lock_clock</span>
                                     @endif
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="5" class="text-center py-12 text-gray-300 font-bold uppercase tracking-widest italic">No borrowing history on record</td></tr>
+                            <tr><td colspan="4" class="text-center py-12 text-gray-300 font-bold uppercase italic">No history found</td></tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 </section>
 
-{{-- Alpine.js for modal logic --}}
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+</style>
+
 <script src="//unpkg.com/alpinejs" defer></script>
 @endsection
