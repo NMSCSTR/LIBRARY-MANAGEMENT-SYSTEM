@@ -16,6 +16,7 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -52,7 +53,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,librarian'])->group(func
     Route::put('reservations/{reservation}/approve', [ReservationController::class, 'approve'])
         ->name('reservations.approve');
 
-    Route::get('/admin/reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
     Route::resource('authors', AuthorController::class)->names([
         'index'   => 'authors.index',
