@@ -5,33 +5,66 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Borrow;
 use App\Models\Reservation;
-use App\Models\BookCopy;
+use App\Models\Supplier;
+use App\Models\User;
+use App\Models\Category;
+use App\Models\Author;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class BorrowerDashboardController extends Controller
+class AdminDashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $userId = Auth::id();
+        $keyword = trim($request->search);
+        $categoryFilter = $request->category;
+        $authorFilter = $request->author;
+        $statusFilter = $request->status;
 
-        // Fetch all books for the Instant Filter to work with
-        // We eager load copies to check availability in the UI
-        $books = Book::with(['author', 'category', 'copies'])->get();
+        $books = Book::with([
+            'author',
+            'category',
+            'publisher',
+            'supplier',
+            'copies',
+        ])
 
-        return view('borrower.dashboard', [
-            'books' => $books,
-            'summary' => [
-                'borrowed'  => Borrow::where('user_id', $userId)->where('status', 'borrowed')->count(),
-                'overdue'   => Borrow::where('user_id', $userId)->where('status', 'overdue')->count(),
-                'available' => BookCopy::where('status', 'available')->count(),
-                'reserved'  => Reservation::where('user_id', $userId)->count(),
-            ],
-            'transactions' => Borrow::where('user_id', $userId)
-                ->with(['book', 'bookCopy'])
-                ->latest()
-                ->take(10)
-                ->get(),
+        ->when($keyword, function ($query) use ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('title', 'like', "%{$keyword}%")
+                    ->orWhere('isbn', 'like', "%{$keyword}%")
+                    ->orWhereHas('author', fn($q2) => $q2->where('name', 'like', "%{$keyword}%"))
+                    ->orWhereHas('category', fn($q2) => $q2->where('name', 'like', "%{$keyword}%"));
+            });
+        })
+
+        ->when($categoryFilter, function ($query) use ($categoryFilter) {
+            $query->where('category_id', $categoryFilter);
+        })
+
+        ->when($authorFilter, function ($query) use ($authorFilter) {
+            $query->where('author_id', $authorFilter);
+        })
+
+        ->when($statusFilter, function ($query) use ($statusFilter) {
+            $query->whereHas('copies', function ($q) use ($statusFilter) {
+                $q->where('status', $statusFilter);
+            });
+        })
+        ->get();
+
+        return view('admin.dashboard', [
+
+            'totalUsers'        => User::count(),
+            'totalBooks'        => Book::count(),
+            'totalReservations' => Reservation::count(),
+            'totalBorrows'      => Borrow::count(),
+            'totalSuppliers'    => Supplier::count(),
+
+            'books'             => $books,
+            'keyword'           => $keyword,
+
+            'categories'        => Category::orderBy('name')->get(),
+            'authors'           => Author::orderBy('name')->get(),
         ]);
     }
 }
