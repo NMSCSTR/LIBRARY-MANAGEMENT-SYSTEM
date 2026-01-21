@@ -1,104 +1,157 @@
 @extends('components.default')
 
-@section('title', 'System Reports | LMIS')
+@section('title', 'Analytics & Reports | LMIS')
 
 @section('content')
-<section class="bg-gray-50 min-h-screen pt-24 pb-10">
+<section class="bg-gray-50/50 min-h-screen pt-24 pb-12">
     @include('components.admin.topnav')
 
-    <div class="flex flex-col lg:flex-row px-4 lg:px-10 gap-6">
+    <div class="flex flex-col lg:flex-row px-4 lg:px-10 gap-8">
+        {{-- Sidebar --}}
         <div class="lg:w-2/12 w-full">
             @include('components.admin.sidebar')
         </div>
 
-        <div class="lg:w-10/12 w-full space-y-8">
-            {{-- Header & Filters --}}
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        {{-- Main Dashboard --}}
+        <div class="lg:w-10/12 w-full space-y-10">
+
+            {{-- Professional Header --}}
+            <div class="flex flex-col md:flex-row md:items-center justify-between bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
                 <div>
-                    <h1 class="text-3xl font-black text-gray-900 tracking-tight">System Reports</h1>
-                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Historical Transaction Logs</p>
+                    <h1 class="text-4xl font-black text-gray-900 tracking-tight">System Analytics</h1>
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">Audit Trail & Circulation History</p>
                 </div>
 
-                <form action="{{ route('reports.index') }}" method="GET" class="flex flex-wrap items-end gap-3 bg-white p-4 rounded-[2rem] shadow-sm border border-gray-100">
-                    <div class="flex flex-col gap-1">
-                        <label class="text-[9px] font-black text-gray-400 uppercase ml-2">From</label>
-                        <input type="date" name="start_date" value="{{ $startDate }}" class="bg-gray-50 border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-blue-500">
+                <form action="{{ route('reports.index') }}" method="GET" class="flex items-center gap-3 mt-4 md:mt-0">
+                    <div class="relative group">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400 uppercase">From</span>
+                        <input type="date" name="start_date" value="{{ $startDate }}"
+                            class="pl-14 pr-4 py-3 bg-gray-50 border-none rounded-2xl text-xs font-black text-gray-700 focus:ring-2 focus:ring-blue-500 transition-all shadow-inner">
                     </div>
-                    <div class="flex flex-col gap-1">
-                        <label class="text-[9px] font-black text-gray-400 uppercase ml-2">To</label>
-                        <input type="date" name="end_date" value="{{ $endDate }}" class="bg-gray-50 border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-blue-500">
+                    <div class="relative group">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400 uppercase">To</span>
+                        <input type="date" name="end_date" value="{{ $endDate }}"
+                            class="pl-10 pr-4 py-3 bg-gray-50 border-none rounded-2xl text-xs font-black text-gray-700 focus:ring-2 focus:ring-blue-500 transition-all shadow-inner">
                     </div>
-                    <button type="submit" class="bg-gray-900 text-white p-3 rounded-xl hover:bg-black transition-all">
-                        <span class="material-icons-outlined text-sm">filter_alt</span>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white p-3.5 rounded-2xl shadow-lg shadow-blue-100 transition-all active:scale-95">
+                        <span class="material-icons-outlined text-sm">tune</span>
                     </button>
                 </form>
             </div>
 
-            {{-- Borrowing Report Table --}}
+            {{-- Loan History Section --}}
             <div class="space-y-4">
-                <h2 class="text-xs font-black text-blue-600 uppercase tracking-[0.2em] ml-2">Loan History</h2>
-                <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 overflow-hidden border border-gray-100 p-6">
-                    <table class="w-full text-sm text-left text-gray-600 datatable">
-                        <thead class="text-[10px] uppercase bg-gray-50/50 text-gray-400 font-black tracking-widest border-b border-gray-100">
-                            <tr>
-                                <th class="px-6 py-4">Borrower</th>
-                                <th class="px-6 py-4">Book Title</th>
-                                <th class="px-6 py-4">Issue Date</th>
-                                <th class="px-6 py-4">Return Date</th>
-                                <th class="px-6 py-4">Status</th>
+                <div class="flex items-center gap-3 px-4">
+                    <div class="w-2 h-8 bg-blue-600 rounded-full"></div>
+                    <h2 class="text-xl font-black text-gray-800 tracking-tight">Loan Registry</h2>
+                </div>
+
+                <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-gray-50/50 border-b border-gray-100">
+                                <th class="px-8 py-6 text-[10px] font-black uppercase text-gray-400 tracking-widest">Borrower Information</th>
+                                <th class="px-8 py-6 text-[10px] font-black uppercase text-gray-400 tracking-widest">Book & Copy</th>
+                                <th class="px-8 py-6 text-[10px] font-black uppercase text-gray-400 tracking-widest">Timeline</th>
+                                <th class="px-8 py-6 text-[10px] font-black uppercase text-gray-400 tracking-widest text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
-                            @foreach($borrowLogs as $log)
-                            <tr class="hover:bg-gray-50/50 transition-colors">
-                                <td class="px-6 py-4 font-black text-gray-900">{{ $log->user->name }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="block font-bold text-gray-800">{{ $log->book->title }}</span>
-                                    <span class="text-[10px] text-blue-500 font-black uppercase">Copy #{{ $log->bookCopy->copy_number }}</span>
+                            @forelse($borrowLogs as $log)
+                            <tr class="hover:bg-blue-50/10 transition-colors group">
+                                <td class="px-8 py-6">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 text-gray-600 flex items-center justify-center font-black text-sm">
+                                            {{ substr($log->user->name, 0, 1) }}
+                                        </div>
+                                        <div>
+                                            <p class="font-black text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">{{ $log->user->name }}</p>
+                                            <p class="text-[10px] font-bold text-gray-400 uppercase">{{ $log->user->email }}</p>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4 text-xs font-medium text-gray-500">{{ $log->borrow_date->format('M d, Y') }}</td>
-                                <td class="px-6 py-4 text-xs">
-                                    @if($log->return_date)
-                                        <span class="font-bold text-green-600">{{ $log->return_date->format('M d, Y') }}</span>
-                                    @else
-                                        <span class="text-gray-300 italic">Pending</span>
-                                    @endif
+                                <td class="px-8 py-6">
+                                    <p class="font-bold text-gray-800 text-sm leading-snug">{{ $log->book->title }}</p>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[9px] font-black rounded-md border border-blue-100">COPY #{{ $log->bookCopy->copy_number }}</span>
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-[9px] font-black uppercase px-3 py-1 rounded-full border {{ $log->status === 'returned' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-orange-50 text-orange-600 border-orange-100' }}">
+                                <td class="px-8 py-6">
+                                    <div class="flex flex-col gap-1">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-black text-gray-400 w-8 uppercase">Out:</span>
+                                            <span class="text-xs font-bold text-gray-700">{{ $log->borrow_date->format('M d, Y') }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-black text-gray-400 w-8 uppercase">In:</span>
+                                            <span class="text-xs font-bold {{ $log->return_date ? 'text-green-600' : 'text-gray-300 italic' }}">
+                                                {{ $log->return_date ? $log->return_date->format('M d, Y') : 'Active Loan' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-6 text-center">
+                                    @php
+                                        $isReturned = $log->status === 'returned';
+                                    @endphp
+                                    <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border {{ $isReturned ? 'bg-green-100 text-green-700 border-green-200' : 'bg-orange-100 text-orange-700 border-orange-200' }}">
+                                        <span class="w-1.5 h-1.5 rounded-full {{ $isReturned ? 'bg-green-500' : 'bg-orange-500 animate-pulse' }}"></span>
                                         {{ $log->status }}
                                     </span>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="4" class="px-8 py-20 text-center opacity-30">
+                                    <span class="material-icons-outlined text-6xl">find_in_page</span>
+                                    <p class="font-black uppercase tracking-widest mt-4">No loan records found for this period</p>
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            {{-- Reservation Report Table --}}
+            {{-- Reservation History Section --}}
             <div class="space-y-4">
-                <h2 class="text-xs font-black text-indigo-600 uppercase tracking-[0.2em] ml-2">Reservation History</h2>
-                <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 overflow-hidden border border-gray-100 p-6">
-                    <table class="w-full text-sm text-left text-gray-600 datatable">
-                        <thead class="text-[10px] uppercase bg-gray-50/50 text-gray-400 font-black tracking-widest border-b border-gray-100">
-                            <tr>
-                                <th class="px-6 py-4">Requestor</th>
-                                <th class="px-6 py-4">Book</th>
-                                <th class="px-6 py-4">Requested On</th>
-                                <th class="px-6 py-4">Status</th>
+                <div class="flex items-center gap-3 px-4">
+                    <div class="w-2 h-8 bg-indigo-600 rounded-full"></div>
+                    <h2 class="text-xl font-black text-gray-800 tracking-tight">Reservation Logs</h2>
+                </div>
+
+                <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-gray-50/50 border-b border-gray-100">
+                                <th class="px-8 py-6 text-[10px] font-black uppercase text-gray-400 tracking-widest">Member</th>
+                                <th class="px-8 py-6 text-[10px] font-black uppercase text-gray-400 tracking-widest">Requested Item</th>
+                                <th class="px-8 py-6 text-[10px] font-black uppercase text-gray-400 tracking-widest">Status Hub</th>
+                                <th class="px-8 py-6 text-[10px] font-black uppercase text-gray-400 tracking-widest text-right">Date Logged</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
                             @foreach($reservationLogs as $res)
-                            <tr class="hover:bg-gray-50/50 transition-colors">
-                                <td class="px-6 py-4 font-black text-gray-900">{{ $res->user->name }}</td>
-                                <td class="px-6 py-4 font-bold text-gray-700">{{ $res->book->title }}</td>
-                                <td class="px-6 py-4 text-xs text-gray-500">{{ $res->created_at->format('M d, Y') }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="text-[9px] font-black uppercase px-3 py-1 rounded-full border {{ $res->status === 'declined' ? 'bg-red-50 text-red-500 border-red-100' : 'bg-blue-50 text-blue-600 border-blue-100' }}">
+                            <tr class="hover:bg-indigo-50/10 transition-colors">
+                                <td class="px-8 py-6 font-black text-gray-900 text-sm">{{ $res->user->name }}</td>
+                                <td class="px-8 py-6">
+                                    <p class="font-bold text-gray-700 text-sm">{{ $res->book->title }}</p>
+                                </td>
+                                <td class="px-8 py-6">
+                                    @php
+                                        $resColor = match($res->status) {
+                                            'pending' => 'bg-amber-50 text-amber-600 border-amber-100',
+                                            'reserved' => 'bg-blue-50 text-blue-600 border-blue-100',
+                                            'declined' => 'bg-red-50 text-red-500 border-red-100',
+                                            default => 'bg-gray-50 text-gray-500 border-gray-100'
+                                        };
+                                    @endphp
+                                    <span class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-tighter border {{ $resColor }}">
                                         {{ $res->status }}
                                     </span>
+                                </td>
+                                <td class="px-8 py-6 text-right font-bold text-xs text-gray-400">
+                                    {{ $res->created_at->format('M d, Y') }}
                                 </td>
                             </tr>
                             @endforeach
