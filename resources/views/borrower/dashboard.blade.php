@@ -14,7 +14,7 @@
                 <div class="space-y-1">
                     <h1 class="text-5xl font-black text-gray-900 tracking-tighter">My Library Portal</h1>
                     <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">
-                        Enter a search term below to browse the library collection.
+                        Browse the library collection by searching below.
                     </p>
                 </div>
             </div>
@@ -40,19 +40,81 @@
                 @endforeach
             </div>
 
-            {{-- 2. COLLECTION SEARCH (Only displays results after search) --}}
+            {{-- 2. COLLECTION SEARCH --}}
             <div class="bg-white rounded-[3rem] shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100 p-8" x-data="{ openModal: false, modalBookId: null, modalCopyId: null }">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <h3 class="text-2xl font-black text-gray-900 tracking-tight">Catalog Explorer</h3>
                     <form method="GET" action="{{ route('borrower.dashboard') }}" class="w-full md:w-1/2 relative group">
                         <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-indigo-600 transition-colors">search</span>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Type title, author or category and press Enter..."
+                            placeholder="Type title or author and press Enter..."
                             class="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-indigo-100 transition-all">
                     </form>
                 </div>
 
-                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-[10px] uppercase bg-gray-50/50 text-gray-400 font-black tracking-widest border-b border-gray-100">
+                            <tr>
+                                <th class="px-6 py-5">Publication</th>
+                                <th class="px-6 py-5">Category</th>
+                                <th class="px-6 py-5 text-right">Copies & Reservation</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            @forelse($books as $book)
+                            <tr class="hover:bg-indigo-50/30 transition group">
+                                <td class="px-6 py-8">
+                                    <p class="font-black text-gray-900 text-lg leading-none">{{ $book->title }}</p>
+                                    <p class="text-xs font-bold text-gray-400 mt-2 uppercase tracking-wide">By {{ $book->author->name ?? 'Unknown' }}</p>
+                                </td>
+                                <td class="px-6 py-8">
+                                    <span class="text-[10px] font-black text-indigo-500 bg-white border border-indigo-100 px-3 py-1.5 rounded-xl uppercase">
+                                        {{ $book->category->name ?? 'General' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-8">
+                                    {{-- UI HANDLING FOR MANY COPIES: Scrollable grid --}}
+                                    <div class="flex flex-wrap justify-end gap-2 max-w-[320px] ml-auto overflow-y-auto max-h-[140px] p-2 custom-scrollbar">
+                                        @foreach($book->copies as $copy)
+                                        <button
+                                            @click="openModal=true; modalBookId={{ $book->id }}; modalCopyId={{ $copy->id }}"
+                                            class="flex flex-col items-center justify-center min-w-[70px] py-2 rounded-xl border-2 transition-all active:scale-90
+                                                {{ $copy->status === 'available'
+                                                    ? 'bg-white border-gray-100 text-gray-800 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 shadow-sm'
+                                                    : 'bg-gray-100 border-transparent text-gray-300 cursor-not-allowed opacity-50' }}"
+                                            {{ $copy->status !== 'available' ? 'disabled' : '' }}>
+                                            <span class="text-[8px] font-black uppercase">#{{ $copy->copy_number }}</span>
+                                            <span class="text-[9px] font-black">HOLD</span>
+                                        </button>
+                                        @endforeach
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="3" class="px-4 py-24 text-center">
+                                    <div class="flex flex-col items-center justify-center space-y-4">
+                                        <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center">
+                                            <span class="material-icons text-4xl text-gray-200">
+                                                {{ request('search') ? 'search_off' : 'manage_search' }}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-900 font-black uppercase tracking-[0.2em] text-sm">
+                                                {{ request('search') ? 'No books found' : 'Ready to Explore' }}
+                                            </p>
+                                            <p class="text-gray-400 text-xs font-bold mt-1">
+                                                {{ request('search') ? 'Try a different title or author.' : 'Enter a book title in the search box to browse results.' }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
                 @if($books->hasPages())
                     <div class="mt-8">{{ $books->links() }}</div>
@@ -108,7 +170,7 @@
     <div x-show="openModal" x-transition.opacity class="fixed inset-0 bg-gray-900/80 backdrop-blur-md flex items-center justify-center z-[100] p-4" style="display: none;">
         <div @click.away="openModal = false" class="bg-white rounded-[3.5rem] shadow-2xl w-full max-w-lg p-12 border border-white/20">
             <h3 class="text-4xl font-black text-gray-900 tracking-tighter mb-4">Confirm Hold</h3>
-            <p class="mb-10 text-gray-400 font-medium leading-relaxed">Please visit the desk within 24 hours to claim your copy.</p>
+            <p class="mb-10 text-gray-400 font-medium leading-relaxed">Confirm your reservation for this book copy.</p>
             <form method="POST" action="{{ route('borrower.reserve') }}" class="flex gap-4">
                 @csrf
                 <input type="hidden" name="book_id" :value="modalBookId">
@@ -121,6 +183,7 @@
 </section>
 
 <style>
+    /* Styling for the copy inventory scrollbar */
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
