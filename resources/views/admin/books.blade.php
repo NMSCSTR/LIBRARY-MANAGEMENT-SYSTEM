@@ -264,11 +264,11 @@
                         <div class="grid grid-cols-2 gap-4">
                             <select name="publisher_id" class="border-none bg-gray-100/50 rounded-2xl p-5 font-bold" required>
                                 <option value="">Publisher</option>
-                                @foreach($publishers as $pub) <option value="{{ $author->id }}">{{ $pub->name }}</option> @endforeach
+                                @foreach($publishers as $pub) <option value="{{ $pub->id }}">{{ $pub->name }}</option> @endforeach
                             </select>
                             <select name="supplier_id" class="border-none bg-gray-100/50 rounded-2xl p-5 font-bold" required>
                                 <option value="">Supplier</option>
-                                @foreach($suppliers as $sup) <option value="{{ $category->id }}">{{ $sup->name }}</option> @endforeach
+                                @foreach($suppliers as $sup) <option value="{{ $sup->id }}">{{ $sup->name }}</option> @endforeach
                             </select>
                         </div>
                     </div>
