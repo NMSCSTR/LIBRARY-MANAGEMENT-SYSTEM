@@ -52,69 +52,7 @@
                     </form>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left">
-                        <thead class="text-[10px] uppercase bg-gray-50/50 text-gray-400 font-black tracking-widest border-b border-gray-100">
-                            <tr>
-                                <th class="px-6 py-5">Publication</th>
-                                <th class="px-6 py-5">Category</th>
-                                <th class="px-6 py-5 text-right">Inventory (Scroll for more)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-50">
-                            @forelse($books as $book)
-                            <tr class="hover:bg-indigo-50/30 transition group">
-                                <td class="px-6 py-8">
-                                    <p class="font-black text-gray-900 text-lg leading-none">{{ $book->title }}</p>
-                                    <p class="text-xs font-bold text-gray-400 mt-2 uppercase tracking-wide">By {{ $book->author->name ?? 'Unknown' }}</p>
-                                </td>
-                                <td class="px-6 py-8">
-                                    <span class="text-[10px] font-black text-indigo-500 bg-white border border-indigo-100 px-3 py-1.5 rounded-xl uppercase">
-                                        {{ $book->category->name ?? 'General' }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-8">
-                                    {{-- UI HANDLING FOR MANY COPIES --}}
-                                    <div class="flex flex-wrap justify-end gap-2 max-w-[320px] ml-auto overflow-y-auto max-h-[140px] p-2 custom-scrollbar">
-                                        @foreach($book->copies as $copy)
-                                        <button
-                                            @click="openModal=true; modalBookId={{ $book->id }}; modalCopyId={{ $copy->id }}"
-                                            class="flex flex-col items-center justify-center min-w-[70px] py-2 rounded-xl border-2 transition-all active:scale-90
-                                                {{ $copy->status === 'available'
-                                                    ? 'bg-white border-gray-100 text-gray-800 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 shadow-sm'
-                                                    : 'bg-gray-100 border-transparent text-gray-300 cursor-not-allowed opacity-50' }}"
-                                            {{ $copy->status !== 'available' ? 'disabled' : '' }}>
-                                            <span class="text-[8px] font-black uppercase">#{{ $copy->copy_number }}</span>
-                                            <span class="text-[9px] font-black">HOLD</span>
-                                        </button>
-                                        @endforeach
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="3" class="px-4 py-24 text-center">
-                                    <div class="flex flex-col items-center justify-center space-y-4">
-                                        <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center">
-                                            <span class="material-icons text-4xl text-gray-200">
-                                                {{ request('search') ? 'search_off' : 'manage_search' }}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <p class="text-gray-900 font-black uppercase tracking-[0.2em] text-sm">
-                                                {{ request('search') ? 'No results found' : 'Collection is hidden' }}
-                                            </p>
-                                            <p class="text-gray-400 text-xs font-bold mt-1">
-                                                {{ request('search') ? 'Try searching for a different keyword.' : 'Type a title or author in the box above to see books.' }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                
 
                 @if($books->hasPages())
                     <div class="mt-8">{{ $books->links() }}</div>
