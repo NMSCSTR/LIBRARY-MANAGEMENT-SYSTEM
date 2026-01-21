@@ -101,3 +101,10 @@ Dli e load tanan nga naka list type
 Bali ang borrow date & return date -mana
 Penalty sa pag borrow -mana
 Reporting ( tanan na area)
+
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear
+php artisan optimize

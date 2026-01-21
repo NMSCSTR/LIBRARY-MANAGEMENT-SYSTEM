@@ -14,7 +14,7 @@
                 <div class="space-y-1">
                     <h1 class="text-5xl font-black text-gray-900 tracking-tighter">My Library Portal</h1>
                     <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">
-                        Browse the library collection by searching below.
+                        Browse the library collection using the instant search below.
                     </p>
                 </div>
             </div>
@@ -40,20 +40,22 @@
                 @endforeach
             </div>
 
-            {{-- 2. COLLECTION SEARCH --}}
+            {{-- 2. COLLECTION SEARCH (ADVANCED) --}}
             <div class="bg-white rounded-[3rem] shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100 p-8" x-data="{ openModal: false, modalBookId: null, modalCopyId: null }">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <h3 class="text-2xl font-black text-gray-900 tracking-tight">Catalog Explorer</h3>
-                    <form method="GET" action="{{ route('borrower.dashboard') }}" class="w-full md:w-1/2 relative group">
+
+                    {{-- Updated Instant Search Input --}}
+                    <div class="w-full md:w-1/2 relative group">
                         <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-indigo-600 transition-colors">search</span>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Type title or author and press Enter..."
+                        <input type="text" id="borrowerSearch"
+                            placeholder="Search by title, author, or category..."
                             class="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-indigo-100 transition-all">
-                    </form>
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left">
+                    <table class="w-full text-sm text-left" id="booksTable">
                         <thead class="text-[10px] uppercase bg-gray-50/50 text-gray-400 font-black tracking-widest border-b border-gray-100">
                             <tr>
                                 <th class="px-6 py-5">Publication</th>
@@ -63,18 +65,19 @@
                         </thead>
                         <tbody class="divide-y divide-gray-50">
                             @forelse($books as $book)
-                            <tr class="hover:bg-indigo-50/30 transition group">
+                            <tr class="hover:bg-indigo-50/30 transition group search-item">
                                 <td class="px-6 py-8">
-                                    <p class="font-black text-gray-900 text-lg leading-none">{{ $book->title }}</p>
-                                    <p class="text-xs font-bold text-gray-400 mt-2 uppercase tracking-wide">By {{ $book->author->name ?? 'Unknown' }}</p>
+                                    <p class="font-black text-gray-900 text-lg leading-none search-text">{{ $book->title }}</p>
+                                    <p class="text-xs font-bold text-gray-400 mt-2 uppercase tracking-wide">
+                                        By <span class="search-text">{{ $book->author->name ?? 'Unknown' }}</span>
+                                    </p>
                                 </td>
                                 <td class="px-6 py-8">
-                                    <span class="text-[10px] font-black text-indigo-500 bg-white border border-indigo-100 px-3 py-1.5 rounded-xl uppercase">
+                                    <span class="text-[10px] font-black text-indigo-500 bg-white border border-indigo-100 px-3 py-1.5 rounded-xl uppercase search-text">
                                         {{ $book->category->name ?? 'General' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-8">
-                                    {{-- UI HANDLING FOR MANY COPIES: Scrollable grid --}}
                                     <div class="flex flex-wrap justify-end gap-2 max-w-[320px] ml-auto overflow-y-auto max-h-[140px] p-2 custom-scrollbar">
                                         @foreach($book->copies as $copy)
                                         <button
@@ -92,33 +95,19 @@
                                 </td>
                             </tr>
                             @empty
-                            <tr>
+                            <tr id="noResults"><td colspan="3" class="px-4 py-24 text-center text-gray-400 font-bold uppercase italic">No books in collection</td></tr>
+                            @endforelse
+
+                            {{-- Dynamic JS No Results Placeholder --}}
+                            <tr id="jsNoResults" class="hidden">
                                 <td colspan="3" class="px-4 py-24 text-center">
-                                    <div class="flex flex-col items-center justify-center space-y-4">
-                                        <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center">
-                                            <span class="material-icons text-4xl text-gray-200">
-                                                {{ request('search') ? 'search_off' : 'manage_search' }}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <p class="text-gray-900 font-black uppercase tracking-[0.2em] text-sm">
-                                                {{ request('search') ? 'No books found' : 'Ready to Explore' }}
-                                            </p>
-                                            <p class="text-gray-400 text-xs font-bold mt-1">
-                                                {{ request('search') ? 'Try a different title or author.' : 'Enter a book title in the search box to browse results.' }}
-                                            </p>
-                                        </div>
-                                    </div>
+                                    <span class="material-icons text-4xl text-gray-200">search_off</span>
+                                    <p class="text-gray-400 font-bold uppercase mt-2">No matching books found</p>
                                 </td>
                             </tr>
-                            @endforelse
                         </tbody>
                     </table>
                 </div>
-
-                @if($books->hasPages())
-                    <div class="mt-8">{{ $books->links() }}</div>
-                @endif
             </div>
 
             {{-- 3. PERSONAL TRANSACTION REGISTRY --}}
@@ -137,7 +126,7 @@
                             @forelse($transactions as $tran)
                             <tr class="hover:bg-gray-50/50 transition">
                                 <td class="px-6 py-8">
-                                    <p class="font-black text-gray-900 leading-tight">{{ $tran->book->title }}</p>
+                                    <p class="font-black text-gray-900 leading-tight">{{ $tran->book->title ?? 'N/A' }}</p>
                                     <p class="text-[10px] font-bold text-gray-400 uppercase mt-1">Copy #{{ $tran->bookCopy->copy_number ?? '-' }}</p>
                                 </td>
                                 <td class="px-6 py-8 text-center">
@@ -182,13 +171,45 @@
     </div>
 </section>
 
-<style>
-    /* Styling for the copy inventory scrollbar */
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
-</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('borrowerSearch');
+        const jsNoResults = document.getElementById('jsNoResults');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                const items = document.querySelectorAll('.search-item');
+                let visibleCount = 0;
+
+                items.forEach(item => {
+                    const textElements = item.querySelectorAll('.search-text');
+                    let match = false;
+
+                    textElements.forEach(el => {
+                        if (el.textContent.toLowerCase().includes(query)) {
+                            match = true;
+                        }
+                    });
+
+                    if (match) {
+                        item.style.display = '';
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Handle no results state
+                if (visibleCount === 0 && query !== '') {
+                    jsNoResults.classList.remove('hidden');
+                } else {
+                    jsNoResults.classList.add('hidden');
+                }
+            });
+        }
+    });
+</script>
 
 <script src="//unpkg.com/alpinejs" defer></script>
 @endsection
