@@ -16,13 +16,25 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index()
+    // {
+    //     return view('admin.books', [
+    //         'books'      => Book::with(['author', 'category', 'publisher', 'supplier', 'copies'])->get(),
+    //         'authors'    => Author::all(),
+    //         'categories' => Category::all(),
+    //         'publishers' => Publisher::all(),
+    //         'suppliers'  => Supplier::all(),
+    //     ]);
+    // }
+
     public function index()
     {
         return view('admin.books', [
-            'books'      => Book::with(['author', 'category', 'publisher', 'supplier', 'copies'])->get(),
-            'authors'    => Author::all(),
-            'categories' => Category::all(),
-            'publishers' => Publisher::all(),
+            'books'      => Book::with(['author', 'category', 'copies'])->latest()->get(),
+            'bookCopies' => BookCopy::with('book')->latest()->take(10)->get(), // Recent copies
+            'authors'    => Author::withCount('books')->get(),
+            'categories' => Category::withCount('books')->get(),
+            'publishers' => Publisher::withCount('books')->get(),
             'suppliers'  => Supplier::all(),
         ]);
     }
