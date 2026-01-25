@@ -28,9 +28,10 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
-        // Fix: Merge JSON data into the request object so validation can see it
+        // Handle JSON payload from Fetch API
         if ($request->isJson()) {
             $request->merge($request->json()->all());
         }
@@ -42,22 +43,20 @@ class CategoryController extends Controller
 
         $category = Category::create($validated);
 
-        // Audit Log
         ActivityLog::create([
             'user_id'     => Auth::id(),
             'action'      => 'create',
             'description' => "Added category '{$category->name}' via Quick-Add",
         ]);
 
-        // Fix: Specifically check for AJAX/JSON expectation
-        if ($request->ajax() || $request->wantsJson() || $request->expectsJson()) {
+        if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
-                'id' => $category->id,
-                'name' => $category->name
+                'id'   => $category->id,
+                'name' => $category->name,
             ], 201);
         }
 
-        return redirect()->back()->with('success', 'Category added successfully.');
+        return redirect()->route('categories.index')->with('success', 'Category added.');
     }
 
     /**
