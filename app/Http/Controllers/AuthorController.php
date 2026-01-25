@@ -50,20 +50,25 @@ class AuthorController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['name' => 'required|string|max:255']);
+
+        $request->validate([
+            'name' => 'required|string|max:255|unique:authors,name',
+        ]);
+
         $author = Author::create(['name' => $request->name]);
 
-        // This handles the new "Create" button automatically
-        if ($request->ajax()) {
-            return response()->json(['id' => $author->id, 'name' => $author->name]);
-        }
-
-        // Log creation
         ActivityLog::create([
             'user_id'     => Auth::id(),
             'action'      => 'create',
             'description' => 'Created author: ' . $author->name,
         ]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'id'   => $author->id,
+                'name' => $author->name,
+            ], 201);
+        }
 
         return redirect()->back()->with('success', 'Author added!');
     }
