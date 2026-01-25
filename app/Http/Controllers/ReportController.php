@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Borrow;
 use App\Models\Book;
+use App\Models\BookCopy;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
