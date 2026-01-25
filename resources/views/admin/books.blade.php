@@ -121,18 +121,32 @@
                     </div>
                 </div>
 
-                {{-- BOTTOM ROW: PUBLICATION & LOCATION --}}
-                <div class="mt-6 pt-4 border-t border-gray-100 grid grid-cols-1 gap-2">
-                    <div class="flex items-center justify-between text-[10px]">
-                        <span class="font-black uppercase text-gray-400">Location</span>
-                        {{-- Pulling shelf_location from the first copy --}}
-                        <span class="font-bold text-red-600 uppercase tracking-tighter">
-                            📍 {{ $book->copies->first()?->shelf_location ?? 'No Location Set' }}
+                {{-- NEW SECTION: BOOK LOCATIONS --}}
+                <div class="mt-4 flex flex-wrap gap-1.5">
+                    @php
+                        // Get unique shelf locations for this book's copies
+                        $locations = $book->copies->pluck('shelf_location')->unique()->filter();
+                    @endphp
+
+                    @forelse($locations as $location)
+                        <span class="px-3 py-1 bg-blue-50 text-blue-600 border border-blue-100 rounded-lg text-[9px] font-black uppercase flex items-center gap-1">
+                            <span class="material-icons-outlined text-[10px]">place</span>
+                            {{ $location }}
                         </span>
-                    </div>
+                    @empty
+                        <span class="text-[9px] font-bold text-gray-400 italic">No location assigned</span>
+                    @endforelse
+                </div>
+
+                {{-- BOTTOM ROW: PUBLICATION & LOGISTICS --}}
+                <div class="mt-4 pt-4 border-t border-gray-100 grid grid-cols-1 gap-2">
                     <div class="flex items-center justify-between text-[10px]">
                         <span class="font-black uppercase text-gray-400">Publisher</span>
                         <span class="font-bold text-gray-700 uppercase">{{ $book->publisher?->name ?? 'N/A' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px]">
+                        <span class="font-black uppercase text-gray-400">Place</span>
+                        <span class="font-bold text-gray-700 uppercase">{{ $book->place_published ?? 'N/A' }}</span>
                     </div>
                     <div class="flex items-center justify-between text-[10px]">
                         <span class="font-black uppercase text-gray-400">Supplier</span>
