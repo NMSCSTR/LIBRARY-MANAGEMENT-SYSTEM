@@ -156,7 +156,7 @@
                     </div>
                     <div class="flex items-center justify-between text-[10px]">
                         <span class="font-black uppercase text-gray-400">Supplier</span>
-                        <span class="font-bold text-blue-600 uppercase">{{ $supplier->name ?? 'N/A' }}</span>
+                        <span class="font-bold text-blue-600 uppercase">{{ $book->supplier?->name ?? 'N/A' }}</span>
                     </div>
                 </div>
             </div>
@@ -336,25 +336,49 @@
 @push('scripts')
 @include('components.alerts')
 <script>
-    // --- FILTER LOGIC ---
+    // --- STATE MANAGEMENT ---
+    let currentLocationFilter = "";
     const searchInput = document.getElementById('globalHubSearch');
     const yearInput = document.getElementById('yearFilter');
-    const items = document.querySelectorAll('.search-item');
+    const bookItems = document.querySelectorAll('#bookGrid .search-item');
+    const activeLocContainer = document.getElementById('activeLocationContainer');
+    const activeLocLabel = document.getElementById('activeLocationLabel');
 
-    function applyFilters() {
+    // --- CONSOLIDATED FILTER ENGINE ---
+    function applyAllFilters() {
         const query = searchInput.value.toLowerCase();
         const year = yearInput.value;
 
-        items.forEach(item => {
+        bookItems.forEach(item => {
             const textContent = item.innerText.toLowerCase();
             const itemYear = item.dataset.year || "";
+            const itemLocations = item.dataset.locations ? item.dataset.locations.split(',') : [];
+
             const matchesSearch = textContent.includes(query);
             const matchesYear = (year === "") || (itemYear === year);
-            item.style.display = (matchesSearch && matchesYear) ? '' : 'none';
+            const matchesLocation = (currentLocationFilter === "") || (itemLocations.includes(currentLocationFilter));
+
+            // Only show if it matches ALL active criteria
+            item.style.display = (matchesSearch && matchesYear && matchesLocation) ? '' : 'none';
         });
     }
-    searchInput.addEventListener('input', applyFilters);
-    yearInput.addEventListener('input', applyFilters);
+
+    function filterByLocation(locationName) {
+        currentLocationFilter = locationName;
+        activeLocLabel.innerText = locationName;
+        activeLocContainer.classList.remove('hidden');
+        document.getElementById('inventory').scrollIntoView({ behavior: 'smooth' });
+        applyAllFilters();
+    }
+
+    function clearLocationFilter() {
+        currentLocationFilter = "";
+        activeLocContainer.classList.add('hidden');
+        applyAllFilters();
+    }
+
+    searchInput.addEventListener('input', applyAllFilters);
+    yearInput.addEventListener('input', applyAllFilters);
 
     // --- MODAL CONTROLLER ---
     function openBookModal(book = null) {
@@ -428,13 +452,18 @@
             try {
                 const res = await fetch(`/admin/${slug}`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({ name: val })
                 });
                 const data = await res.json();
                 if (res.ok) {
                     const opt = document.createElement('option');
-                    opt.value = data.name; opt.setAttribute('data-id', data.id);
+                    opt.value = data.name;
+                    opt.setAttribute('data-id', data.id);
                     list.appendChild(opt);
                     hiddenId.value = data.id;
                     btn.classList.add('hidden');
@@ -444,59 +473,5 @@
             finally { btn.innerText = "CREATE"; btn.disabled = false; }
         });
     });
-</script>
-<script>
-    let currentLocationFilter = "";
-
-    // --- ENHANCED FILTER LOGIC ---
-    const searchInput = document.getElementById('globalHubSearch');
-    const yearInput = document.getElementById('yearFilter');
-    const bookItems = document.querySelectorAll('.search-item');
-    const activeLocContainer = document.getElementById('activeLocationContainer');
-    const activeLocLabel = document.getElementById('activeLocationLabel');
-
-    function applyAllFilters() {
-        const query = searchInput.value.toLowerCase();
-        const year = yearInput.value;
-
-        bookItems.forEach(item => {
-            const textContent = item.innerText.toLowerCase();
-            const itemYear = item.dataset.year || "";
-            const itemLocations = item.dataset.locations ? item.dataset.locations.split(',') : [];
-
-            const matchesSearch = textContent.includes(query);
-            const matchesYear = (year === "") || (itemYear === year);
-            const matchesLocation = (currentLocationFilter === "") || (itemLocations.includes(currentLocationFilter));
-
-            if (matchesSearch && matchesYear && matchesLocation) {
-                item.style.display = '';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    }
-
-    // Function triggered by clicking a location tag
-    function filterByLocation(locationName) {
-        currentLocationFilter = locationName;
-        activeLocLabel.innerText = locationName;
-        activeLocContainer.classList.remove('hidden');
-
-        // Scroll inventory into view
-        document.getElementById('inventory').scrollIntoView({ behavior: 'smooth' });
-
-        applyAllFilters();
-    }
-
-    // Function to clear the location filter
-    function clearLocationFilter() {
-        currentLocationFilter = "";
-        activeLocContainer.classList.add('hidden');
-        applyAllFilters();
-    }
-
-    // Event listeners for text and year inputs
-    searchInput.addEventListener('input', applyAllFilters);
-    yearInput.addEventListener('input', applyAllFilters);
 </script>
 @endpush
