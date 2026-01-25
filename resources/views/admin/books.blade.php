@@ -67,41 +67,80 @@
                 </div>
             </div>
 
-            {{-- SECTION: INVENTORY --}}
-            <div id="inventory" class="section-container bg-white rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
-                <div class="p-8 border-b border-gray-50 flex justify-between items-center bg-white sticky top-0 z-10">
-                    <div>
-                        <h2 class="text-2xl font-black text-gray-900 tracking-tighter">Books Inventory</h2>
-                        <p class="text-[10px] font-black uppercase text-blue-400">Total Entries: {{ $books->count() }}</p>
+{{-- SECTION: INVENTORY --}}
+<div id="inventory" class="section-container bg-white rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
+    <div class="p-8 border-b border-gray-50 flex justify-between items-center bg-white sticky top-0 z-10">
+        <div>
+            <h2 class="text-2xl font-black text-gray-900 tracking-tighter">Books Inventory</h2>
+            <p class="text-[10px] font-black uppercase text-blue-400">Total Entries: {{ $books->count() }}</p>
+        </div>
+        <button onclick="openBookModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase px-8 py-4 rounded-2xl shadow-lg transition-all active:scale-95">
+            + New Registration
+        </button>
+    </div>
+
+    <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[600px] overflow-y-auto" id="bookGrid">
+        @foreach($books as $book)
+        <div class="search-item group bg-gray-50/50 border border-gray-100 p-6 rounded-[2.5rem] hover:bg-white hover:shadow-xl transition-all" data-year="{{ $book->year_published }}">
+            <div class="flex flex-col h-full">
+                {{-- TOP ROW: TITLE & EDIT --}}
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3">
+                            <h3 class="text-lg font-black text-gray-800 search-text leading-tight">{{ $book->title }}</h3>
+                            <button onclick='openBookModal(@json($book))' class="text-gray-300 hover:text-blue-600 transition-colors">
+                                <span class="material-icons-outlined text-sm">edit</span>
+                            </button>
+                        </div>
+                        <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mt-1">
+                            {{ $book->category?->name ?? 'Uncategorized' }}
+                        </p>
                     </div>
-                    <button onclick="openBookModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase px-8 py-4 rounded-2xl shadow-lg transition-all active:scale-95">
-                        + New Registration
-                    </button>
+                    <div class="bg-gray-900 text-white px-4 py-2 rounded-2xl text-center min-w-[60px]">
+                        <span class="text-lg font-black block leading-none">{{ $book->copies->count() }}</span>
+                        <span class="text-[8px] font-bold uppercase opacity-60">Copies</span>
+                    </div>
                 </div>
-                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[600px] overflow-y-auto" id="bookGrid">
-                    @foreach($books as $book)
-                    <div class="search-item group bg-gray-50/50 border border-gray-100 p-6 rounded-[2rem] hover:bg-white hover:shadow-xl transition-all" data-year="{{ $book->year_published }}">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-3">
-                                    <h3 class="text-lg font-black text-gray-800 search-text leading-tight">{{ $book->title }}</h3>
-                                    <button onclick='openBookModal(@json($book))' class="text-gray-300 hover:text-blue-600 transition-colors">
-                                        <span class="material-icons-outlined text-sm">edit</span>
-                                    </button>
-                                </div>
-                                <p class="text-xs font-bold text-gray-400 search-text uppercase mt-1">
-                                    {{ $book->author?->name }} • {{ $book->category?->name }}
-                                    @if($book->year_published) • {{ $book->year_published }} @endif
-                                </p>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-xl font-black text-gray-800">{{ $book->copies->count() }}<small class="text-[10px] ml-1">QTY</small></span>
-                            </div>
+
+                {{-- MIDDLE ROW: PRIMARY DETAILS --}}
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2 text-gray-600">
+                        <span class="material-icons-outlined text-sm text-gray-400">person</span>
+                        <span class="text-xs font-bold search-text">{{ $book->author?->name ?? 'Unknown Author' }}</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-center gap-2 text-gray-500">
+                            <span class="material-icons-outlined text-sm text-gray-400">fingerprint</span>
+                            <span class="text-[11px] font-bold">ISBN: {{ $book->isbn ?? 'N/A' }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-500">
+                            <span class="material-icons-outlined text-sm text-gray-400">event</span>
+                            <span class="text-[11px] font-bold">Year: {{ $book->year_published ?? 'N/A' }}</span>
                         </div>
                     </div>
-                    @endforeach
+                </div>
+
+                {{-- BOTTOM ROW: PUBLICATION & LOGISTICS --}}
+                <div class="mt-6 pt-4 border-t border-gray-100 grid grid-cols-1 gap-2">
+                    <div class="flex items-center justify-between text-[10px]">
+                        <span class="font-black uppercase text-gray-400">Publisher</span>
+                        <span class="font-bold text-gray-700 uppercase">{{ $book->publisher?->name ?? 'N/A' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px]">
+                        <span class="font-black uppercase text-gray-400">Place</span>
+                        <span class="font-bold text-gray-700 uppercase">{{ $book->place_published ?? 'N/A' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px]">
+                        <span class="font-black uppercase text-gray-400">Supplier</span>
+                        <span class="font-bold text-blue-600 uppercase">{{ $book->supplier?->name ?? 'N/A' }}</span>
+                    </div>
                 </div>
             </div>
+        </div>
+        @endforeach
+    </div>
+</div>
 
             {{-- SECTION: COPIES --}}
             <div id="copies" class="section-container bg-gray-900 rounded-[3rem] shadow-sm p-8 text-white overflow-hidden">
