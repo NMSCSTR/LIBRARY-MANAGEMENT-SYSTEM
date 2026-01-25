@@ -37,15 +37,22 @@ class CategoryController extends Controller
 
         $category = Category::create($validated);
 
-        // Log creation
+        // Audit Log
         ActivityLog::create([
             'user_id'     => Auth::id(),
             'action'      => 'create',
-            'description' => "Added category '{$category->name}'",
+            'description' => "Added category '{$category->name}' ",
         ]);
 
-        return redirect()->route('categories.index')
-            ->with('success', 'Category added successfully.');
+        // Detect AJAX Request from the "Create" button
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'id' => $category->id,
+                'name' => $category->name
+            ]);
+        }
+
+        return redirect()->route('categories.index')->with('success', 'Category added successfully.');
     }
 
     /**

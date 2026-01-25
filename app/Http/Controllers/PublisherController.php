@@ -40,12 +40,20 @@ class PublisherController extends Controller
 
         $publisher = Publisher::create($validated);
 
-        // Log creation
+        // Audit Log
         ActivityLog::create([
             'user_id'     => Auth::id(),
             'action'      => 'create',
-            'description' => "Added publisher '{$publisher->name}' (ID: {$publisher->id})",
+            'description' => "Added publisher '{$publisher->name}' ",
         ]);
+
+        // Detect AJAX Request
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'id' => $publisher->id,
+                'name' => $publisher->name
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Publisher added successfully.');
     }

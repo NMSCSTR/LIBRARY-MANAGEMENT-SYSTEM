@@ -28,15 +28,35 @@ class AuthorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //     ]);
+
+    //     $author = Author::create([
+    //         'name' => $request->name,
+    //     ]);
+
+    //     // Log creation
+    //     ActivityLog::create([
+    //         'user_id'     => Auth::id(),
+    //         'action'      => 'create',
+    //         'description' => 'Created author: ' . $author->name,
+    //     ]);
+
+    //     return redirect()->route('authors.index')->with('success', 'Author created successfully.');
+    // }
+
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        $request->validate(['name' => 'required|string|max:255']);
+        $author = Author::create(['name' => $request->name]);
 
-        $author = Author::create([
-            'name' => $request->name,
-        ]);
+        // This handles the new "Create" button automatically
+        if ($request->ajax()) {
+            return response()->json(['id' => $author->id, 'name' => $author->name]);
+        }
 
         // Log creation
         ActivityLog::create([
@@ -45,7 +65,7 @@ class AuthorController extends Controller
             'description' => 'Created author: ' . $author->name,
         ]);
 
-        return redirect()->route('authors.index')->with('success', 'Author created successfully.');
+        return redirect()->back()->with('success', 'Author added!');
     }
 
     /**

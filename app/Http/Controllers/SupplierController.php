@@ -40,12 +40,20 @@ class SupplierController extends Controller
 
         $supplier = Supplier::create($request->all());
 
-        // Log creation
+        // Audit Log
         ActivityLog::create([
             'user_id'     => Auth::id(),
             'action'      => 'create',
-            'description' => "Created supplier '{$supplier->name}' (ID: {$supplier->id})",
+            'description' => "Created supplier '{$supplier->name}'",
         ]);
+
+        // Detect AJAX Request
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'id' => $supplier->id,
+                'name' => $supplier->name
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Supplier added successfully!');
     }
