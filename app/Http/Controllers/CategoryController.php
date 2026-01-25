@@ -30,29 +30,31 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name'        => 'required|string|max:255',
+        // Important: Handle both normal form and AJAX JSON body
+        $data = $request->isJson() ? $request->json()->all() : $request->all();
+
+        $validated = validator($data, [
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-        ]);
+        ])->validate();
 
         $category = Category::create($validated);
 
-        // Audit Log
         ActivityLog::create([
             'user_id'     => Auth::id(),
             'action'      => 'create',
-            'description' => "Added category '{$category->name}' ",
+            'description' => "Added category '{$category->name}'",
         ]);
 
-        // Detect AJAX Request from the "Create" button
+        // This part bridges the View and the Controller
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'id' => $category->id,
                 'name' => $category->name
-            ]);
+            ], 201);
         }
 
-        return redirect()->route('categories.index')->with('success', 'Category added successfully.');
+        return redirect()->back()->with('success', 'Category added successfully.');
     }
 
     /**
