@@ -3,12 +3,12 @@
 @section('title', 'Library Hub | LMIS')
 
 @section('content')
-<section class="bg-[#f8f9fa] min-h-screen pb-24">
+<section class="bg-[#fcfcfd] min-h-screen pb-24">
     @include('components.admin.topnav')
 
     <div class="flex flex-col lg:flex-row px-4 lg:px-10 pt-24 gap-8">
 
-        {{-- 1. STICKY SIDEBAR NAVIGATION --}}
+        {{-- STICKY SIDEBAR NAVIGATION --}}
         <div class="lg:w-2/12 w-full">
             <div class="sticky top-28 space-y-6">
                 @include('components.admin.sidebar')
@@ -20,28 +20,51 @@
                         <a href="#copies" class="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all">🆔 Book Copies</a>
                         <a href="#authors" class="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all">✍️ Authors</a>
                         <a href="#suppliers" class="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all">🚚 Suppliers</a>
-                        <a href="#meta" class="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all">🏷️ Categories & Pubs</a>
+                        <a href="#meta" class="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all">🏷️ Categories</a>
                     </nav>
                 </div>
             </div>
         </div>
 
-        {{-- 2. MAIN CONTENT AREA --}}
+        {{-- MAIN HUB CONTENT --}}
         <div class="lg:w-10/12 w-full space-y-12">
+
+            {{-- HEADER STATS --}}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
+                    <span class="text-[10px] font-black uppercase text-gray-400 block mb-1">Titles</span>
+                    <span class="text-3xl font-black text-gray-800">{{ $books->count() }}</span>
+                </div>
+                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
+                    <span class="text-[10px] font-black uppercase text-gray-400 block mb-1">Total Copies</span>
+                    <span class="text-3xl font-black text-blue-600">{{ $books->sum(fn($b) => $b->copies->count()) }}</span>
+                </div>
+                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
+                    <span class="text-[10px] font-black uppercase text-gray-400 block mb-1">Authors</span>
+                    <span class="text-3xl font-black text-gray-800">{{ $authors->count() }}</span>
+                </div>
+                <div class="bg-blue-600 p-6 rounded-[2.5rem] shadow-lg shadow-blue-100 text-white">
+                    <span class="text-[10px] font-black uppercase text-blue-100 block mb-1">Publishers</span>
+                    <span class="text-3xl font-black">{{ $publishers->count() }}</span>
+                </div>
+            </div>
 
             {{-- GLOBAL HUB SEARCH --}}
             <div class="relative group">
                 <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
                     <span class="material-icons-outlined text-gray-400 group-focus-within:text-blue-600 transition-colors">search</span>
                 </div>
-                <input type="text" id="globalHubSearch" placeholder="Filter through titles, authors, categories, or status..."
+                <input type="text" id="globalHubSearch" placeholder="Search anything (Titles, Authors, Categories, Locations)..."
                     class="block w-full pl-16 pr-6 py-6 border-none rounded-[2.5rem] bg-white shadow-xl shadow-gray-200/40 focus:ring-4 focus:ring-blue-100 transition-all text-gray-700 font-bold italic">
             </div>
 
             {{-- SECTION: INVENTORY --}}
             <div id="inventory" class="section-container bg-white rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
                 <div class="p-8 border-b border-gray-50 flex justify-between items-center bg-white sticky top-0 z-10">
-                    <h2 class="text-2xl font-black text-gray-900 tracking-tighter">Books Inventory</h2>
+                    <div>
+                        <h2 class="text-2xl font-black text-gray-900 tracking-tighter">Books Inventory</h2>
+                        <a href="{{ route('books.index') }}" class="text-[10px] font-black uppercase text-blue-400">Manage Detailed List &rarr;</a>
+                    </div>
                     <button data-modal-target="registrationModal" data-modal-toggle="registrationModal"
                         class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase px-8 py-4 rounded-2xl shadow-lg transition-all active:scale-95">
                         + New Registration
@@ -51,9 +74,9 @@
                     @foreach($books as $book)
                     <div class="search-item group bg-gray-50/50 border border-gray-100 p-6 rounded-[2rem] hover:bg-white hover:shadow-xl transition-all">
                         <div class="flex justify-between items-start">
-                            <div>
+                            <div class="flex-1">
                                 <h3 class="text-lg font-black text-gray-800 search-text leading-tight mb-1">{{ $book->title }}</h3>
-                                <p class="text-xs font-bold text-gray-400 search-text uppercase tracking-tight">{{ $book->author?->name }} • {{ $book->category?->name }}</p>
+                                <p class="text-xs font-bold text-gray-400 search-text uppercase">{{ $book->author?->name }} • {{ $book->category?->name }}</p>
                             </div>
                             <span class="text-xl font-black text-gray-800">{{ $book->copies->count() }}<small class="text-[10px] ml-1">QTY</small></span>
                         </div>
@@ -62,14 +85,14 @@
                 </div>
             </div>
 
-            {{-- SECTION: BOOK COPIES --}}
-            <div id="copies" class="section-container bg-gray-900 rounded-[3rem] shadow-sm p-8 text-white">
+            {{-- SECTION: COPIES --}}
+            <div id="copies" class="section-container bg-gray-900 rounded-[3rem] shadow-sm p-8 text-white overflow-hidden">
                 <div class="flex justify-between items-center mb-8 px-4">
                     <h2 class="text-2xl font-black tracking-tighter">Physical Copies</h2>
                     <a href="{{ route('book-copies.index') }}" class="text-[10px] font-black uppercase text-blue-400">Manage Detailed List &rarr;</a>
                 </div>
                 <div class="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                    @foreach($books->take(15) as $book)
+                    @foreach($books->take(20) as $book)
                         @foreach($book->copies as $copy)
                         <div class="p-5 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-between search-item">
                             <div class="flex items-center gap-4">
@@ -85,11 +108,13 @@
                 </div>
             </div>
 
-            {{-- GRID ROW: AUTHORS & SUPPLIERS --}}
+            {{-- GRID: AUTHORS & SUPPLIERS --}}
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                {{-- AUTHORS --}}
                 <div id="authors" class="section-container bg-white rounded-[3rem] shadow-sm border border-gray-100 p-8">
-                    <h2 class="text-2xl font-black text-gray-900 mb-8">Authors Directory</h2>
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-black text-gray-900 tracking-tighter leading-none">Authors</h2>
+                        <a href="{{ route('authors.index') }}" class="text-[10px] font-black uppercase text-blue-600">Manage List &rarr;</a>
+                    </div>
                     <div class="grid grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-2">
                         @foreach($authors as $author)
                         <div class="p-4 bg-gray-50 rounded-2xl flex items-center gap-4 search-item group">
@@ -102,28 +127,32 @@
                     </div>
                 </div>
 
-                {{-- SUPPLIERS --}}
                 <div id="suppliers" class="section-container bg-white rounded-[3rem] shadow-sm border border-gray-100 p-8">
-                    <h2 class="text-2xl font-black text-gray-900 mb-8">Suppliers</h2>
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-black text-gray-900 tracking-tighter leading-none">Suppliers</h2>
+                        <a href="{{ route('suppliers.index') }}" class="text-[10px] font-black uppercase text-blue-600">Manage List &rarr;</a>
+                    </div>
                     <div class="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                         @foreach($suppliers as $supplier)
-                        <div class="p-6 bg-gray-50 rounded-[2rem] flex justify-between items-center search-item hover:bg-gray-100 transition-all">
+                        <div class="p-6 bg-gray-50 rounded-[2rem] flex justify-between items-center search-item hover:bg-gray-100 transition-all group">
                             <div>
                                 <h4 class="font-black text-gray-800 search-text">{{ $supplier->name }}</h4>
-                                <p class="text-[10px] text-gray-400 font-bold mt-1 search-text uppercase tracking-widest">{{ $supplier->contact_person }}</p>
+                                <p class="text-[10px] text-gray-400 font-bold mt-1 search-text uppercase tracking-widest">{{ $supplier->contact_person ?? 'Main Provider' }}</p>
                             </div>
-                            <span class="material-icons-outlined text-gray-300">arrow_forward</span>
                         </div>
                         @endforeach
                     </div>
                 </div>
             </div>
 
-            {{-- META SECTION --}}
+            {{-- META SECTION: CATEGORIES & PUBLISHERS --}}
             <div id="meta" class="section-container bg-white rounded-[3rem] shadow-sm border border-gray-100 p-10">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                     <div>
-                        <h3 class="text-xl font-black text-gray-900 mb-6">Categories</h3>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-black text-gray-900">Categories</h3>
+                            <a href="{{ route('categories.index') }}" class="text-[10px] font-black uppercase text-blue-600">Manage &rarr;</a>
+                        </div>
                         <div class="flex flex-wrap gap-2">
                             @foreach($categories as $category)
                             <span class="px-5 py-2.5 bg-gray-50 border border-gray-100 rounded-2xl text-[10px] font-black text-gray-500 uppercase search-item search-text">
@@ -133,11 +162,14 @@
                         </div>
                     </div>
                     <div>
-                        <h3 class="text-xl font-black text-gray-900 mb-6">Publishers</h3>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-black text-gray-900">Publishers</h3>
+                            <a href="{{ route('publishers.index') }}" class="text-[10px] font-black uppercase text-blue-600">Manage &rarr;</a>
+                        </div>
                         <div class="grid grid-cols-2 gap-3">
                             @foreach($publishers as $pub)
                             <div class="p-4 bg-gray-50 rounded-2xl flex items-center gap-3 search-item group">
-                                <div class="w-8 h-8 rounded-lg bg-white text-blue-600 flex items-center justify-center text-[10px] font-black">
+                                <div class="w-8 h-8 rounded-lg bg-white text-blue-600 flex items-center justify-center text-[10px] font-black shadow-sm">
                                     {{ substr($pub->name, 0, 1) }}
                                 </div>
                                 <span class="text-xs font-bold text-gray-600 search-text">{{ $pub->name }}</span>
@@ -152,12 +184,12 @@
     </div>
 </section>
 
-{{-- REGISTRATION MODAL WITH SEARCH-OR-CREATE --}}
+{{-- MODAL: FAST REGISTRATION --}}
 <div id="registrationModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40 backdrop-blur-md">
     <div class="w-full max-w-xl p-4 animate-in zoom-in duration-300">
         <div class="bg-white rounded-[3.5rem] shadow-2xl p-10 border border-gray-100">
             <div class="flex justify-between items-center mb-8">
-                <h3 class="text-3xl font-black text-gray-900 tracking-tighter">Fast Registration</h3>
+                <h3 class="text-3xl font-black text-gray-900 tracking-tighter">New Entry</h3>
                 <button data-modal-toggle="registrationModal" class="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 transition-colors">✕</button>
             </div>
 
@@ -167,19 +199,16 @@
                     <input type="text" name="title" class="w-full border-none bg-gray-100/50 rounded-2xl p-5 font-bold" placeholder="Entry Title" required>
 
                     <div class="grid grid-cols-2 gap-4">
-                        {{-- AUTHOR COMBO --}}
                         <div class="relative combo-box" data-type="author">
-                            <input type="text" list="author-list" placeholder="Author" class="combo-input w-full border-none bg-gray-100/50 rounded-2xl p-5 font-bold focus:ring-2 focus:ring-blue-500">
+                            <input type="text" list="author-list" placeholder="Search Author" class="combo-input w-full border-none bg-gray-100/50 rounded-2xl p-5 font-bold focus:ring-2 focus:ring-blue-500">
                             <input type="hidden" name="author_id" class="hidden-id" required>
                             <datalist id="author-list">
                                 @foreach($authors as $author) <option data-id="{{ $author->id }}" value="{{ $author->name }}"> @endforeach
                             </datalist>
                             <button type="button" class="quick-add-btn hidden absolute right-3 top-3 bg-blue-600 text-white text-[9px] font-black px-3 py-2 rounded-xl">CREATE</button>
                         </div>
-
-                        {{-- CATEGORY COMBO --}}
                         <div class="relative combo-box" data-type="category">
-                            <input type="text" list="category-list" placeholder="Category" class="combo-input w-full border-none bg-gray-100/50 rounded-2xl p-5 font-bold focus:ring-2 focus:ring-blue-500">
+                            <input type="text" list="category-list" placeholder="Search Category" class="combo-input w-full border-none bg-gray-100/50 rounded-2xl p-5 font-bold focus:ring-2 focus:ring-blue-500">
                             <input type="hidden" name="category_id" class="hidden-id" required>
                             <datalist id="category-list">
                                 @foreach($categories as $category) <option data-id="{{ $category->id }}" value="{{ $category->name }}"> @endforeach
@@ -189,19 +218,16 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
-                        {{-- PUBLISHER COMBO --}}
                         <div class="relative combo-box" data-type="publisher">
-                            <input type="text" list="publisher-list" placeholder="Publisher" class="combo-input w-full border-none bg-gray-100/50 rounded-2xl p-5 font-bold focus:ring-2 focus:ring-blue-500">
+                            <input type="text" list="publisher-list" placeholder="Search Publisher" class="combo-input w-full border-none bg-gray-100/50 rounded-2xl p-5 font-bold">
                             <input type="hidden" name="publisher_id" class="hidden-id" required>
                             <datalist id="publisher-list">
                                 @foreach($publishers as $pub) <option data-id="{{ $pub->id }}" value="{{ $pub->name }}"> @endforeach
                             </datalist>
                             <button type="button" class="quick-add-btn hidden absolute right-3 top-3 bg-blue-600 text-white text-[9px] font-black px-3 py-2 rounded-xl">CREATE</button>
                         </div>
-
-                        {{-- SUPPLIER COMBO --}}
                         <div class="relative combo-box" data-type="supplier">
-                            <input type="text" list="supplier-list" placeholder="Supplier" class="combo-input w-full border-none bg-gray-100/50 rounded-2xl p-5 font-bold focus:ring-2 focus:ring-blue-500">
+                            <input type="text" list="supplier-list" placeholder="Search Supplier" class="combo-input w-full border-none bg-gray-100/50 rounded-2xl p-5 font-bold">
                             <input type="hidden" name="supplier_id" class="hidden-id" required>
                             <datalist id="supplier-list">
                                 @foreach($suppliers as $sup) <option data-id="{{ $sup->id }}" value="{{ $sup->name }}"> @endforeach
@@ -223,6 +249,7 @@
 @endsection
 
 @push('scripts')
+@include('components.alerts')
 <script>
     // 1. GLOBAL HUB SEARCH
     document.getElementById('globalHubSearch').addEventListener('input', function() {
@@ -233,7 +260,7 @@
         });
     });
 
-    // 2. SEARCH-OR-CREATE AJAX LOGIC (Irregular Plural Fix Integrated)
+    // 2. SEARCH-OR-CREATE LOGIC
     document.querySelectorAll('.combo-box').forEach(box => {
         const input = box.querySelector('.combo-input');
         const hiddenId = box.querySelector('.hidden-id');
@@ -259,7 +286,6 @@
             const nameValue = input.value.trim();
             if (!nameValue) return;
 
-            // FIX: Slug mapping for Laravel Resources
             let slug = type + 's';
             if (type === 'category') slug = 'categories';
 
@@ -288,10 +314,10 @@
 
                     hiddenId.value = data.id;
                     btn.classList.add('hidden');
-                    Swal.fire({ icon: 'success', title: 'New ' + type + ' added', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'New ' + type + ' saved!', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
                 } else {
-                    const errorMsg = data.errors ? Object.values(data.errors)[0][0] : 'Check input';
-                    throw new Error(errorMsg);
+                    const msg = data.errors ? Object.values(data.errors)[0][0] : 'Validation failed';
+                    throw new Error(msg);
                 }
             } catch (e) {
                 Swal.fire({ icon: 'error', title: 'Error', text: e.message });
