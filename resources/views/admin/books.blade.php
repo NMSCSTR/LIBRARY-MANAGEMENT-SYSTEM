@@ -144,6 +144,22 @@
 
 @push('scripts')
 <script>
+    // 1. GLOBAL HUB SEARCH (Live Filtering)
+    document.getElementById('globalHubSearch').addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        document.querySelectorAll('.search-item').forEach(item => {
+            const text = item.innerText.toLowerCase();
+            item.style.display = text.includes(query) ? '' : 'none';
+        });
+
+        // Visual indicator for empty sections
+        document.querySelectorAll('.section-container').forEach(section => {
+            const hasVisible = Array.from(section.querySelectorAll('.search-item')).some(i => i.style.display !== 'none');
+            section.style.opacity = hasVisible ? '1' : '0.4';
+        });
+    });
+
+    // 2. ADVANCED SEARCH-OR-CREATE AJAX LOGIC
     document.querySelectorAll('.combo-box').forEach(box => {
         const input = box.querySelector('.combo-input');
         const hiddenId = box.querySelector('.hidden-id');
@@ -151,32 +167,27 @@
         const list = box.querySelector('datalist');
         const type = box.dataset.type;
 
-        // Sync typing with existing options
+        // Logic to detect if typed text matches an existing item
         input.addEventListener('input', function() {
-            const val = this.value;
-            const options = list.querySelectorAll('option');
-            let match = false;
-
-            options.forEach(opt => {
-                if (opt.value === val) {
-                    hiddenId.value = opt.getAttribute('data-id');
-                    match = true;
-                }
-            });
+            const val = this.value.trim();
+            const options = Array.from(list.options);
+            const match = options.find(opt => opt.value === val);
 
             if (match) {
+                hiddenId.value = match.getAttribute('data-id');
                 btn.classList.add('hidden');
             } else {
-                hiddenId.value = ""; // Reset hidden ID if typing something new
-                btn.classList.toggle('hidden', val.trim().length === 0);
+                hiddenId.value = ""; // Clear ID so validation fails if they don't click CREATE
+                btn.classList.toggle('hidden', val.length === 0);
             }
         });
 
-        // AJAX Quick Add
+        // The AJAX "Quick Add" Execution
         btn.addEventListener('click', async function() {
             const nameValue = input.value.trim();
             if (!nameValue) return;
 
+            // UI State: Loading
             btn.innerText = "...";
             btn.disabled = true;
 
@@ -185,44 +196,64 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'Accept': 'application/json', // Critical for receiving JSON errors
+                        'X-Requested-With': 'XMLHttpRequest', // Critical for $request->ajax()
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
                     },
                     body: JSON.stringify({ name: nameValue })
                 });
 
                 const data = await response.json();
 
-                if (response.ok && data.id) {
-                    // Update the datalist locally
-                    const newOpt = document.createElement('option');
-                    newOpt.value = data.name;
-                    newOpt.setAttribute('data-id', data.id);
-                    list.appendChild(newOpt);
+                if (response.status === 201 || response.status === 200) {
+                    // Success: Update the local datalist
+                    const newOption = document.createElement('option');
+                    newOption.value = data.name;
+                    newOption.setAttribute('data-id', data.id);
+                    list.appendChild(newOption);
 
-                    // Select it
+                    // Auto-select the new item
                     hiddenId.value = data.id;
                     btn.classList.add('hidden');
-                    Swal.fire({ icon: 'success', title: 'New ' + type + ' added', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: `${type.charAt(0).toUpperCase() + type.slice(1)} Saved`,
+                        toast: true,
+                        position: 'top-end',
+                        timer: 2500,
+                        showConfirmButton: false
+                    });
                 } else {
-                    btn.innerText = "Error";
+                    // Handle Validation Errors (e.g., name already exists)
+                    const errorMsg = data.errors ? Object.values(data.errors)[0][0] : data.message;
+                    throw new Error(errorMsg || 'Failed to save');
                 }
-            } catch (error) {
-                btn.innerText = "Error";
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'Action Failed', text: e.message });
+                btn.innerText = "RETRY";
             } finally {
                 btn.disabled = false;
-                if(btn.innerText === "...") btn.innerText = "CREATE";
+                if (btn.innerText === "...") btn.innerText = "CREATE";
             }
         });
     });
 
-    // Global filtering
-    document.getElementById('globalHubSearch').addEventListener('input', function() {
-        const query = this.value.toLowerCase();
-        document.querySelectorAll('.search-item').forEach(item => {
-            const text = item.innerText.toLowerCase();
-            item.style.display = text.includes(query) ? '' : 'none';
+    // 3. DELETE CONFIRMATION (SweetAlert2)
+    document.querySelectorAll('.delete-book-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Removing this title will delete all associated physical copies.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#111827',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Yes, delete it'
+            }).then(res => {
+                if (res.isConfirmed) document.getElementById(`delete-book-form-${id}`).submit();
+            });
         });
     });
 </script>
