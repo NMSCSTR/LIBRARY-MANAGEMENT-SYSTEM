@@ -121,15 +121,18 @@
                     </div>
                 </div>
 
-                {{-- BOTTOM ROW: PUBLICATION & LOGISTICS --}}
+                {{-- BOTTOM ROW: PUBLICATION & LOCATION --}}
                 <div class="mt-6 pt-4 border-t border-gray-100 grid grid-cols-1 gap-2">
+                    <div class="flex items-center justify-between text-[10px]">
+                        <span class="font-black uppercase text-gray-400">Location</span>
+                        {{-- Pulling shelf_location from the first copy --}}
+                        <span class="font-bold text-red-600 uppercase tracking-tighter">
+                            📍 {{ $book->copies->first()?->shelf_location ?? 'No Location Set' }}
+                        </span>
+                    </div>
                     <div class="flex items-center justify-between text-[10px]">
                         <span class="font-black uppercase text-gray-400">Publisher</span>
                         <span class="font-bold text-gray-700 uppercase">{{ $book->publisher?->name ?? 'N/A' }}</span>
-                    </div>
-                    <div class="flex items-center justify-between text-[10px]">
-                        <span class="font-black uppercase text-gray-400">Place</span>
-                        <span class="font-bold text-gray-700 uppercase">{{ $book->place_published ?? 'N/A' }}</span>
                     </div>
                     <div class="flex items-center justify-between text-[10px]">
                         <span class="font-black uppercase text-gray-400">Supplier</span>
