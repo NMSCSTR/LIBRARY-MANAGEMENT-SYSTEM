@@ -7,23 +7,29 @@
     @include('components.admin.topnav')
 
     <div class="flex flex-col lg:flex-row px-4 lg:px-10 pt-24 gap-8">
-        {{-- SIDEBAR --}}
+
+        {{-- STICKY SIDEBAR NAVIGATION --}}
         <div class="lg:w-2/12 w-full">
             <div class="sticky top-28 space-y-6">
                 @include('components.admin.sidebar')
+
                 <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100 hidden lg:block">
                     <p class="text-[10px] font-black uppercase text-gray-400 px-2 mb-4 tracking-widest">Jump To Section</p>
                     <nav class="flex flex-col gap-2">
                         <a href="#inventory" class="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all">📚 Inventory</a>
-                        <a href="#meta" class="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all">🏷️ Metadata</a>
+                        <a href="#copies" class="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all">🆔 Book Copies</a>
+                        <a href="#authors" class="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all">✍️ Authors</a>
+                        <a href="#suppliers" class="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all">🚚 Suppliers</a>
+                        <a href="#meta" class="px-4 py-2 text-xs font-bold text-gray-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all">🏷️ Categories</a>
                     </nav>
                 </div>
             </div>
         </div>
 
-        {{-- MAIN CONTENT --}}
+        {{-- MAIN HUB CONTENT --}}
         <div class="lg:w-10/12 w-full space-y-12">
-            {{-- STATS GRID --}}
+
+            {{-- HEADER STATS --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
                     <span class="text-[10px] font-black uppercase text-gray-400 block mb-1">Titles</span>
@@ -43,7 +49,7 @@
                 </div>
             </div>
 
-            {{-- SEARCH & FILTERS --}}
+            {{-- SEARCH & YEAR FILTER --}}
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="relative group flex-grow">
                     <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
@@ -61,11 +67,12 @@
                 </div>
             </div>
 
-            {{-- INVENTORY GRID --}}
+            {{-- SECTION: INVENTORY --}}
             <div id="inventory" class="section-container bg-white rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
                 <div class="p-8 border-b border-gray-50 flex justify-between items-center bg-white sticky top-0 z-10">
                     <div>
                         <h2 class="text-2xl font-black text-gray-900 tracking-tighter">Books Inventory</h2>
+                        <p class="text-[10px] font-black uppercase text-blue-400">Total Entries: {{ $books->count() }}</p>
                     </div>
                     <button onclick="openBookModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase px-8 py-4 rounded-2xl shadow-lg transition-all active:scale-95">
                         + New Registration
@@ -73,8 +80,7 @@
                 </div>
                 <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[600px] overflow-y-auto" id="bookGrid">
                     @foreach($books as $book)
-                    <div class="search-item group bg-gray-50/50 border border-gray-100 p-6 rounded-[2rem] hover:bg-white hover:shadow-xl transition-all"
-                         data-year="{{ $book->year_published }}">
+                    <div class="search-item group bg-gray-50/50 border border-gray-100 p-6 rounded-[2rem] hover:bg-white hover:shadow-xl transition-all" data-year="{{ $book->year_published }}">
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <div class="flex items-center gap-3">
@@ -89,19 +95,114 @@
                                 </p>
                             </div>
                             <div class="text-right">
-                                <span class="text-xl font-black text-gray-800 block">{{ $book->copies->count() }}</span>
-                                <span class="text-[9px] font-black text-gray-400 uppercase">Copies</span>
+                                <span class="text-xl font-black text-gray-800">{{ $book->copies->count() }}<small class="text-[10px] ml-1">QTY</small></span>
                             </div>
                         </div>
                     </div>
                     @endforeach
                 </div>
             </div>
+
+            {{-- SECTION: COPIES --}}
+            <div id="copies" class="section-container bg-gray-900 rounded-[3rem] shadow-sm p-8 text-white overflow-hidden">
+                <div class="flex justify-between items-center mb-8 px-4">
+                    <h2 class="text-2xl font-black tracking-tighter">Physical Copies</h2>
+                    <a href="{{ route('book-copies.index') }}" class="text-[10px] font-black uppercase text-blue-400">Manage Detailed List &rarr;</a>
+                </div>
+                <div class="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                    @foreach($books->take(20) as $book)
+                        @foreach($book->copies as $copy)
+                        <div class="p-5 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-between search-item" data-year="{{ $book->year_published }}">
+                            <div class="flex items-center gap-4">
+                                <span class="w-10 h-10 flex items-center justify-center bg-white/10 rounded-xl font-black text-xs text-blue-400">#{{ $copy->copy_number }}</span>
+                                <span class="font-bold search-text">{{ $book->title }}</span>
+                            </div>
+                            <span class="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase {{ $copy->status == 'available' ? 'bg-green-500' : 'bg-orange-500' }} text-white">
+                                {{ $copy->status }}
+                            </span>
+                        </div>
+                        @endforeach
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- GRID: AUTHORS & SUPPLIERS --}}
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                <div id="authors" class="section-container bg-white rounded-[3rem] shadow-sm border border-gray-100 p-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-black text-gray-900 tracking-tighter leading-none">Authors</h2>
+                        <a href="{{ route('authors.index') }}" class="text-[10px] font-black uppercase text-blue-600">Manage List &rarr;</a>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-2">
+                        @foreach($authors as $author)
+                        <div class="p-4 bg-gray-50 rounded-2xl flex items-center gap-4 search-item group">
+                            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center font-black text-xs text-gray-300 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                {{ substr($author->name, 0, 1) }}
+                            </div>
+                            <span class="font-bold text-sm text-gray-700 search-text">{{ $author->name }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div id="suppliers" class="section-container bg-white rounded-[3rem] shadow-sm border border-gray-100 p-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-black text-gray-900 tracking-tighter leading-none">Suppliers</h2>
+                        <a href="{{ route('suppliers.index') }}" class="text-[10px] font-black uppercase text-blue-600">Manage List &rarr;</a>
+                    </div>
+                    <div class="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                        @foreach($suppliers as $supplier)
+                        <div class="p-6 bg-gray-50 rounded-[2rem] flex justify-between items-center search-item hover:bg-gray-100 transition-all group">
+                            <div>
+                                <h4 class="font-black text-gray-800 search-text">{{ $supplier->name }}</h4>
+                                <p class="text-[10px] text-gray-400 font-bold mt-1 search-text uppercase tracking-widest">{{ $supplier->contact_person ?? 'Main Provider' }}</p>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            {{-- META SECTION: CATEGORIES & PUBLISHERS --}}
+            <div id="meta" class="section-container bg-white rounded-[3rem] shadow-sm border border-gray-100 p-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-black text-gray-900">Categories</h3>
+                            <a href="{{ route('categories.index') }}" class="text-[10px] font-black uppercase text-blue-600">Manage &rarr;</a>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($categories as $category)
+                            <span class="px-5 py-2.5 bg-gray-50 border border-gray-100 rounded-2xl text-[10px] font-black text-gray-500 uppercase search-item search-text">
+                                {{ $category->name }}
+                            </span>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-black text-gray-900">Publishers</h3>
+                            <a href="{{ route('publishers.index') }}" class="text-[10px] font-black uppercase text-blue-600">Manage &rarr;</a>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            @foreach($publishers as $pub)
+                            <div class="p-4 bg-gray-50 rounded-2xl flex items-center gap-3 search-item group">
+                                <div class="w-8 h-8 rounded-lg bg-white text-blue-600 flex items-center justify-center text-[10px] font-black shadow-sm">
+                                    {{ substr($pub->name, 0, 1) }}
+                                </div>
+                                <span class="text-xs font-bold text-gray-600 search-text">{{ $pub->name }}</span>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
 
-{{-- UNIFIED BOOK MODAL (Create & Edit) --}}
+{{-- MODAL: SMART FORM (CREATE & EDIT) --}}
 <div id="bookModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40 backdrop-blur-md">
     <div class="w-full max-w-xl p-4 animate-in zoom-in duration-300">
         <div class="bg-white rounded-[3.5rem] shadow-2xl p-10 border border-gray-100">
@@ -152,14 +253,14 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="number" name="year_published" id="formYear" class="border-none bg-gray-100/50 rounded-2xl p-5 font-bold" placeholder="Year Published (YYYY)">
-                        <input type="text" name="place_published" id="formPlace" class="border-none bg-gray-100/50 rounded-2xl p-5 font-bold" placeholder="Place Published">
+                        <input type="number" name="year_published" id="formYear" class="border-none bg-gray-100/50 rounded-2xl p-5 font-bold focus:ring-2 focus:ring-blue-500" placeholder="Year Published (YYYY)">
+                        <input type="text" name="place_published" id="formPlace" class="border-none bg-gray-100/50 rounded-2xl p-5 font-bold focus:ring-2 focus:ring-blue-500" placeholder="Place of Publication">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="text" name="isbn" id="formIsbn" class="border-none bg-gray-100/50 rounded-2xl p-5 font-bold" placeholder="ISBN (Optional)">
+                        <input type="text" name="isbn" id="formIsbn" class="border-none bg-gray-100/50 rounded-2xl p-5 font-bold focus:ring-2 focus:ring-blue-500" placeholder="ISBN (Optional)">
                         <div id="copiesFieldWrapper">
-                            <input type="number" name="copies_available" id="formCopies" value="1" min="1" class="w-full border-none bg-gray-100/50 rounded-2xl p-5 font-bold" required>
+                            <input type="number" name="copies_available" id="formCopies" value="1" min="1" class="w-full border-none bg-gray-100/50 rounded-2xl p-5 font-bold focus:ring-2 focus:ring-blue-500" required>
                         </div>
                     </div>
                 </div>
@@ -173,7 +274,7 @@
 @push('scripts')
 @include('components.alerts')
 <script>
-    // --- ADVANCED FILTERING (Global Search + Year Filter) ---
+    // --- FILTER LOGIC ---
     const searchInput = document.getElementById('globalHubSearch');
     const yearInput = document.getElementById('yearFilter');
     const items = document.querySelectorAll('.search-item');
@@ -185,10 +286,8 @@
         items.forEach(item => {
             const textContent = item.innerText.toLowerCase();
             const itemYear = item.dataset.year || "";
-
             const matchesSearch = textContent.includes(query);
             const matchesYear = (year === "") || (itemYear === year);
-
             item.style.display = (matchesSearch && matchesYear) ? '' : 'none';
         });
     }
@@ -200,17 +299,16 @@
         const modal = document.getElementById('bookModal');
         const form = document.getElementById('bookForm');
         const method = document.getElementById('methodContainer');
-        const submitBtn = document.getElementById('formSubmitBtn');
         const copiesWrapper = document.getElementById('copiesFieldWrapper');
 
         modal.classList.remove('hidden');
 
         if (book) {
             document.getElementById('modalTitle').innerText = "Edit Entry";
-            submitBtn.innerText = "Save Changes";
+            document.getElementById('formSubmitBtn').innerText = "Save Changes";
             form.action = `/admin/books/${book.id}`;
             method.innerHTML = `<input type="hidden" name="_method" value="PUT">`;
-            copiesWrapper.classList.add('hidden'); // Copies are managed separately in edits
+            copiesWrapper.classList.add('hidden');
 
             document.getElementById('formTitle').value = book.title;
             document.getElementById('formIsbn').value = book.isbn || '';
@@ -223,7 +321,7 @@
             setCombo('supplier', book.supplier_id, book.supplier?.name);
         } else {
             document.getElementById('modalTitle').innerText = "New Entry";
-            submitBtn.innerText = "Register Book";
+            document.getElementById('formSubmitBtn').innerText = "Register Book";
             form.action = "{{ route('books.store') }}";
             method.innerHTML = "";
             copiesWrapper.classList.remove('hidden');
@@ -240,7 +338,7 @@
         box.querySelector('.hidden-id').value = id || '';
     }
 
-    // --- COMBO BOX & QUICK ADD ---
+    // --- QUICK-ADD LOGIC ---
     document.querySelectorAll('.combo-box').forEach(box => {
         const input = box.querySelector('.combo-input');
         const hiddenId = box.querySelector('.hidden-id');

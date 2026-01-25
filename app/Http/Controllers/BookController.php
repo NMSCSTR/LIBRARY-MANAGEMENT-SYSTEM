@@ -30,11 +30,10 @@ class BookController extends Controller
     public function index()
     {
         return view('admin.books', [
-            'books'      => Book::with(['author', 'category', 'copies'])->latest()->get(),
-            'bookCopies' => BookCopy::with('book')->latest()->take(10)->get(), // Recent copies
-            'authors'    => Author::withCount('books')->get(),
-            'categories' => Category::withCount('books')->get(),
-            'publishers' => Publisher::withCount('books')->get(),
+            'books'      => Book::with(['author', 'category', 'publisher', 'supplier', 'copies'])->latest()->get(),
+            'authors'    => Author::all(),
+            'categories' => Category::all(),
+            'publishers' => Publisher::all(),
             'suppliers'  => Supplier::all(),
         ]);
     }
