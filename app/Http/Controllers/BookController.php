@@ -111,6 +111,8 @@ class BookController extends Controller
         return view('admin.books-edit', compact('book', 'authors', 'categories', 'publishers', 'suppliers'));
     }
 
+    
+
     /**
      * Update the specified resource in storage.
      */
