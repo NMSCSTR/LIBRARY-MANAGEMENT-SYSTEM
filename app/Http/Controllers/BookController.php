@@ -111,38 +111,65 @@ class BookController extends Controller
         return view('admin.books-edit', compact('book', 'authors', 'categories', 'publishers', 'suppliers'));
     }
 
-    
+
 
     /**
      * Update the specified resource in storage.
      */
+    // public function update(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'title'            => 'required|string|max:255',
+    //         'isbn'             => 'required|string|max:255',
+    //         'author_id'        => 'required|exists:authors,id',
+    //         'category_id'      => 'required|exists:categories,id',
+    //         'publisher_id'     => 'required|exists:publishers,id',
+    //         'supplier_id'      => 'required|exists:suppliers,id',
+    //         'copies_available' => 'required|integer|min:0',
+    //         'year_published'   => 'nullable|digits:4|integer',
+    //         'place_published'  => 'nullable|string|max:255',
+    //     ]);
+
+    //     $book     = Book::findOrFail($id);
+    //     $oldTitle = $book->title;
+
+    //     $book->update($request->all());
+
+    //     // Log update
+    //     ActivityLog::create([
+    //         'user_id'     => Auth::id(),
+    //         'action'      => 'update',
+    //         'description' => "Updated book: '{$oldTitle}' to '{$book->title}'",
+    //     ]);
+
+    //     return redirect()->route('books.index')->with('success', 'Book updated successfully.');
+    // }
+
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'title'            => 'required|string|max:255',
-            'isbn'             => 'required|string|max:255',
-            'author_id'        => 'required|exists:authors,id',
-            'category_id'      => 'required|exists:categories,id',
-            'publisher_id'     => 'required|exists:publishers,id',
-            'supplier_id'      => 'required|exists:suppliers,id',
-            'copies_available' => 'required|integer|min:0',
+        $book = Book::findOrFail($id);
+
+        $validated = $request->validate([
+            'title'        => 'required|string|max:255',
+            'isbn'         => 'nullable|string|max:255|unique:books,isbn,'.$id,
+            'author_id'    => 'required|exists:authors,id',
+            'category_id'  => 'required|exists:categories,id',
+            'publisher_id' => 'required|exists:publishers,id',
+            'supplier_id'  => 'required|exists:suppliers,id',
             'year_published'   => 'nullable|digits:4|integer',
             'place_published'  => 'nullable|string|max:255',
         ]);
 
-        $book     = Book::findOrFail($id);
         $oldTitle = $book->title;
+        $book->update($validated);
 
-        $book->update($request->all());
-
-        // Log update
         ActivityLog::create([
             'user_id'     => Auth::id(),
             'action'      => 'update',
             'description' => "Updated book: '{$oldTitle}' to '{$book->title}'",
         ]);
 
-        return redirect()->route('books.index')->with('success', 'Book updated successfully.');
+        return redirect()->back()->with('success', 'Book updated successfully.');
     }
 
     /**
