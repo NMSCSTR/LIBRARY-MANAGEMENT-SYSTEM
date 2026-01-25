@@ -70,9 +70,19 @@
 {{-- SECTION: INVENTORY --}}
 <div id="inventory" class="section-container bg-white rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
     <div class="p-8 border-b border-gray-50 flex justify-between items-center bg-white sticky top-0 z-10">
-        <div>
+        <div class="flex flex-col">
             <h2 class="text-2xl font-black text-gray-900 tracking-tighter">Books Inventory</h2>
-            <p class="text-[10px] font-black uppercase text-blue-400">Total Entries: {{ $books->count() }}</p>
+            <div class="flex items-center gap-2">
+                <p class="text-[10px] font-black uppercase text-blue-400">Total Entries: {{ $books->count() }}</p>
+                {{-- Active Location Filter Badge --}}
+                <div id="activeLocationContainer" class="hidden">
+                    <span class="text-[10px] text-gray-300 mx-1">•</span>
+                    <button onclick="clearLocationFilter()" class="bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full flex items-center gap-1 hover:bg-red-500 transition-colors">
+                        <span id="activeLocationLabel"></span>
+                        <span class="material-icons-outlined text-[10px]">close</span>
+                    </button>
+                </div>
+            </div>
         </div>
         <button onclick="openBookModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase px-8 py-4 rounded-2xl shadow-lg transition-all active:scale-95">
             + New Registration
@@ -81,9 +91,14 @@
 
     <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[600px] overflow-y-auto" id="bookGrid">
         @foreach($books as $book)
-        <div class="search-item group bg-gray-50/50 border border-gray-100 p-6 rounded-[2.5rem] hover:bg-white hover:shadow-xl transition-all" data-year="{{ $book->year_published }}">
+        @php
+            $locations = $book->copies->pluck('shelf_location')->unique()->filter();
+        @endphp
+        <div class="search-item group bg-gray-50/50 border border-gray-100 p-6 rounded-[2.5rem] hover:bg-white hover:shadow-xl transition-all"
+             data-year="{{ $book->year_published }}"
+             data-locations="{{ $locations->implode(',') }}">
             <div class="flex flex-col h-full">
-                {{-- TOP ROW: TITLE & EDIT --}}
+                {{-- TOP ROW --}}
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex-1">
                         <div class="flex items-center gap-3">
@@ -102,13 +117,12 @@
                     </div>
                 </div>
 
-                {{-- MIDDLE ROW: PRIMARY DETAILS --}}
+                {{-- PRIMARY DETAILS --}}
                 <div class="space-y-3">
                     <div class="flex items-center gap-2 text-gray-600">
                         <span class="material-icons-outlined text-sm text-gray-400">person</span>
                         <span class="text-xs font-bold search-text">{{ $book->author?->name ?? 'Unknown Author' }}</span>
                     </div>
-
                     <div class="grid grid-cols-2 gap-4">
                         <div class="flex items-center gap-2 text-gray-500">
                             <span class="material-icons-outlined text-sm text-gray-400">fingerprint</span>
@@ -121,36 +135,28 @@
                     </div>
                 </div>
 
-                {{-- NEW SECTION: BOOK LOCATIONS --}}
+                {{-- CLICKABLE LOCATION TAGS --}}
                 <div class="mt-4 flex flex-wrap gap-1.5">
-                    @php
-                        // Get unique shelf locations for this book's copies
-                        $locations = $book->copies->pluck('shelf_location')->unique()->filter();
-                    @endphp
-
                     @forelse($locations as $location)
-                        <span class="px-3 py-1 bg-blue-50 text-blue-600 border border-blue-100 rounded-lg text-[9px] font-black uppercase flex items-center gap-1">
+                        <button onclick="filterByLocation('{{ $location }}')"
+                                class="location-tag px-3 py-1 bg-blue-50 text-blue-600 border border-blue-100 rounded-lg text-[9px] font-black uppercase flex items-center gap-1 hover:bg-blue-600 hover:text-white transition-all">
                             <span class="material-icons-outlined text-[10px]">place</span>
                             {{ $location }}
-                        </span>
+                        </button>
                     @empty
                         <span class="text-[9px] font-bold text-gray-400 italic">No location assigned</span>
                     @endforelse
                 </div>
 
-                {{-- BOTTOM ROW: PUBLICATION & LOGISTICS --}}
+                {{-- LOGISTICS --}}
                 <div class="mt-4 pt-4 border-t border-gray-100 grid grid-cols-1 gap-2">
                     <div class="flex items-center justify-between text-[10px]">
                         <span class="font-black uppercase text-gray-400">Publisher</span>
                         <span class="font-bold text-gray-700 uppercase">{{ $book->publisher?->name ?? 'N/A' }}</span>
                     </div>
                     <div class="flex items-center justify-between text-[10px]">
-                        <span class="font-black uppercase text-gray-400">Place</span>
-                        <span class="font-bold text-gray-700 uppercase">{{ $book->place_published ?? 'N/A' }}</span>
-                    </div>
-                    <div class="flex items-center justify-between text-[10px]">
                         <span class="font-black uppercase text-gray-400">Supplier</span>
-                        <span class="font-bold text-blue-600 uppercase">{{ $book->supplier?->name ?? 'N/A' }}</span>
+                        <span class="font-bold text-blue-600 uppercase">{{ $supplier->name ?? 'N/A' }}</span>
                     </div>
                 </div>
             </div>
@@ -438,5 +444,59 @@
             finally { btn.innerText = "CREATE"; btn.disabled = false; }
         });
     });
+</script>
+<script>
+    let currentLocationFilter = "";
+
+    // --- ENHANCED FILTER LOGIC ---
+    const searchInput = document.getElementById('globalHubSearch');
+    const yearInput = document.getElementById('yearFilter');
+    const bookItems = document.querySelectorAll('.search-item');
+    const activeLocContainer = document.getElementById('activeLocationContainer');
+    const activeLocLabel = document.getElementById('activeLocationLabel');
+
+    function applyAllFilters() {
+        const query = searchInput.value.toLowerCase();
+        const year = yearInput.value;
+
+        bookItems.forEach(item => {
+            const textContent = item.innerText.toLowerCase();
+            const itemYear = item.dataset.year || "";
+            const itemLocations = item.dataset.locations ? item.dataset.locations.split(',') : [];
+
+            const matchesSearch = textContent.includes(query);
+            const matchesYear = (year === "") || (itemYear === year);
+            const matchesLocation = (currentLocationFilter === "") || (itemLocations.includes(currentLocationFilter));
+
+            if (matchesSearch && matchesYear && matchesLocation) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    // Function triggered by clicking a location tag
+    function filterByLocation(locationName) {
+        currentLocationFilter = locationName;
+        activeLocLabel.innerText = locationName;
+        activeLocContainer.classList.remove('hidden');
+
+        // Scroll inventory into view
+        document.getElementById('inventory').scrollIntoView({ behavior: 'smooth' });
+
+        applyAllFilters();
+    }
+
+    // Function to clear the location filter
+    function clearLocationFilter() {
+        currentLocationFilter = "";
+        activeLocContainer.classList.add('hidden');
+        applyAllFilters();
+    }
+
+    // Event listeners for text and year inputs
+    searchInput.addEventListener('input', applyAllFilters);
+    yearInput.addEventListener('input', applyAllFilters);
 </script>
 @endpush
