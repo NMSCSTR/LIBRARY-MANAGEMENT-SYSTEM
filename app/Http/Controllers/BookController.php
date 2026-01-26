@@ -16,20 +16,10 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // public function index()
-    // {
-    //     return view('admin.books', [
-    //         'books'      => Book::with(['author', 'category', 'publisher', 'supplier', 'copies'])->get(),
-    //         'authors'    => Author::all(),
-    //         'categories' => Category::all(),
-    //         'publishers' => Publisher::all(),
-    //         'suppliers'  => Supplier::all(),
-    //     ]);
-    // }
-
     public function index()
     {
         return view('admin.books', [
+            // We keep the eager loading; latest() helps show new entries first
             'books'      => Book::with(['author', 'category', 'publisher', 'supplier', 'copies'])->latest()->get(),
             'authors'    => Author::all(),
             'categories' => Category::all(),
