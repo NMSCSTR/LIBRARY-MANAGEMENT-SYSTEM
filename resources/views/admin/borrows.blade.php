@@ -1,6 +1,6 @@
 @extends('components.default')
 
-@section('title', 'Circulation Hub | LMIS')
+@section('title', 'Borrows| LMIS')
 
 @section('content')
 <section class="bg-gray-50 min-h-screen pt-24">

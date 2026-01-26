@@ -1,6 +1,6 @@
 @extends('components.default')
 
-@section('title', 'Library Hub | LMIS')
+@section('title', 'Library Management | LMIS')
 
 @section('content')
 <section class="bg-[#fcfcfd] min-h-screen pb-24">

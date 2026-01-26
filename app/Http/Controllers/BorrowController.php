@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\BookCopy;
 use App\Models\Borrow;
 use App\Models\User;
+use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +24,49 @@ class BorrowController extends Controller
         return view('admin.borrows', compact('borrows', 'books', 'users'));
     }
 
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'user_id' => 'required|exists:users,id',
+    //         'books'   => 'required|array|min:1',
+    //     ]);
+
+    //     $user   = User::findOrFail($request->user_id);
+    //     $errors = [];
+
+    //     foreach ($request->books as $bookId => $data) {
+    //         if (! isset($data['copy_ids'])) {
+    //             continue;
+    //         }
+
+    //         foreach ($data['copy_ids'] as $copyId) {
+    //             $copy = BookCopy::find($copyId);
+    //             if (! $copy || in_array($copy->status, ['borrowed', 'lost', 'damaged'])) {
+    //                 continue;
+    //             }
+
+    //             $borrow = Borrow::create([
+    //                 'user_id'      => $user->id,
+    //                 'book_id'      => $bookId,
+    //                 'book_copy_id' => $copy->id,
+    //                 'borrow_date'  => now('Asia/Manila'),
+    //                 'due_date'     => now('Asia/Manila')->addDays(3),
+    //                 'status'       => 'borrowed',
+    //             ]);
+
+    //             $copy->update(['status' => 'borrowed']);
+
+    //             ActivityLog::create([
+    //                 'user_id'     => Auth::id(),
+    //                 'action'      => 'borrow',
+    //                 'description' => Auth::user()->name . " issued '{$borrow->book->title}' (Copy #{$copy->copy_number})",
+    //             ]);
+    //         }
+    //     }
+
+    //     return redirect()->route('borrows.index')->with('success', 'Borrowing processed with 3-day due date.');
+    // }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -30,17 +74,18 @@ class BorrowController extends Controller
             'books'   => 'required|array|min:1',
         ]);
 
-        $user   = User::findOrFail($request->user_id);
-        $errors = [];
+
+        $user = User::with('role')->findOrFail($request->user_id);
+
+        $daysToAdd = (strtolower($user->role->name) === 'instructor') ? 30 : 3;
+        $dueDate = now('Asia/Manila')->addDays($daysToAdd);
 
         foreach ($request->books as $bookId => $data) {
-            if (! isset($data['copy_ids'])) {
-                continue;
-            }
+            if (!isset($data['copy_ids'])) continue;
 
             foreach ($data['copy_ids'] as $copyId) {
                 $copy = BookCopy::find($copyId);
-                if (! $copy || in_array($copy->status, ['borrowed', 'lost', 'damaged'])) {
+                if (!$copy || in_array($copy->status, ['borrowed', 'lost', 'damaged'])) {
                     continue;
                 }
 
@@ -49,7 +94,7 @@ class BorrowController extends Controller
                     'book_id'      => $bookId,
                     'book_copy_id' => $copy->id,
                     'borrow_date'  => now('Asia/Manila'),
-                    'due_date'     => now('Asia/Manila')->addDays(3),
+                    'due_date'     => $dueDate, 
                     'status'       => 'borrowed',
                 ]);
 
@@ -58,12 +103,12 @@ class BorrowController extends Controller
                 ActivityLog::create([
                     'user_id'     => Auth::id(),
                     'action'      => 'borrow',
-                    'description' => Auth::user()->name . " issued '{$borrow->book->title}' (Copy #{$copy->copy_number})",
+                    'description' => Auth::user()->name . " issued '{$borrow->book->title}' to {$user->name} (Due in {$daysToAdd} days)",
                 ]);
             }
         }
 
-        return redirect()->route('borrows.index')->with('success', 'Borrowing processed with 3-day due date.');
+        return redirect()->route('borrows.index')->with('success', "Borrowing processed. Due date set for {$daysToAdd} days.");
     }
 
     public function return (Request $request, $id)
