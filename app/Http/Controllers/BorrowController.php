@@ -6,7 +6,6 @@ use App\Models\Book;
 use App\Models\BookCopy;
 use App\Models\Borrow;
 use App\Models\User;
-use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,7 +76,9 @@ class BorrowController extends Controller
 
         $user = User::with('role')->findOrFail($request->user_id);
 
-        $daysToAdd = (strtolower($user->role->name) === 'instructor') ? 30 : 3;
+
+        $isInstructor = strtolower($user->role->name) === 'instructor';
+        $daysToAdd = $isInstructor ? 30 : 3;
         $dueDate = now('Asia/Manila')->addDays($daysToAdd);
 
         foreach ($request->books as $bookId => $data) {
@@ -85,30 +86,25 @@ class BorrowController extends Controller
 
             foreach ($data['copy_ids'] as $copyId) {
                 $copy = BookCopy::find($copyId);
-                if (!$copy || in_array($copy->status, ['borrowed', 'lost', 'damaged'])) {
-                    continue;
-                }
 
-                $borrow = Borrow::create([
+
+                if (!$copy || !in_array($copy->status, ['available', 'reserved'])) continue;
+
+                Borrow::create([
                     'user_id'      => $user->id,
                     'book_id'      => $bookId,
                     'book_copy_id' => $copy->id,
                     'borrow_date'  => now('Asia/Manila'),
-                    'due_date'     => $dueDate, 
+                    'due_date'     => $dueDate,
                     'status'       => 'borrowed',
                 ]);
 
                 $copy->update(['status' => 'borrowed']);
-
-                ActivityLog::create([
-                    'user_id'     => Auth::id(),
-                    'action'      => 'borrow',
-                    'description' => Auth::user()->name . " issued '{$borrow->book->title}' to {$user->name} (Due in {$daysToAdd} days)",
-                ]);
             }
         }
 
-        return redirect()->route('borrows.index')->with('success', "Borrowing processed. Due date set for {$daysToAdd} days.");
+        return redirect()->route('borrows.index')
+            ->with('success', "Loan finalized. Due date set to " . $dueDate->format('M d, Y') . " ({$daysToAdd} days).");
     }
 
     public function return (Request $request, $id)
