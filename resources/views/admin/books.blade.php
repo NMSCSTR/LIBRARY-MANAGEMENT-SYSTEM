@@ -81,13 +81,13 @@
                 </div>
             </div>
 
-            {{-- SECTION: INVENTORY --}}
+    {{-- SECTION: INVENTORY --}}
 <div id="inventory" class="section-container bg-white rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
     <div class="p-8 border-b border-gray-50 flex justify-between items-center bg-white sticky top-0 z-10">
         <div class="flex flex-col">
             <h2 class="text-2xl font-black text-gray-900 tracking-tighter">Books Inventory</h2>
             <div class="flex items-center gap-2">
-                <p class="text-[10px] font-black uppercase text-blue-400">Total Entries: {{ $books->count() }}</p>
+                <p class="text-[10px] font-black uppercase text-blue-400">Total Titles: {{ $books->count() }}</p>
             </div>
         </div>
         <button onclick="openBookModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase px-8 py-4 rounded-2xl shadow-lg transition-all active:scale-95">
@@ -98,8 +98,9 @@
     <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[700px] overflow-y-auto" id="bookGrid">
         @foreach($books as $book)
             @php
-                $availableCopies = $book->copies->where('status', 'available');
-                $locations = $book->copies->pluck('shelf_location')->unique()->filter();
+                $allCopies = $book->copies;
+                $availableCount = $allCopies->where('status', 'available')->count();
+                $locations = $allCopies->pluck('shelf_location')->unique()->filter();
             @endphp
 
             <div class="search-item group bg-gray-50/50 border border-gray-100 p-6 rounded-[2.5rem] hover:bg-white hover:shadow-xl transition-all"
@@ -107,6 +108,7 @@
                 data-locations="{{ $locations->implode(',') }}">
 
                 <div class="flex flex-col h-full">
+                    {{-- HEADER --}}
                     <div class="flex justify-between items-start mb-4">
                         <div class="flex-1">
                             <h3 class="text-lg font-black text-gray-800 search-text leading-tight">{{ $book->title }}</h3>
@@ -114,36 +116,50 @@
                                 {{ $book->category?->name ?? 'Uncategorized' }}
                             </p>
                         </div>
-                        <div class="bg-gray-900 text-white px-4 py-2 rounded-2xl text-center min-w-[60px]">
-                            <span class="text-lg font-black block leading-none">{{ $availableCopies->count() }}</span>
-                            <span class="text-[8px] font-bold uppercase opacity-60">Available</span>
+                        <div class="bg-gray-900 text-white px-4 py-2 rounded-2xl text-center min-w-[70px]">
+                            <span class="text-lg font-black block leading-none">{{ $availableCount }}</span>
+                            <span class="text-[8px] font-bold uppercase opacity-60">In Stock</span>
                         </div>
                     </div>
 
-                    {{-- NEW: EXACT LOCATIONS PER COPY --}}
-                    <div class="mb-4 space-y-2">
-                        <p class="text-[9px] font-black uppercase text-gray-400 tracking-widest">Shelf Locations</p>
-                        <div class="flex flex-wrap gap-2">
-                            @forelse($availableCopies as $copy)
-                                <div class="flex items-center gap-1.5 bg-white border border-gray-200 px-2 py-1 rounded-lg shadow-sm">
-                                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                                    <span class="text-[10px] font-bold text-gray-700">#{{ $copy->copy_number }}:</span>
-                                    <span class="text-[10px] font-black text-blue-600 uppercase">{{ $copy->shelf_location ?? 'No Room' }}</span>
+                    {{-- EXACT COPY STATUS & LOCATIONS --}}
+                    <div class="mb-6">
+                        <p class="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-3">Copy Tracking & Locations</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            @forelse($allCopies as $copy)
+                                <div class="flex items-center justify-between bg-white border border-gray-100 p-2 rounded-xl shadow-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[9px] font-black text-gray-400">#{{ $copy->copy_number }}</span>
+                                        @if($copy->status === 'available')
+                                            <span class="text-[10px] font-black text-blue-600 uppercase">{{ $copy->shelf_location ?: 'General Shelf' }}</span>
+                                        @else
+                                            <span class="text-[10px] font-black uppercase {{
+                                                $copy->status === 'borrowed' ? 'text-orange-500' :
+                                                ($copy->status === 'reserved' ? 'text-purple-500' : 'text-red-500')
+                                            }}">
+                                                {{ $copy->status }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <div class="w-1.5 h-1.5 rounded-full {{ $copy->status === 'available' ? 'bg-green-500' : 'bg-gray-300' }}"></div>
                                 </div>
                             @empty
-                                <span class="text-[10px] font-bold text-red-400 italic">No copies currently available</span>
+                                <div class="col-span-2 py-2 text-[10px] font-bold text-gray-400 italic text-center bg-gray-100/50 rounded-lg">
+                                    No physical copies registered
+                                </div>
                             @endforelse
                         </div>
                     </div>
 
+                    {{-- FOOTER DETAILS --}}
                     <div class="pt-4 border-t border-gray-100 mt-auto grid grid-cols-2 gap-2">
                         <div class="flex flex-col">
-                            <span class="text-[8px] font-black text-gray-400 uppercase">Author</span>
-                            <span class="text-xs font-bold text-gray-700 truncate">{{ $book->author?->name }}</span>
+                            <span class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Author</span>
+                            <span class="text-[11px] font-bold text-gray-700 truncate italic">by {{ $book->author?->name ?? 'Anonymous' }}</span>
                         </div>
                         <div class="flex flex-col text-right">
-                            <span class="text-[8px] font-black text-gray-400 uppercase">ISBN</span>
-                            <span class="text-xs font-bold text-gray-700">{{ $book->isbn ?? 'N/A' }}</span>
+                            <span class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Identity</span>
+                            <span class="text-[11px] font-bold text-gray-700">ISBN: {{ $book->isbn ?? 'NONE' }}</span>
                         </div>
                     </div>
                 </div>
