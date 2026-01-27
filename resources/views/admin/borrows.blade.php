@@ -1,22 +1,17 @@
 @extends('components.default')
 
-@section('title', 'Borrows| LMIS')
+@section('title', 'Borrows | LMIS')
 
 @section('content')
 <section class="bg-gray-50 min-h-screen pt-24">
     @include('components.admin.topnav')
 
     <div class="flex flex-col lg:flex-row px-4 lg:px-10 pb-10 gap-6">
-
-        {{-- Sidebar --}}
         <div class="lg:w-2/12 w-full">
             @include('components.admin.sidebar')
         </div>
 
-        {{-- Main Content --}}
         <div class="lg:w-10/12 w-full space-y-6">
-
-            {{-- Header & Actions --}}
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 class="text-3xl font-black text-gray-900 tracking-tight">Circulation Registry</h1>
@@ -28,7 +23,6 @@
                 </button>
             </div>
 
-            {{-- Table Container --}}
             <div class="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 overflow-hidden border border-gray-100 p-6">
                 <div class="overflow-x-auto">
                     <table id="datatable" class="w-full text-sm text-left text-gray-600">
@@ -41,7 +35,6 @@
                                 <th class="px-8 py-5 text-right">Actions</th>
                             </tr>
                         </thead>
-
                         <tbody class="divide-y divide-gray-50">
                             @foreach($borrows as $borrow)
                             <tr class="hover:bg-blue-50/20 transition-colors group">
@@ -66,27 +59,16 @@
                                             <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
                                             <span class="text-xs font-bold text-gray-700">Out: {{ $borrow->borrow_date->timezone('Asia/Manila')->format('M d, Y | g:i A') }}</span>
                                         </div>
-
                                         @if($borrow->return_date)
                                             <div class="flex items-center gap-2">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
                                                 <span class="text-xs font-bold text-green-600">In: {{ $borrow->return_date->timezone('Asia/Manila')->format('M d, Y | g:i A') }}</span>
                                             </div>
-                                            @if($borrow->return_date > $borrow->due_date)
-                                                <span class="text-[9px] font-black text-red-500 uppercase bg-red-50 px-2 py-0.5 rounded-md self-start border border-red-100">
-                                                    ⚠️ Late Return (Penalty Applied)
-                                                </span>
-                                            @endif
                                         @else
                                             <div class="flex items-center gap-2">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span>
                                                 <span class="text-xs font-bold text-orange-500 italic">Due: {{ $borrow->due_date->timezone('Asia/Manila')->format('M d, Y | g:i A') }}</span>
                                             </div>
-                                            @if(now('Asia/Manila') > $borrow->due_date)
-                                                <span class="animate-pulse text-[9px] font-black text-white uppercase bg-red-600 px-2 py-1 rounded-md self-start mt-1 shadow-lg shadow-red-200">
-                                                    🚨 Overdue Penalty Active
-                                                </span>
-                                            @endif
                                         @endif
                                     </div>
                                 </td>
@@ -146,7 +128,6 @@
                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400">Return Date</label>
                     <input type="date" name="return_date" value="{{ now('Asia/Manila')->format('Y-m-d') }}" required
                         class="w-full border-none bg-gray-100 rounded-2xl p-4 font-bold focus:ring-2 focus:ring-green-500">
-                    <p class="text-[9px] text-gray-400 font-bold italic px-2">Current system time (Manila) will be used for precise logging.</p>
                 </div>
                 <div class="flex gap-3 pt-4">
                     <button type="button" data-modal-toggle="returnBorrowModal" class="flex-1 px-3 py-4 bg-gray-100 text-gray-500 font-black rounded-2xl hover:bg-gray-200 transition">Cancel</button>
@@ -176,9 +157,16 @@
                     </select>
                 </div>
 
-                {{-- DYNAMIC DURATION PREVIEW --}}
-                <div id="durationPreview" class="hidden animate-in fade-in slide-in-from-top-2">
-                    {{-- JS will inject duration notice here --}}
+                <div id="durationPreview" class="hidden animate-in fade-in slide-in-from-top-2"></div>
+
+                {{-- BOOK SEARCH FILTER (NEW) --}}
+                <div id="bookSearchContainer" class="hidden space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-gray-400">Filter Available Books</label>
+                    <div class="relative">
+                        <span class="material-icons-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg">search</span>
+                        <input type="text" id="bookSearchInput" placeholder="Type book title to filter..."
+                            class="w-full border-none bg-gray-100 rounded-2xl py-4 pl-12 pr-4 font-bold focus:ring-2 focus:ring-blue-500 shadow-inner text-sm">
+                    </div>
                 </div>
 
                 <div class="space-y-2">
@@ -206,22 +194,29 @@
 
 <script>
     const books = @json($books);
-    // Include user data with roles for JS processing
-    const users = @json($users->load('role'));
+    const users = @json($users);
 
+    // User Selection and Book Loading
     document.getElementById('user_id').addEventListener('change', function() {
         const userId = this.value;
         const container = document.getElementById('bookCopiesContainer');
         const durationPreview = document.getElementById('durationPreview');
+        const searchContainer = document.getElementById('bookSearchContainer');
+        const searchInput = document.getElementById('bookSearchInput');
+
         container.innerHTML = '';
+        searchInput.value = '';
 
         if (!userId) {
             durationPreview.classList.add('hidden');
+            searchContainer.classList.add('hidden');
             container.innerHTML = '<div class="flex flex-col items-center justify-center py-10 opacity-40"><span class="material-icons-outlined text-4xl mb-2">person_search</span><p class="text-xs font-black uppercase tracking-widest">Select a borrower to load eligible inventory</p></div>';
             return;
         }
 
-        // Handle Duration Preview logic
+        searchContainer.classList.remove('hidden');
+
+        // Handle Duration Preview
         const selectedUser = users.find(u => u.id == userId);
         if(selectedUser && selectedUser.role) {
             const isInstructor = selectedUser.role.name.toLowerCase() === 'instructor';
@@ -240,7 +235,7 @@
             durationPreview.classList.remove('hidden');
         }
 
-        // Load Books
+        // Load and Render Books
         books.forEach(book => {
             const availableCopies = book.copies.filter(copy => {
                 if (copy.status === 'available') return true;
@@ -253,19 +248,17 @@
             if (availableCopies.length === 0) return;
 
             const bookDiv = document.createElement('div');
-            bookDiv.classList.add('p-5', 'bg-white', 'rounded-2xl', 'shadow-sm', 'border', 'border-gray-100', 'animate-in', 'fade-in', 'slide-in-from-left-2');
-            bookDiv.innerHTML = `<p class="font-black text-gray-800 mb-3 text-sm">${book.title}</p>`;
+            bookDiv.classList.add('book-item', 'p-5', 'bg-white', 'rounded-2xl', 'shadow-sm', 'border', 'border-gray-100', 'animate-in', 'fade-in');
+            bookDiv.setAttribute('data-title', book.title.toLowerCase());
+
+            let html = `<p class="font-black text-gray-800 mb-3 text-sm">${book.title}</p>`;
 
             availableCopies.forEach(copy => {
-                let isReservedForUser = false;
-                if (copy.status === 'reserved') {
-                    if (copy.reservations.find(r => r.user_id == userId)) isReservedForUser = true;
-                }
+                const isReserved = copy.status === 'reserved' && copy.reservations.find(r => r.user_id == userId);
+                const checked = isReserved ? 'checked' : '';
+                const badge = isReserved ? '<span class="px-2 py-0.5 bg-indigo-100 text-indigo-600 text-[8px] font-black rounded-full ml-2">RESERVED FOR YOU</span>' : '';
 
-                const checked = isReservedForUser ? 'checked' : '';
-                const badge = isReservedForUser ? '<span class="px-2 py-0.5 bg-indigo-100 text-indigo-600 text-[8px] font-black rounded-full ml-2">RESERVED</span>' : '';
-
-                const copyHtml = `
+                html += `
                     <label class="flex items-center p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors border border-transparent hover:border-blue-100">
                         <input type="checkbox" name="books[${book.id}][copy_ids][]" value="${copy.id}" class="w-5 h-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500" ${checked}>
                         <div class="ml-4 flex-1">
@@ -277,12 +270,22 @@
                         </div>
                     </label>
                 `;
-                bookDiv.innerHTML += copyHtml;
             });
+            bookDiv.innerHTML = html;
             container.appendChild(bookDiv);
         });
     });
 
+    // Live Search Logic
+    document.getElementById('bookSearchInput').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        document.querySelectorAll('.book-item').forEach(item => {
+            const title = item.getAttribute('data-title');
+            item.style.display = title.includes(searchTerm) ? 'block' : 'none';
+        });
+    });
+
+    // Return Modal Logic
     document.querySelectorAll('.return-borrow-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const form = document.getElementById('returnBorrowForm');
