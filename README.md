@@ -1,110 +1,161 @@
-<<<<<<< HEAD
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📚 Library Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A role-based library management system built with **Laravel 12**, designed to help schools and institutions manage book inventory, borrowing, returns, and penalties through separate dashboards for **Admins**, **Librarians**, and **Students**.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Role-based access control** — Admin, Librarian, and Student each get a dedicated dashboard and permission set.
+- **Book catalog management** — add, edit, and organize the library's book inventory.
+- **Borrowing workflow** — track borrow dates and return (due) dates for every loan.
+- **Penalty system** — automatically flag/handle overdue borrows.
+- **Reporting** — generate reports across borrowing activity and inventory.
+- **Search** — look up books quickly from the catalog.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🗺️ Planned / In Progress
+The following enhancements are on the roadmap:
+- Advanced search filters
+- Streamlined "add book" UI (all book details on a single view)
+- Lazy loading for long book listings
+- Book reviews for student/instructor feedback
+- Notifications for due dates, overdue items, and reservation alerts
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🧑‍🤝‍🧑 User Roles
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Role | Access |
+|------|--------|
+| **Admin** | Full control over the system — manages books, users, and reports |
+| **Librarian** | Manages book inventory and borrow/return transactions |
+| **Student** | Browses the catalog, borrows books, and views their own history |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🛠️ Tech Stack
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| Layer | Technology |
+|-------|------------|
+| Backend | [Laravel 12](https://laravel.com) (PHP ^8.2) |
+| Frontend build | [Vite 7](https://vitejs.dev) + [Laravel Vite Plugin](https://laravel.com/docs/vite) |
+| Styling | [Tailwind CSS 4](https://tailwindcss.com) |
+| Testing | PHPUnit |
+| Dev tooling | Laravel Pint, Laravel Sail, Laravel Pail, Faker, Mockery |
 
-### Premium Partners
+**Color palette:**
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+| Swatch | Hex |
+|--------|-----|
+| ⬜ | `#EFECE3` |
+| 🟦 | `#8FABD4` |
+| 🔵 | `#4A70A9` |
+| ⬛ | `#000000` |
+| 🟨 | `#F2E9D8` (parchment) |
+| 🟫 | `#A67C52` (book spines) |
+| 🟤 | `#6C4F3D` (hardcover brown) |
+| ⚫ | `#2C1A13` (ink) |
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🚀 Getting Started
 
-## Code of Conduct
+### Prerequisites
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- PHP >= 8.2
+- Composer
+- Node.js & npm
+- A database (MySQL/SQLite/PostgreSQL — configure via `.env`)
 
-## Security Vulnerabilities
+### Installation
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+# 1. Clone the repository
+git clone https://github.com/rhondelp/LIBRARY-MANAGEMENT-SYSTEM.git
+cd LIBRARY-MANAGEMENT-SYSTEM
 
-## License
+# 2. Install PHP dependencies
+composer install
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-=======
-# LIBRARY-MANAGEMENT-SYSTEM
->>>>>>> c3ea731722e0db3a4ce2661557501723d5353b1f
+# 3. Install JS dependencies
+npm install
 
+# 4. Copy the environment file and generate an app key
+cp .env.example .env
+php artisan key:generate
 
+# 5. Configure your database credentials in .env, then run migrations
+php artisan migrate
 
+# 6. (Optional) Seed the database with sample data
+php artisan db:seed
+```
 
+### Running the app
 
+```bash
+# Start the Laravel dev server
+php artisan serve
 
+# In a separate terminal, run the Vite dev server for hot-reloading assets
+npm run dev
+```
 
-# Optional enhancements:
-    book_reviews for student/instructor feedback
-    notifications for due dates, overdue, and reservation alerts
+The app should now be available at `http://localhost:8000`.
 
+### Building for production
 
-public function index() {
-    if (auth()->user()->role->name === 'admin') {
-        return view('admin.books.index', compact('books'));
-    } elseif (auth()->user()->role->name === 'librarian') {
-        return view('librarian.books.index', compact('books'));
-    } else {
-        return view('student.books.index', compact('books'));
-    }
-}
+```bash
+npm run build
+```
 
+---
 
+## 🧹 Useful Artisan Commands
 
+Handy when things get cached weirdly during development:
 
-color pallete
-#EFECE3 #8FABD4 #4A70A9 #000000
-
-#F2E9D8 (parchment) #A67C52 (book spines) #6C4F3D (hardcover brown) #2C1A13 (ink)
-
-
-Advanced search - mana
-Pag borrow
-Pag add   -isahon ra tanan sa UI ang details sa book - mana
-Dli e load tanan nga naka list type
-Bali ang borrow date & return date -mana
-Penalty sa pag borrow -mana
-Reporting ( tanan na area)
-
+```bash
 php artisan config:clear
 php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
 php artisan optimize:clear
 php artisan optimize
+```
+
+---
+
+## 🧪 Testing
+
+```bash
+php artisan test
+```
+
+---
+
+## 📁 Project Structure
+
+Standard Laravel 12 directory layout:
+
+```
+app/          Application logic (models, controllers, policies, etc.)
+bootstrap/    Framework bootstrap files
+config/       Configuration files
+database/     Migrations, factories, and seeders
+public/       Publicly accessible entry point & compiled assets
+resources/    Views (Blade), CSS, and JS source
+routes/       Route definitions
+storage/      Logs, cache, and file uploads
+tests/        PHPUnit tests
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome. Feel free to open a pull request or start a discussion.
+
+## 📄 License
+
+This project is open-sourced software. Check the repository for license details.
